@@ -277,6 +277,12 @@ section { padding: 1.35rem 0; }
   font-size: 1.08rem;
 }
 .model-meta { color: var(--muted); font-size: .95rem; }
+.panel-featured {
+  grid-column: 1 / -1;
+  background: linear-gradient(145deg, #f5faee 0%, #ffffff 100%);
+  border-color: #c7d8b8;
+  box-shadow: 0 14px 34px rgba(62, 104, 30, 0.12);
+}
 .model-desc { color: var(--muted); font-size: .88rem; margin: .15rem 0 .5rem; line-height: 1.4; }
 .model-version { color: var(--muted); font-size: .75rem; margin: 0 0 .6rem; opacity: .7; }
 .what-is-model {

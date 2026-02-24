@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Genutzter Prompt | Wahlanalyse 2026</title>
+  <meta name="description" content="Der veröffentlichte und genutzte Prompt für die KI-gestützte Kandidatenanalyse." />
+  <link rel="stylesheet" href="/assets/styles.css" />
+</head>
+<body>
+  <header class="topbar"><div class="wrap nav"><a class="brand" href="/"><img src="/assets/logo.png" alt="OpenZirndorf Logo" /><strong>KI-Wahlanalyse</strong></a><nav class="menu"><a href="/">Start</a><a aria-current="page" href="/prompt/">Prompt</a><a href="/ergebnisse/">Ergebnisse</a><a href="/disclaimer/">Disclaimer</a></nav></div></header>
+
+  <main class="wrap">
+    <section>
+      <h1>Veröffentlichter Prompt (1:1)</h1>
+      <p class="lead">Der folgende Prompt wurde für die Modellläufe verwendet und wird unverändert dokumentiert.</p>
+    </section>
+
+    <section class="panel">
+      <pre class="code">Analysiere die folgenden Bürgermeisterkandidaten der Kommunalwahl Zirndorf am 8. März 2026 
+umfassend und neutral. Wende für alle Kandidaten exakt dieselben Bewertungskriterien an.
+
+## KANDIDATEN (Listenplatz · Partei · Name · Beruf · Jahrgang)
+
+01 · CSU · Hesselberger Tom · examinierter Gymnasiallehrer · Jg. 1998
+02 · FREIE WÄHLER Bayern · Schmidt Ralf · selbstständiger Werbetechniker, Stadtratsmitglied · Jg. 1969
+03 · Alternative für Deutschland · Treuheit Bastian · Mitglied des Bundestages, Stadtratsmitglied, Kreisrat · Jg. 1998
+04 · BÜNDNIS 90/DIE GRÜNEN · Poxleitner Lukas · Arzt, Stadtratsmitglied · Jg. 1998
+05 · SPD · Hauber Sandra · M.A. Personal- und Organisationsentwicklerin, Stadtratsmitglied, Kreisrätin · Jg. 1970
+06 · DIE LINKE · Greser Robin · Informatiker · Jg. 2000
+07 · FDP · Reubel Paul · Koch, Stadtratsmitglied · Jg. 1954
+08 · Volt Deutschland · Krause Eike · Dipl.-Ing. (FH), Architekt · Jg. 1969
+09 · Zirndorfer Bürgergemeinschaft e.V. · Spath Marcus · Bankkaufmann, Stadtratsmitglied · Jg. 1979
+
+## PFLICHTRECHERCHE VOR DER ANALYSE
+
+Bevor du die Analyse erstellst, recherchiere zwingend folgende Quellen:
+
+1. RATSINFORMATIONSSYSTEM ZIRNDORF
+   URL: https://sitzung.zirndorf.de/bi/info.asp
+   
+   Recherchiere dort für jeden Kandidaten, der ein Stadtratsmitglied ist:
+   - Anzahl und Art eingereichter Anträge (Eigeninitiative)
+   - Anfragen und Anfragebeantwortungen
+   - Redebeiträge und Abstimmungsverhalten (soweit dokumentiert)
+   - Mitgliedschaft in Ausschüssen und Gremien
+   - Sitzungsteilnahme und Aktivität im Gremium
+   
+   Ziel: Ein datenbasiertes Bild der tatsächlichen kommunalpolitischen Aktivität,
+   nicht nur der selbst kommunizierten Schwerpunkte.
+
+2. ALLGEMEINE WEBRECHERCHE
+   Recherchiere zusätzlich öffentlich belegbare Informationen zu jedem Kandidaten:
+   - Offizielle Kandidatenwebseiten und Partei-Pressemitteilungen
+   - Lokale Medienberichte (insbesondere Nürnberger Nachrichten, Fürth Aktuell, 
+     Marktspiegel Landkreis Fürth)
+   - Öffentliche Stellungnahmen und Interviews
+
+## BEWERTUNGSKRITERIEN (für jeden Kandidaten einzeln abarbeiten)
+
+1. PERSON & BERUF
+   - Beruflicher Hintergrund und fachliche Relevanz für das Bürgermeisteramt
+   - Alter und Lebenssituation (soweit öffentlich bekannt)
+   - Lokale Verwurzelung
+
+2. POLITISCHE ROLLE
+   - Bisherige Mandate und Ämter (kommunal, Kreis, Land, Bund)
+   - Erfahrung im kommunalen Tagesgeschäft
+   - Nominierungsverfahren und innerparteiliche Rückendeckung
+   - Fraktions- und Ausschusserfahrung
+
+3. AKTIVITÄT IM STADTRAT (nur für Kandidaten mit Stadtratssitz)
+   - Anzahl eingereichter Anträge laut sitzung.zirndorf.de
+   - Thematische Schwerpunkte der Anträge
+   - Erfolgsquote bzw. Resonanz der Anträge im Gremium
+   - Ausschussbeteiligung und Sitzungsfrequenz
+   - Bewertung: Ist die kommunalpolitische Selbstdarstellung durch die 
+     Ratsdokumentation belegbar oder widerspricht sie ihr?
+
+4. THEMATISCHE SCHWERPUNKTE
+   - Kernthemen und programmatische Aussagen (nur belegbar öffentliche Quellen)
+   - Wie werden diese Themen kommunal operationalisiert?
+   - Spezifität vs. Allgemeinheit der Aussagen
+   - Abgleich: Decken sich die Wahlkampfthemen mit der tatsächlichen 
+     Antrags- und Stadtratspraxis?
+
+5. STÄRKEN (sachlich, ohne Wertung zugunsten einer politischen Richtung)
+
+6. SCHWÄCHEN (sachlich, ohne Wertung zugunsten einer politischen Richtung)
+
+## ABSCHLUSS
+
+Erstelle nach den Einzelanalysen eine Gesamtbewertung, die folgende Fragen beantwortet:
+- Wer hat das stärkste kommunalpolitische Profil — gemessen an belegbarer Aktivität,
+  nicht nur an Selbstdarstellung?
+- Wer hat die realistischsten Wahlchancen (bezogen auf Ausgangsergebnis der letzten Wahl)?
+- Welche Kandidaten kandidieren realistisch für das Amt, welche primär zur Stärkung 
+  ihrer Stadtratsliste oder aus Gründen der demokratischen Meinungsvielfalt?
+- Gibt es auffällige Diskrepanzen zwischen Wahlkampfversprechen und 
+  dokumentierter Stadtratspraxis?
+
+## NEUTRALITÄTSVORGABEN (zwingend einzuhalten)
+
+- Keine Partei, keine politische Richtung und keine Weltanschauung wird bevorzugt 
+  oder benachteiligt
+- Alle Schwächen und Stärken werden nach demselben Maßstab benannt
+- Faktische Fehler in Wahlprogrammen oder öffentlichen Aussagen können sachlich 
+  benannt werden, sofern sie belegbar sind und dieselbe Sorgfalt für alle Kandidaten gilt
+- Keine moralischen Urteile, nur sachliche Einschätzungen
+- Wenn zu einem Kandidaten wenige öffentliche Informationen vorliegen, 
+  wird das explizit als solches benannt – keine Spekulation
+- Aussagen aus dem Ratsinformationssystem werden als belastbarere Quelle gewichtet 
+  als Selbstdarstellungen im Wahlkampf
+
+## AUSGANGSDATEN ZUR LETZTEN WAHL
+
+Stadtratsergebnis 2020:
+  CSU:          32,05 %
+  SPD:          27,84 %
+  GRÜNE:        18,05 %
+  Freie Wähler: 10,83 %
+  AfD:           6,27 %
+  Die Linke:     2,63 %
+  FDP:           2,34 %
+
+Bürgermeisterwahl 2020: Stichwahl zwischen Thomas Zwingel (SPD) und Bernd Klaski (CSU),
+Zwingel gewann mit 51,12 %.
+
+Besonderheiten 2026:
+  - Amtsinhaber Thomas Zwingel (SPD) tritt nach 20 Jahren nicht mehr an
+  - Offenes Rennen ohne Amtsinhaberbonus
+  - Mit 9 Kandidaten ungewöhnlich breites Bewerberfeld
+  - FDP, Volt, Die Linke und ZBG traten 2020 nicht oder ohne BM-Kandidaten an</pre>
+    </section>
+  </main>
+
+  <footer><div class="footer-grid"><div>entwickelt mit ❤️ in Zirndorf</div><div><a href="/impressum/">Impressum</a><a href="/datenschutz/">Datenschutz</a><a href="/disclaimer/">Disclaimer</a><a href="https://github.com/openzirndorf/wahl2026">GitHub Repo</a></div></div></footer>
+  <script src="/assets/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,59 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640" role="img" aria-label="openzirndorf Logo">
+  <defs>
+    <linearGradient id="stone" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#f1e4bf" />
+      <stop offset="1" stop-color="#e8d6aa" />
+    </linearGradient>
+    <pattern id="brick" width="42" height="24" patternUnits="userSpaceOnUse">
+      <rect width="42" height="24" fill="none" />
+      <rect x="2" y="4" width="22" height="9" fill="#e9d8aa" opacity=".55" />
+      <rect x="24" y="11" width="16" height="8" fill="#e7d39f" opacity=".45" />
+    </pattern>
+  </defs>
+
+  <g transform="translate(138,24)">
+    <path d="M42 78h280L182 0z" fill="#e55d24" stroke="#a63c12" stroke-width="3" />
+    <path d="M58 81h246l18 18H40z" fill="#0d1014" />
+
+    <rect x="56" y="100" width="252" height="20" rx="2" fill="#22272d" />
+    <g fill="#2a2f35">
+      <rect x="70" y="100" width="14" height="40" />
+      <rect x="120" y="100" width="14" height="40" />
+      <rect x="170" y="100" width="14" height="40" />
+      <rect x="220" y="100" width="14" height="40" />
+      <rect x="270" y="100" width="14" height="40" />
+    </g>
+
+    <rect x="76" y="136" width="212" height="340" rx="12" fill="url(#stone)" stroke="#c8a665" stroke-width="8" />
+    <rect x="86" y="144" width="192" height="324" rx="10" fill="url(#brick)" opacity=".9" />
+
+    <g fill="#0e1116">
+      <rect x="170" y="182" width="24" height="36" rx="2" />
+      <rect x="170" y="252" width="24" height="36" rx="2" />
+      <rect x="170" y="322" width="24" height="36" rx="2" />
+    </g>
+
+    <g transform="translate(124,368)">
+      <path d="M0 70h118c0-26-8-41-35-45v17c16 3 22 11 22 28h-14v16h34v-16h-8c0-45-20-63-59-63S0 25 0 70z" fill="#f5f3ef" />
+      <path d="M118 70H0v16h118z" fill="#f5f3ef" />
+      <path d="M22 72c17 0 28-13 28-30V33c-10 2-19 7-19 16v9c0 7-3 12-9 14z" fill="#4d9610" />
+      <path d="M96 72c-6-2-9-7-9-14v-9c0-9-9-14-19-16v9c0 17 11 30 28 30z" fill="#4d9610" />
+      <path d="M22 72c-1 0-4 3-9 3v11c8 0 14-4 16-8-2-3-5-6-7-6z" fill="#4d9610" />
+      <path d="M96 72c2 0 5 3 9 3v11c-8 0-14-4-16-8 2-3 5-6 7-6z" fill="#4d9610" />
+    </g>
+
+    <g transform="translate(-34,470)">
+      <path d="M0 84c95-50 265-50 360 0z" fill="#5a9d15" />
+      <path d="M16 84c88-38 242-38 328 0z" fill="#79b722" />
+      <ellipse cx="50" cy="70" rx="18" ry="12" fill="#5a9d15" />
+      <ellipse cx="84" cy="67" rx="20" ry="13" fill="#67a91a" />
+      <ellipse cx="302" cy="68" rx="20" ry="13" fill="#4e8d10" />
+      <ellipse cx="332" cy="71" rx="18" ry="12" fill="#5a9d15" />
+    </g>
+  </g>
+
+  <g transform="translate(80,560)">
+    <text x="0" y="0" font-family="Avenir Next, Nunito Sans, Segoe UI, sans-serif" font-size="92" font-weight="800" fill="#4f8f17">open</text>
+    <text x="176" y="0" font-family="Avenir Next, Nunito Sans, Segoe UI, sans-serif" font-size="92" font-weight="700" fill="#0f1312">zirndorf</text>
+  </g>
+</svg>

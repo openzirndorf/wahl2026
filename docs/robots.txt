@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://wahl2026.openzirndorf.de/sitemap.xml

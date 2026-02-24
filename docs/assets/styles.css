@@ -277,6 +277,32 @@ section { padding: 1.35rem 0; }
   font-size: 1.08rem;
 }
 .model-meta { color: var(--muted); font-size: .95rem; }
+.model-desc { color: var(--muted); font-size: .88rem; margin: .15rem 0 .5rem; line-height: 1.4; }
+.what-is-model {
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: .75rem 1rem;
+  margin-top: .85rem;
+}
+.what-is-model summary {
+  cursor: pointer;
+  font-weight: 700;
+  color: var(--primary-dark);
+  font-size: .95rem;
+  user-select: none;
+}
+.what-is-model p {
+  margin: .6rem 0 0;
+  color: var(--muted);
+  font-size: .93rem;
+  line-height: 1.55;
+}
+.home-how {
+  display: grid;
+  gap: .9rem;
+}
+.home-how h2 { margin: 0; }
 .code { background: #181c1a; color: #d8f9c2; border-radius: 12px; padding: .9rem; overflow-x: auto; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; font-size: .88rem; }
 .note { border-left: 4px solid var(--accent); padding-left: .8rem; }
 .toc-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: .7rem; }

@@ -1,0 +1,332 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Parteiantworten | Zirndorf wählt 2026</title>
+  <meta name="description" content="OpenZirndorf hat alle Parteien zu digitaler Bürgerbeteiligung befragt. Hier stehen die Antworten – vollständig und unverändert." />
+  <link rel="stylesheet" href="/assets/styles.css" />
+  <style>
+    .status-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: .6rem;
+      margin: 1.2rem 0 2rem;
+    }
+    .party-status {
+      border-radius: var(--radius);
+      padding: .65rem .8rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: .4rem;
+      font-weight: 700;
+      font-size: .9rem;
+      border: 2px solid transparent;
+      text-decoration: none;
+    }
+    a.party-status.answered:hover {
+      filter: brightness(.95);
+      transform: translateY(-1px);
+      transition: transform .12s, filter .12s;
+    }
+    .party-status.answered {
+      background: #f0faf0;
+      border-color: #2ecc71;
+      color: #1a6b3a;
+    }
+    .party-status.no-answer {
+      background: #fff5f5;
+      border-color: #f5c6c6;
+      color: #c0392b;
+    }
+    .party-dot {
+      width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0;
+    }
+    .status-icon { font-size: 1rem; }
+    .answer-section { margin-top: 2.5rem; }
+    .answer-section h2 { margin-bottom: .5rem; }
+    .party-panel {
+      border-left: 4px solid #ccc;
+      padding-left: 1.2rem;
+    }
+    .answer-meta {
+      font-size: .82rem;
+      color: var(--muted);
+      margin-bottom: 1rem;
+    }
+    .answer-body { line-height: 1.7; }
+    .answer-body ul { margin: .4rem 0 .8rem 1.2rem; }
+    .answer-body li { margin-bottom: .2rem; }
+    .answer-body p { margin: .5rem 0; }
+    .original-letter {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 1.2rem 1.5rem;
+      white-space: pre-wrap;
+      font-size: .88rem;
+      line-height: 1.7;
+      color: #444;
+    }
+    details summary {
+      cursor: pointer;
+      font-weight: 700;
+      color: var(--primary);
+      margin-bottom: .3rem;
+      list-style: none;
+      display: flex;
+      align-items: center;
+      gap: .4rem;
+    }
+    details summary::before { content: '▶'; font-size: .75rem; transition: transform .15s; }
+    details[open] summary::before { transform: rotate(90deg); }
+    .no-answer-list {
+      display: flex; flex-wrap: wrap; gap: .4rem; margin-top: .5rem;
+    }
+    .no-answer-tag {
+      background: #f0f0f0;
+      border-radius: 999px;
+      padding: .25rem .7rem;
+      font-size: .82rem;
+      color: #888;
+      font-weight: 600;
+    }
+    @media (max-width: 600px) {
+      .status-grid { grid-template-columns: 1fr 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar"><div class="wrap nav"><a class="brand" href="/"><img src="/assets/logo.png" alt="OpenZirndorf Logo" /><strong>Zirndorf wählt 2026</strong></a><nav class="menu"><a href="/">Start</a><a href="/prompt/">Prompt</a><a href="/ergebnisse/">KI-Bewertungen</a><a aria-current="page" href="/parteiantworten/">Parteiantworten</a><a href="/live/" style="color:#c0392b;font-weight:800">● Live-Ergebnisse</a><a href="/disclaimer/">Disclaimer</a></nav></div></header>
+
+  <main class="wrap">
+    <section>
+      <h1>Parteiantworten zur OpenZirndorf-Anfrage</h1>
+      <p class="lead">Wir haben alle neun antretenden Parteien angefragt: Wie stehen sie zu digitaler Bürgerbeteiligung und einer ehrenamtlichen Digitalinitiative? <strong>4 von 9 Parteien haben bis zur gesetzten Frist geantwortet.</strong> Alle Antworten sind vollständig und unverändert veröffentlicht.</p>
+    </section>
+
+    <section>
+      <h2>Übersicht: Wer hat geantwortet?</h2>
+      <div class="status-grid">
+        <a class="party-status answered" href="#antwort-csu">
+          <span><span class="party-dot" style="background:#005CA9;display:inline-block;vertical-align:middle;margin-right:.4rem"></span>CSU</span>
+          <span class="status-icon">✓</span>
+        </a>
+        <div class="party-status no-answer">
+          <span><span class="party-dot" style="background:#FF6600;display:inline-block;vertical-align:middle;margin-right:.4rem"></span>Freie Wähler</span>
+          <span class="status-icon" style="color:#c0392b">✗</span>
+        </div>
+        <a class="party-status answered" href="#antwort-afd">
+          <span><span class="party-dot" style="background:#009DE0;display:inline-block;vertical-align:middle;margin-right:.4rem"></span>AfD</span>
+          <span class="status-icon">✓</span>
+        </a>
+        <a class="party-status answered" href="#antwort-gruene">
+          <span><span class="party-dot" style="background:#1FAB2C;display:inline-block;vertical-align:middle;margin-right:.4rem"></span>Grüne</span>
+          <span class="status-icon">✓</span>
+        </a>
+        <div class="party-status no-answer">
+          <span><span class="party-dot" style="background:#E3000F;display:inline-block;vertical-align:middle;margin-right:.4rem"></span>SPD</span>
+          <span class="status-icon" style="color:#c0392b">✗</span>
+        </div>
+        <a class="party-status answered" href="#antwort-linke">
+          <span><span class="party-dot" style="background:#BE3075;display:inline-block;vertical-align:middle;margin-right:.4rem"></span>Die Linke</span>
+          <span class="status-icon">✓</span>
+        </a>
+        <div class="party-status no-answer">
+          <span><span class="party-dot" style="background:#FFED00;display:inline-block;vertical-align:middle;margin-right:.4rem;border:1px solid #eee"></span>FDP</span>
+          <span class="status-icon" style="color:#c0392b">✗</span>
+        </div>
+        <div class="party-status no-answer">
+          <span><span class="party-dot" style="background:#562883;display:inline-block;vertical-align:middle;margin-right:.4rem"></span>Volt</span>
+          <span class="status-icon" style="color:#c0392b">✗</span>
+        </div>
+        <div class="party-status no-answer">
+          <span><span class="party-dot" style="background:#4F8F17;display:inline-block;vertical-align:middle;margin-right:.4rem"></span>ZBG</span>
+          <span class="status-icon" style="color:#c0392b">✗</span>
+        </div>
+      </div>
+
+      <details>
+        <summary>Unsere Anfrage im Wortlaut</summary>
+        <div style="margin-top:.8rem">
+          <pre class="original-letter">Liebes ***-Team,
+
+wir haben mit OpenZirndorf eine Initiative von Zirndorfer Einwohnerinnen
+und Einwohnern gestartet, die digitale Ideen und kleinere Anwendungen
+für unsere Stadt entwickeln möchte – ehrenamtlich und
+gemeinwohlorientiert.
+
+Kurz vor der Wahl möchten wir Ihnen einige direkte Fragen stellen:
+- Haben Sie konkrete Vorschläge, wo digitale Unterstützung aus der
+  Bürgerschaft sinnvoll wäre?
+- Würden Sie eine solche Initiative grundsätzlich unterstützen? Wenn ja,
+  in welcher Form?
+- Wo sehen Sie aktuell den größten digitalen Bedarf in Zirndorf?
+- Welche Themen halten Sie für realistisch umsetzbar durch engagierte
+  Bürgerinnen und Bürger?
+
+Transparente Informationen und hilfreiche digitale Werkzeuge können
+Vertrauen stärken, Beteiligung erleichtern und das kommunale Miteinander
+unterstützen.
+
+Gerne würden wir Ihre Rückmeldung transparent und unverändert auf
+unserer Webseite veröffentlichen, damit sich Bürgerinnen und Bürger ein
+Bild von den Positionen machen können.
+
+Wir bitten – sofern möglich – um eine kurze Antwort bis Freitag, 06.03., 18:00 Uhr.
+
+Mit freundlichen Grüßen
+OpenZirndorf
+https://openzirndorf.de/</pre>
+        </div>
+      </details>
+    </section>
+
+    <!-- CSU -->
+    <section class="answer-section" id="antwort-csu">
+      <div class="party-panel" style="border-left-color:#005CA9">
+        <h2 style="color:#005CA9">CSU</h2>
+        <p class="answer-meta">Antwort von Tom Hesselberger, Bürgermeisterkandidat der CSU</p>
+        <div class="answer-body">
+          <p>Liebes Team von OpenZirndorf!</p>
+          <p>Vielen Dank für Ihre Nachricht und Ihr damit verbundenes Engagement. Ich selbst bin der Auffassung, dass die Digitalisierung unseres Alltags in den nächsten Jahren signifikant steigen wird. Digitale Lösungen können dabei einen wichtigen Beitrag leisten, Kommunalpolitik zu stärken. Demnach begrüße ich Initiativen wie Ihre ausdrücklich.</p>
+
+          <p><strong>1. Wo wäre digitale Unterstützung aus der Bürgerschaft sinnvoll?</strong></p>
+          <p>Sinnvoll wäre digitale Unterstützung insbesondere bei niedrigschwelligen Informations- und Serviceangeboten. Sie soll und kann Menschen nicht ersetzen, sondern diese bei ihrer Arbeit unterstützen. Bereiche in denen dies meines Erachtens nach sinnvoll wären, wären zum Beispiel bei:</p>
+          <ul>
+            <li>Übersichtliche Aufbereitung von Stadtratsinformationen</li>
+            <li>Digitale Mängelmelder- oder Beteiligungsformate</li>
+            <li>Transparente Darstellung von Projekten und Bauvorhaben</li>
+            <li>Veranstaltungskalender oder interaktive Stadtübersichten (hier fehlt es an Übersichtlichkeit)</li>
+          </ul>
+          <p>Gerade dort, wo Informationen bereits vorliegen, aber nutzerfreundlicher aufbereitet werden könnten, sehe ich großes Potenzial. Die Bürgerinnen und Bürger müssen wieder Lust auf ihre Heimat bekommen und schnell und unkompliziert erfahren, was wann und wo stattfindet.</p>
+
+          <p><strong>2. Würden Sie eine solche Initiative unterstützen?</strong></p>
+          <p>Ja, grundsätzlich unterstützen wir bürgerschaftliches Engagement im digitalen Bereich. Eine mögliche Form wäre ein regelmäßiger Austausch mit Verwaltung und Stadtrat, um Bedarfe abzustimmen und realistische Umsetzungswege zu klären. Wichtig ist dabei eine enge Abstimmung mit der Stadtverwaltung, insbesondere in Fragen des Datenschutzes, vor allem vor dem Hintergrund der Kostenfrage. Grundsätzlich ist es jedoch mein Anspruch, mich mit allen zeitnah an einen Tisch zu setzen, um verschiedene Möglichkeiten voranzubringen.</p>
+
+          <p><strong>3. Wo sehen Sie den größten digitalen Bedarf?</strong></p>
+          <p>Der größte Bedarf liegt aus unserer Sicht in drei Bereichen:</p>
+          <ul>
+            <li>Transparenz kommunaler Entscheidungsprozesse</li>
+            <li>Digitale Bürgerbeteiligung</li>
+            <li>Serviceorientierung der Verwaltung (Online-Terminvergabe, digitale Anträge, Statusabfragen)</li>
+          </ul>
+          <p>Hier kann Digitalisierung konkret helfen und Abläufe beschleunigen.</p>
+
+          <p><strong>4. Welche Themen sind realistisch durch engagierte Bürgerinnen und Bürger umsetzbar?</strong></p>
+          <p>Realistisch sind insbesondere Projekte mit Informations- und Plattformcharakter, zum Beispiel:</p>
+          <ul>
+            <li>Visualisierung bestehender öffentlicher Daten</li>
+            <li>Beteiligungstools für Umfragen oder Ideensammlungen</li>
+            <li>Digitale Begleitung von Stadtentwicklungsprojekten</li>
+          </ul>
+          <p>Grundsätzlich gilt: Digitalisierung ersetzt keine politische Entscheidung, kann aber Prozesse verständlicher, zugänglicher und bürgernäher machen. Ich selbst bin der festen Überzeugung, dass Bürgerinnen und Bürger dann auch für viele Entscheidungen mehr Verständnis haben, wenn sie die notwendigen Hintergründe vollumfänglich kennen.</p>
+          <p>Ich halte es für wichtig, solche Initiativen nicht als Parallelstruktur, sondern als ergänzenden Impuls zur kommunalen Arbeit zu verstehen. Wenn ich Verantwortung übernehmen darf, bin ich offen für einen konstruktiven Austausch über konkrete Projekte.</p>
+
+          <p><em>Mit freundlichen Grüßen<br>Tom Hesselberger</em></p>
+        </div>
+      </div>
+    </section>
+
+    <!-- GRÜNE -->
+    <section class="answer-section" id="antwort-gruene">
+      <div class="party-panel" style="border-left-color:#1FAB2C">
+        <h2 style="color:#1FAB2C">Bündnis 90 / Die Grünen</h2>
+        <p class="answer-meta">Antwort von Dr. Timo Engemann, Fraktionsvorsitzender im Stadtratund Ortsverbandssprecher von Bündnis 90/Die Grünen Zirndorf</p>
+        <div class="answer-body">
+          <p>Liebes OpenZirndorf-Team,</p>
+          <p>zuerst einmal danke für Initiative und Einsatz.</p>
+          <p>Projekte der Vergangenheit haben in der Stadtverwaltung immer wieder aus personellen oder monetären Gründen ausgesetzt werden müssen – obwohl es politische Beschlüsse dazu gegeben hat. Hier fallen Themen wie die BürgerApp oder die digitale Umsetzung der Organisation des Garagenflohmarktes ein, wo ehrenamtliche Unterstützung sofort fruchten würde.</p>
+          <p>Die Stadtratsfraktion würde diese Vorhaben mit Rat und Tat sowie den nötigen Anträgen unterstützen. War es auch die grüne Fraktion (v. a. Gerhard Wirner), die die Digitalisierungsbeauftragte beantragt hat und stetig in ihrem Schaffen unterstützt.</p>
+          <p><em>Fraktionsvorsitzender B90/Die Grünen Stadtrat Zirndorf<br>Sprecher Ortsverband B90/Die Grünen Zirndorf</em></p>
+        </div>
+      </div>
+    </section>
+
+    <!-- AfD -->
+    <section class="answer-section" id="antwort-afd">
+      <div class="party-panel" style="border-left-color:#009DE0">
+        <h2 style="color:#009DE0">AfD</h2>
+        <p class="answer-meta">Antwort von Claus-Georg Pleyer, AfD-Fraktionsvorsitzender im Kreistag Fürth, AfD-Stadtrat Zirndorf</p>
+        <div class="answer-body">
+          <p>Wir unterstützen eine bürgerschaftliche Initiative genauso wie eine moderne digitale Kommunal-Verwaltung, die den Bürgern Zirndorfs die Möglichkeit gibt, online zusammenzukommen, sich gegenseitig zu unterstützen, zu jeder Zeit fristgerecht Anträge zu stellen oder sich an der Kommunalpolitik zu beteiligen. Auch die Verwaltung kann durch weitere digitale Abläufe entlastet werden, wenn diese in enger Abstimmung mit den Betroffenen eingeführt und durch gut verfügbare technische Unterstützung begleitet wird.</p>
+
+          <p>Ein (ergänzendes) bürgerschaftliches IT-Engagement sehe ich positiv und realistisch in den Bereichen:</p>
+          <ul>
+            <li>Informationen und Diskussionen zu aktuellen kommunalpolitischen Themen</li>
+            <li>Tourismus und Heimatpflege (Attraktionen, Übernachtungen, Verschönerungswettbewerbe)</li>
+            <li>Marketing, insbesondere für Vereine, Veranstaltungen (z.B. Garagenflohmarkt), Lokale und inhabergeführte Geschäfte</li>
+            <li>Kleinanzeigen, Nahversorgung (z.B. Wunschzettel/Bestandsanzeige/Sicherheit für digitale 24/7-Shops)</li>
+            <li>Nachbarschaftshilfe (inkl. IT-Support, Pflege, Kinderbetreuung und Notfälle)</li>
+            <li>Gemeinschaftsfördernde Projekte rund um VHS, Stadtmuseum (z.B. virtueller Rundgang, evtl. gegen kleinen Betrag), Bücherei, Jugendhaus bis hin zu einem Online-Spiel zu Geschichte und Attraktionen Zirndorfs, Wallensteins Lager oder dem Hohenzollernweg</li>
+          </ul>
+
+          <p>Unser Antrag für eine anerkannte und freie Bürgerbeteiligungs-Software wie z.B. „Consul" in der Stadtratssitzung vom 27.07.2022 zielte darauf ab, einen sachbezogenen Informations- und Meinungsaustausch von interessierten Bürgern und der Verwaltung zu aktuellen kommunalen Fragen zu fördern. Dadurch sollten möglichst viele Aspekte und Ideen berücksichtigt, Umfragen und Eingaben leichter ermöglicht und wo sinnvoll Bürgerentscheide rechtssicher und möglichst kooperativ vorbereitet werden können.</p>
+
+          <p>Außerdem haben wir uns u.a. mit Anträgen für eine (digitale) Veröffentlichung des jährlichen polizeilichen Sicherheitsberichts zu Zirndorf, eines datenschutzkonformen Protokolls der Bürgerversammlungen und der Bürgerfragestunden eingesetzt. Auch hier könnten Besucher evtl. alternativ ihre eigenen Informationen in ein ehrenamtlich betriebenes Portal eingeben.</p>
+
+          <p>Wir unterstützen außerdem eine Live-Übertragung von öffentlichen Stadtrats-Sitzungen sowie eine Online-Recherchemöglichkeit über alle Ausgaben des Zirndorfer Amtsblatts. Amtsgänge sollten möglichst vollständig durch Online-Formulare auf der Netzseite der Stadt ersetzt werden, wofür die städtische Digitalisierungsbeauftragte zuständig ist. Eine telefonische und eine Vor-Ort-Beratung für Verständnisfragen oder spezielle Anliegen muss dennoch ohne lange Wartezeiten erhalten bleiben.</p>
+
+          <p>Generell sollte der Ablauf von Verwaltungsvorgängen über Dokumenten-Management- oder Prozess-Management-Systeme datenschutzkonform und fehlersicherer beschleunigt werden. Auch die Sicherheit im öffentlichen Raum kann durch eine digitale Kamera-Überwachung an wichtigen öffentlichen Plätzen datenschutzkonform erhöht werden.</p>
+
+          <p><em>Mit freundlichen Grüßen<br>Claus-Georg Pleyer<br>AfD-Kreisvorsitzender Fürth/Neustadt a.d.A. · AfD-Ortsvorstandsmitglied Zirndorf · AfD-Stadtrat in Zirndorf · AfD-Fraktionsvorsitzender im Kreistag Fürth</em></p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Die Linke -->
+    <section class="answer-section" id="antwort-linke">
+      <div class="party-panel" style="border-left-color:#BE3075">
+        <h2 style="color:#BE3075">Die Linke</h2>
+        <p class="answer-meta">Antwort von Robin Greser und die Linke Zirndorf</p>
+        <div class="answer-body">
+          <p><strong>1. Haben Sie konkrete Vorschläge, wo digitale Unterstützung aus der Bürgerschaft sinnvoll wäre?</strong></p>
+          <ul>
+            <li><strong>Begleitung bei digitalen Prozessen:</strong> Unterstützung beim Ausfüllen von Online-Anträgen und die Erarbeitung von Vorschlägen, wie diese durch Leichte Sprache und Barrierefreiheit für alle verständlicher gestaltet werden können.</li>
+            <li><strong>Hardware-Sourcing (Refurbishment):</strong> Eine Initiative, die gebrauchte IT-Geräte von Firmen oder Privatpersonen sammelt, diese sicher aufbereitet und kostengünstig oder kostenfrei an einkommensschwache Haushalte in Zirndorf abgibt.</li>
+            <li><strong>Kompetenzaufbau:</strong> Direkte Hilfe in den Bereichen Social Media und AI (KI), damit Bürgerinnen und Bürger diese Technologien sicher nutzen können, anstatt von ihnen abgehängt zu werden.</li>
+          </ul>
+
+          <p><strong>2. Würden Sie eine solche Initiative grundsätzlich unterstützen? Wenn ja, in welcher Form?</strong></p>
+          <ul>
+            <li>Eine solche Initiative ist absolut unterstützenswert und muss aktiv gefördert werden.</li>
+            <li>Unser Ansatz ist es, die Menschen „aufzufangen", die sich von der „Digitalisierung mit der Brechstange" überfordert fühlen.</li>
+            <li>Die Unterstützung kann durch die Bereitstellung städtischer Räume (z. B. für eine Datenschutz-Sprechstunde), politische Rückendeckung im Stadtrat sowie die Vernetzung mit sozialen Strukturen erfolgen.</li>
+          </ul>
+
+          <p><strong>3. Wo sehen Sie aktuell den größten digitalen Bedarf in Zirndorf?</strong></p>
+          <ul>
+            <li><strong>Hilfe bei digitalen Anträgen:</strong> Es fehlen direkte Anlaufstellen für Menschen, die mit rein digitalen Verwaltungsakten überfordert sind.</li>
+            <li><strong>Digitale Barrierefreiheit:</strong> Viele Angebote der Stadt müssen dringend hinsichtlich Nutzerfreundlichkeit, Sehbehinderungen und Leichte Sprache optimiert werden.</li>
+            <li><strong>Datenschutz &amp; Ethik:</strong> Es besteht hoher Aufklärungsbedarf im Hinblick auf den Schutz der Privatsphäre gegenüber großen Konzernen sowie beim ethischen Umgang mit AI (KI).</li>
+          </ul>
+
+          <p><strong>4. Welche Themen halten Sie für realistisch umsetzbar durch engagierte Bürgerinnen und Bürger?</strong></p>
+          <ul>
+            <li><strong>Digital-Café &amp; Datenschutz-Sprechstunde:</strong> Regelmäßige Treffen (wöchentlich/monatlich) zur Wissensvermittlung über Social Media, Datensicherheit und die Nutzung von AI (KI).</li>
+            <li><strong>Prüfung auf Barrierefreiheit:</strong> Eine Bürgergruppe, die städtische Web-Angebote prüft und konkrete Verbesserungsvorschläge einreichen kann.</li>
+            <li><strong>Gemeinsames Zirndorf Wiki &amp; Webpräsenz:</strong> Der Aufbau eines gemeinschaftlich betriebenen „Digitalen Marktplatzes", der lokales Gewerbe, Vereine und soziale Projekte in Zirndorf vernetzt. Sowie der Aufbau und Pflege eines Zirndorf Wikis.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- Keine Antwort -->
+    <section class="answer-section">
+      <h2>Keine Antwort erhalten</h2>
+      <p>Die folgenden Parteien haben bis zur gesetzten Frist (06.03.2026, 18:00 Uhr) nicht geantwortet. Sollte eine Antwort nachträglich eingehen, wird sie hier ergänzt.</p>
+      <div class="no-answer-list">
+        <span class="no-answer-tag">Freie Wähler</span>
+        <span class="no-answer-tag">SPD</span>
+        <span class="no-answer-tag">FDP</span>
+        <span class="no-answer-tag">Volt</span>
+        <span class="no-answer-tag">ZBG</span>
+      </div>
+    </section>
+  </main>
+
+  <footer><div class="footer-grid"><div>entwickelt mit ❤️ in Zirndorf</div><div><a href="/impressum/">Impressum</a><a href="/datenschutz/">Datenschutz</a><a href="/disclaimer/">Disclaimer</a><a href="https://github.com/openzirndorf/wahl2026">GitHub Repo</a></div></div></footer>
+  <script src="/assets/app.js"></script>
+</body>
+</html>

@@ -3,23 +3,71 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Wahlanalyse 2026 | OpenZirndorf</title>
+  <title>Zirndorf wählt 2026 | OpenZirndorf</title>
   <meta name="description" content="Vergleichende KI-Analyse von Wahlkandidaten mit einheitlichem Prompt, transparenter Methodik und offen einsehbaren Ergebnissen." />
   <link rel="stylesheet" href="/assets/styles.css" />
+  <style>
+    .live-banner {
+      background: linear-gradient(135deg, #1a0a0a 0%, #2d0f0f 100%);
+      color: #fff;
+      padding: .75rem 0;
+      border-bottom: 2px solid #c0392b;
+    }
+    .live-banner .wrap {
+      display: flex; align-items: center; justify-content: space-between;
+      flex-wrap: wrap; gap: .6rem;
+    }
+    .live-banner-left { display: flex; align-items: center; gap: .7rem; }
+    .live-dot-lg {
+      width: 10px; height: 10px; border-radius: 50%; background: #e74c3c;
+      flex-shrink: 0; animation: pulse-lg 1.2s infinite;
+    }
+    @keyframes pulse-lg { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.5;transform:scale(.8)} }
+    .live-banner strong { font-size: 1rem; letter-spacing: .2px; }
+    .live-banner span { font-size: .85rem; opacity: .85; }
+    .live-banner-btn {
+      display: inline-flex; align-items: center; gap: .4rem;
+      background: #e74c3c; color: #fff; font-weight: 800; font-size: .85rem;
+      padding: .45rem 1rem; border-radius: 999px; text-decoration: none;
+      transition: background .15s, transform .12s;
+      white-space: nowrap;
+    }
+    .live-banner-btn:hover { background: #c0392b; transform: translateY(-1px); }
+    .nav-live { color: #c0392b !important; font-weight: 800 !important; animation: nav-pulse 2s infinite; }
+    .nav-live:hover { border-bottom-color: #c0392b !important; }
+    @keyframes nav-pulse { 0%,100%{opacity:1} 60%{opacity:.6} }
+  </style>
 </head>
 <body>
   <header class="topbar">
     <div class="wrap nav">
-      <a class="brand" href="/"><img src="/assets/logo.png" alt="OpenZirndorf Logo" /><strong>KI-Wahlanalyse</strong></a>
+      <a class="brand" href="/"><img src="/assets/logo.png" alt="OpenZirndorf Logo" /><strong>Zirndorf wählt 2026</strong></a>
       <nav class="menu" aria-label="Navigation">
         <a aria-current="page" href="/">Start</a>
         <a href="/prompt/">Prompt</a>
-        <a href="/ergebnisse/">Ergebnisse</a>
-        <a href="/live/">Live</a>
+        <a href="/ergebnisse/">KI-Bewertungen</a>
+        <a href="/parteiantworten/">Parteiantworten</a>
+        <a href="/live/" class="nav-live">● Live-Ergebnisse</a>
         <a href="/disclaimer/">Disclaimer</a>
       </nav>
     </div>
   </header>
+
+  <div class="live-banner">
+    <div class="wrap">
+      <div class="live-banner-left">
+        <div class="live-dot-lg"></div>
+        <div>
+          <strong>Live-Ergebnisse · 8. März 2026</strong>
+          <span style="display:block">Auszählungsstand ab 18:00 Uhr in Echtzeit</span>
+        </div>
+      </div>
+      <a class="live-banner-btn" href="/live/">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+        Zum Dashboard
+      </a>
+    </div>
+  </div>
 
   <main class="wrap home-v3">
     <section class="home-head">
@@ -27,7 +75,7 @@
       <h1>Bürgermeisterwahl Zirndorf 2026</h1>
       <p class="lead">Neun Kandidatinnen und Kandidaten bewerben sich um das Bürgermeisteramt. Mehrere unabhängige KI-Systeme haben alle nach identischem Maßstab analysiert – transparent, ohne Wahlempfehlung.</p>
       <div class="home-head-actions">
-        <a class="btn btn-primary" href="/ergebnisse/">Zu den Ergebnissen</a>
+        <a class="btn btn-primary" href="/ergebnisse/">Zu den KI-Bewertungen</a>
       </div>
     </section>
 
@@ -62,6 +110,10 @@
         <a class="focus-card" href="/prompt/">
           <strong>Der Fragenkatalog</strong>
           <span>Welche Fragen wurden den KI-Systemen gestellt?</span>
+        </a>
+        <a class="focus-card" href="/parteiantworten/">
+          <strong>Parteiantworten</strong>
+          <span>4 von 9 Parteien haben auf unsere Anfrage zu digitaler Bürgerbeteiligung geantwortet.</span>
         </a>
         <a class="focus-card" href="/live/">
           <strong>Live-Ergebnisse</strong>

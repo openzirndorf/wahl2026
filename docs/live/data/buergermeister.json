@@ -1,0 +1,74 @@
+{
+  "lastUpdated": "2026-03-06T19:48:16Z",
+  "status": "Kein Eingang",
+  "wahlberechtigte": 0,
+  "waehler": 0,
+  "wahlbeteiligung": 0.0,
+  "ungueltig": 0,
+  "gueltig": 0,
+  "candidates": [
+    {
+      "party": "CSU",
+      "color": "#005CA9",
+      "name": "Hesselberger Tom",
+      "stimmen": 0,
+      "anteil": 0.0
+    },
+    {
+      "party": "FREIE WÄHLER",
+      "color": "#FF6600",
+      "name": "Schmidt Ralf",
+      "stimmen": 0,
+      "anteil": 0.0
+    },
+    {
+      "party": "AfD",
+      "color": "#009DE0",
+      "name": "Treuheit Bastian",
+      "stimmen": 0,
+      "anteil": 0.0
+    },
+    {
+      "party": "GRÜNE",
+      "color": "#1FAB2C",
+      "name": "Poxleitner Lukas",
+      "stimmen": 0,
+      "anteil": 0.0
+    },
+    {
+      "party": "SPD",
+      "color": "#E3000F",
+      "name": "Hauber Sandra",
+      "stimmen": 0,
+      "anteil": 0.0
+    },
+    {
+      "party": "DIE LINKE",
+      "color": "#888",
+      "name": "Greser Robin",
+      "stimmen": 0,
+      "anteil": 0.0
+    },
+    {
+      "party": "FDP",
+      "color": "#FFED00",
+      "name": "Reubel Paul",
+      "stimmen": 0,
+      "anteil": 0.0
+    },
+    {
+      "party": "Volt",
+      "color": "#562883",
+      "name": "Krause Eike",
+      "stimmen": 0,
+      "anteil": 0.0
+    },
+    {
+      "party": "ZBG",
+      "color": "#4F8F17",
+      "name": "Spath Marcus",
+      "stimmen": 0,
+      "anteil": 0.0
+    }
+  ]
+}

@@ -121,6 +121,45 @@
     .spinner { width: 22px; height: 22px; border: 3px solid var(--line); border-top-color: var(--primary); border-radius: 50%; animation: spin .7s linear infinite; }
     @keyframes spin { to { transform: rotate(360deg); } }
 
+    /* ─── Refresh-Controls ───────────────────────────────────── */
+    .refresh-bar {
+      display: flex; align-items: center; gap: .6rem; flex-wrap: wrap;
+      font-size: .8rem; color: var(--muted); margin-bottom: 1rem;
+    }
+    .reload-btn {
+      display: inline-flex; align-items: center; gap: .35rem;
+      padding: .32rem .75rem; border-radius: 999px;
+      border: 1.5px solid var(--line); background: #fff;
+      font-size: .8rem; font-weight: 700; cursor: pointer;
+      transition: border-color .15s, box-shadow .15s;
+    }
+    .reload-btn:hover { border-color: var(--primary); box-shadow: 0 2px 8px rgba(79,143,23,.15); }
+    .reload-btn:disabled { opacity: .5; cursor: not-allowed; }
+    .reload-btn svg { transition: transform .4s; }
+    .reload-btn.loading svg { animation: spin .7s linear infinite; }
+    .auto-toggle {
+      display: inline-flex; align-items: center; gap: .4rem;
+      cursor: pointer; user-select: none; font-weight: 600;
+    }
+    .toggle-track {
+      width: 32px; height: 18px; border-radius: 999px; background: var(--line);
+      position: relative; transition: background .2s; flex-shrink: 0;
+    }
+    .toggle-track.on { background: var(--primary); }
+    .toggle-knob {
+      width: 13px; height: 13px; border-radius: 50%; background: #fff;
+      position: absolute; top: 2.5px; left: 2.5px;
+      transition: transform .2s; box-shadow: 0 1px 3px rgba(0,0,0,.2);
+    }
+    .toggle-track.on .toggle-knob { transform: translateX(14px); }
+    .countdown { font-variant-numeric: tabular-nums; }
+    .error-hint {
+      display: none; align-items: center; gap: .4rem;
+      background: #fde8e8; color: #c0392b; border: 1px solid #f5b4b4;
+      border-radius: 8px; padding: .4rem .75rem; font-size: .8rem; font-weight: 600;
+    }
+    .error-hint.visible { display: flex; }
+
     @media(max-width:600px) {
       .bar-row { grid-template-columns: 90px 1fr 52px; font-size: .8rem; }
     }
@@ -151,6 +190,26 @@
       </div>
       <p class="lead" style="margin-bottom:.9rem">Auszählungsstand in Echtzeit – Daten direkt vom offiziellen Wahlsystem des Bayerischen Staatsministeriums des Innern.</p>
     </section>
+
+    <!-- Refresh-Controls -->
+    <div class="refresh-bar">
+      <button class="reload-btn" id="reload-btn" onclick="manualReload()">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+          <path d="M1 4v6h6"/><path d="M23 20v-6h-6"/>
+          <path d="M20.49 9A9 9 0 0 0 5.64 5.64L1 10m22 4-4.64 4.36A9 9 0 0 1 3.51 15"/>
+        </svg>
+        Jetzt laden
+      </button>
+      <label class="auto-toggle" title="Automatische Aktualisierung alle 2 Minuten">
+        <div class="toggle-track on" id="auto-track"><div class="toggle-knob"></div></div>
+        <span>Auto</span>
+      </label>
+      <span class="countdown" id="countdown"></span>
+      <div class="error-hint" id="error-hint">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><circle cx="12" cy="16" r=".5" fill="currentColor"/></svg>
+        Laden fehlgeschlagen – nächster Versuch läuft
+      </div>
+    </div>
 
     <div id="status-bm" class="status-bar">
       <span><strong>Bürgermeisterwahl:</strong> <span id="bm-status-text">Wird geladen…</span></span>
@@ -225,7 +284,7 @@
     </div>
 
     <p style="font-size:.75rem;color:var(--muted);margin-top:2rem;text-align:center">
-      Datenquelle: <a href="https://wahlen.osrz-akdb.de/" target="_blank" rel="noopener" style="color:var(--primary)">wahlen.osrz-akdb.de</a> (OSRZ AKDB) · Automatische Aktualisierung alle 2 Minuten · Keine Gewähr für Vollständigkeit
+      Datenquelle: <a href="https://wahlen.osrz-akdb.de/" target="_blank" rel="noopener" style="color:var(--primary)">wahlen.osrz-akdb.de</a> (OSRZ AKDB) · Keine Gewähr für Vollständigkeit
     </p>
   </main>
 
@@ -234,7 +293,10 @@
     const BASE = '/live/data/';
     const REFRESH_MS = 120_000; // 2 Minuten
     let currentGrParty = null;
-    let activeTab = 'bm';
+    let autoRefresh = true;
+    let refreshTimer = null;
+    let countdownTimer = null;
+    let nextRefreshAt = null;
 
     /* ── Formatierung ── */
     const fmt = n => n.toLocaleString('de-DE');
@@ -246,13 +308,49 @@
 
     /* ── Tab-Switching ── */
     window.switchTab = (id) => {
-      activeTab = id;
       document.querySelectorAll('.tab-btn').forEach((b, i) =>
         b.classList.toggle('active', ['bm','gr'][i] === id)
       );
       document.querySelectorAll('.tab-panel').forEach(p =>
         p.classList.toggle('active', p.id === 'tab-' + id)
       );
+    };
+
+    /* ── Auto-Refresh Toggle ── */
+    const track = document.getElementById('auto-track');
+    track.parentElement.addEventListener('click', () => {
+      autoRefresh = !autoRefresh;
+      track.classList.toggle('on', autoRefresh);
+      if (autoRefresh) {
+        scheduleRefresh();
+      } else {
+        clearTimeout(refreshTimer);
+        clearInterval(countdownTimer);
+        document.getElementById('countdown').textContent = 'Auto-Refresh pausiert';
+      }
+    });
+
+    function scheduleRefresh() {
+      clearTimeout(refreshTimer);
+      clearInterval(countdownTimer);
+      nextRefreshAt = Date.now() + REFRESH_MS;
+      refreshTimer = setTimeout(() => { load(); scheduleRefresh(); }, REFRESH_MS);
+      countdownTimer = setInterval(updateCountdown, 1000);
+      updateCountdown();
+    }
+
+    function updateCountdown() {
+      const secs = Math.max(0, Math.round((nextRefreshAt - Date.now()) / 1000));
+      document.getElementById('countdown').textContent =
+        secs > 0 ? `Nächste Aktualisierung in ${secs} s` : '';
+    }
+
+    /* ── Manueller Reload ── */
+    window.manualReload = () => {
+      const btn = document.getElementById('reload-btn');
+      if (btn.disabled) return;
+      load();
+      if (autoRefresh) scheduleRefresh(); // Reset countdown
     };
 
     /* ── Hilfsfunktionen ── */
@@ -273,7 +371,6 @@
 
     /* ── BM: Bar Chart ── */
     function renderBM(data) {
-      // KPIs
       document.getElementById('kpi-wahlberechtigte').textContent =
         data.wahlberechtigte > 0 ? fmt(data.wahlberechtigte) : '–';
       document.getElementById('kpi-waehler').textContent =
@@ -288,10 +385,7 @@
         'Stand: ' + fmtTime(data.lastUpdated) + ' Uhr';
 
       const container = document.getElementById('bm-chart');
-      if (!hasData(data)) {
-        container.innerHTML = noDataPlaceholder();
-        return;
-      }
+      if (!hasData(data)) { container.innerHTML = noDataPlaceholder(); return; }
 
       const maxPct = Math.max(...data.candidates.map(c => c.anteil), 1);
       container.innerHTML = data.candidates.map(c => `
@@ -328,24 +422,17 @@
           ${p.gv && p.gv !== '-' ? `<div class="party-card-gv">Δ ${esc(p.gv)} %-Punkte</div>` : ''}
         </div>`).join('');
 
-      // Kandidatenlisten
       renderGRCandidates(data);
     }
 
     function renderGRCandidates(data) {
       const parties = Object.keys(data.candidatesByParty);
-      if (!parties.length) {
-        document.getElementById('gr-cand-section').style.display = 'none';
-        return;
-      }
+      if (!parties.length) { document.getElementById('gr-cand-section').style.display = 'none'; return; }
       document.getElementById('gr-cand-section').style.display = '';
 
-      if (!currentGrParty || !parties.includes(currentGrParty)) {
-        currentGrParty = parties[0];
-      }
+      if (!currentGrParty || !parties.includes(currentGrParty)) currentGrParty = parties[0];
 
-      const tabsEl = document.getElementById('gr-party-tabs');
-      tabsEl.innerHTML = parties.map(p => `
+      document.getElementById('gr-party-tabs').innerHTML = parties.map(p => `
         <button class="tab-btn ${p === currentGrParty ? 'active' : ''}"
                 onclick="switchGRParty('${esc(p)}')">${esc(p)}</button>`).join('');
 
@@ -354,17 +441,16 @@
 
     window.switchGRParty = (party) => {
       currentGrParty = party;
-      document.querySelectorAll('#gr-party-tabs .tab-btn').forEach(b => {
-        b.classList.toggle('active', b.textContent === party);
-      });
+      document.querySelectorAll('#gr-party-tabs .tab-btn').forEach(b =>
+        b.classList.toggle('active', b.textContent === party)
+      );
       if (window._grData) renderGRCandidatePanel(window._grData, party);
     };
 
     function renderGRCandidatePanel(data, party) {
       const cands = data.candidatesByParty[party] || [];
-      const el = document.getElementById('gr-cand-panels');
       const withVotes = cands.some(c => c.stimmen > 0);
-      el.innerHTML = `<ul class="cand-list">
+      document.getElementById('gr-cand-panels').innerHTML = `<ul class="cand-list">
         ${cands.map(c => `
           <li class="cand-item">
             <span class="cand-nr">${c.nr}</span>
@@ -383,6 +469,11 @@
 
     /* ── Fetch & Refresh ── */
     async function load() {
+      const btn = document.getElementById('reload-btn');
+      const errHint = document.getElementById('error-hint');
+      btn.disabled = true;
+      btn.classList.add('loading');
+
       try {
         const [bmResp, grResp] = await Promise.all([
           fetch(BASE + 'buergermeister.json?t=' + Date.now()),
@@ -393,24 +484,25 @@
         window._grData = gr;
         renderBM(bm);
         renderGR(gr);
+        errHint.classList.remove('visible');
 
-        // Update live-badge
         const anyData = hasData(bm) || hasData(gr);
         const badge = document.getElementById('live-badge');
-        if (anyData) {
-          badge.classList.add('live');
-          badge.innerHTML = '<span class="live-dot"></span>Live';
-        } else {
-          badge.classList.remove('live');
-          badge.innerHTML = '<span class="live-dot"></span>Wartet auf Ergebnisse';
-        }
+        badge.classList.toggle('live', anyData);
+        badge.innerHTML = anyData
+          ? '<span class="live-dot"></span>Live'
+          : '<span class="live-dot"></span>Wartet auf Ergebnisse';
       } catch (e) {
         console.error('Fehler beim Laden:', e);
+        errHint.classList.add('visible');
+      } finally {
+        btn.disabled = false;
+        btn.classList.remove('loading');
       }
     }
 
     load();
-    setInterval(load, REFRESH_MS);
+    scheduleRefresh();
   })();
   </script>
 </body>

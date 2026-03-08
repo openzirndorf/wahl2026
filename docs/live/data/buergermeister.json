@@ -1,17 +1,17 @@
 {
-  "lastUpdated": "2026-03-08T19:24:10Z",
-  "status": "Vorläufiges Endergebnis",
+  "lastUpdated": "2026-03-08T19:26:09Z",
+  "status": "Amtliches Endergebnis",
   "wahlberechtigte": 21137,
-  "waehler": 13355,
+  "waehler": 13359,
   "wahlbeteiligung": 63.2,
-  "ungueltig": 67,
-  "gueltig": 13288,
+  "ungueltig": 70,
+  "gueltig": 13289,
   "candidates": [
     {
       "party": "ZBG",
       "color": "#4F8F17",
       "name": "Spath Marcus",
-      "stimmen": 4590,
+      "stimmen": 4591,
       "anteil": 34.5
     },
     {

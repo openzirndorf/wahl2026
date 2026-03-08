@@ -64,7 +64,8 @@ def parse_float(s: str) -> float:
 
 def parse_status(html: str) -> str:
     matches = re.findall(r'class="stand"[^>]*>\s*([^<]+)</p>', html)
-    return matches[1].strip() if len(matches) >= 2 else "Kein Eingang"
+    raw = matches[1].strip() if len(matches) >= 2 else "Kein Eingang"
+    return strip_tags(raw)
 
 
 def get_row_cells(row_html: str) -> list[str]:

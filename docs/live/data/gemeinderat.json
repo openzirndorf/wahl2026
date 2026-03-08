@@ -1,73 +1,73 @@
 {
-  "lastUpdated": "2026-03-08T22:26:09Z",
-  "status": "Ausgezählte Gebiete: 15 von 34, 08.03.2026, 22:54:26",
-  "wahlberechtigte": 15585,
-  "waehler": 4674,
-  "wahlbeteiligung": 30.0,
-  "ungueltig": 98,
-  "gueltig": 124715,
+  "lastUpdated": "2026-03-08T22:28:11Z",
+  "status": "Ausgezählte Gebiete: 16 von 34, 08.03.2026, 23:26:21",
+  "wahlberechtigte": 16571,
+  "waehler": 5028,
+  "wahlbeteiligung": 30.3,
+  "ungueltig": 104,
+  "gueltig": 134416,
   "parties": [
     {
       "party": "ZBG",
       "color": "#4F8F17",
-      "stimmen": 31162,
-      "anteil": 25.0,
-      "gv": "25,0"
+      "stimmen": 33776,
+      "anteil": 25.1,
+      "gv": "25,1"
     },
     {
       "party": "CSU",
       "color": "#005CA9",
-      "stimmen": 26462,
-      "anteil": 21.2,
-      "gv": "-10,8"
+      "stimmen": 28919,
+      "anteil": 21.5,
+      "gv": "-10,5"
     },
     {
       "party": "AfD",
       "color": "#009DE0",
-      "stimmen": 22528,
-      "anteil": 18.1,
-      "gv": "11,8"
+      "stimmen": 24090,
+      "anteil": 17.9,
+      "gv": "11,7"
     },
     {
       "party": "SPD",
       "color": "#E3000F",
-      "stimmen": 15777,
-      "anteil": 12.7,
+      "stimmen": 16981,
+      "anteil": 12.6,
       "gv": "-15,2"
     },
     {
       "party": "GRÜNE",
       "color": "#1FAB2C",
-      "stimmen": 12241,
-      "anteil": 9.8,
-      "gv": "-8,2"
+      "stimmen": 13340,
+      "anteil": 9.9,
+      "gv": "-8,1"
     },
     {
       "party": "Die Linke",
       "color": "#BE3075",
-      "stimmen": 5173,
+      "stimmen": 5535,
       "anteil": 4.1,
       "gv": "4,1"
     },
     {
       "party": "FREIE WÄHLER",
       "color": "#FF6600",
-      "stimmen": 4980,
-      "anteil": 4.0,
-      "gv": "-6,8"
+      "stimmen": 5090,
+      "anteil": 3.8,
+      "gv": "-7,0"
     },
     {
       "party": "Volt",
       "color": "#562883",
-      "stimmen": 4547,
-      "anteil": 3.6,
-      "gv": "3,6"
+      "stimmen": 4764,
+      "anteil": 3.5,
+      "gv": "3,5"
     },
     {
       "party": "FDP",
       "color": "#FFED00",
-      "stimmen": 1845,
-      "anteil": 1.5,
+      "stimmen": 1921,
+      "anteil": 1.4,
       "gv": "-0,9"
     }
   ],
@@ -76,181 +76,181 @@
       {
         "nr": 1,
         "name": "Hesselberger Tom",
-        "stimmen": 1606,
+        "stimmen": 1782,
         "anteil": 0.0
       },
       {
         "nr": 2,
         "name": "Seifert Adelheid",
-        "stimmen": 1242,
+        "stimmen": 1371,
         "anteil": 0.0
       },
       {
         "nr": 3,
         "name": "Nürnberger Udo",
-        "stimmen": 1172,
+        "stimmen": 1282,
         "anteil": 0.0
       },
       {
         "nr": 4,
         "name": "Maderer Michael",
-        "stimmen": 1092,
+        "stimmen": 1188,
         "anteil": 0.0
       },
       {
         "nr": 6,
         "name": "Spitzer Ines",
-        "stimmen": 1073,
+        "stimmen": 1174,
         "anteil": 0.0
       },
       {
         "nr": 5,
         "name": "Rauch Ursula",
-        "stimmen": 1057,
+        "stimmen": 1132,
         "anteil": 0.0
       },
       {
         "nr": 7,
         "name": "Schemm Florian",
-        "stimmen": 967,
-        "anteil": 0.0
-      },
-      {
-        "nr": 10,
-        "name": "Huber Monika",
-        "stimmen": 918,
+        "stimmen": 1099,
         "anteil": 0.0
       },
       {
         "nr": 8,
         "name": "Bechtloff Andreas",
-        "stimmen": 911,
+        "stimmen": 998,
+        "anteil": 0.0
+      },
+      {
+        "nr": 10,
+        "name": "Huber Monika",
+        "stimmen": 992,
         "anteil": 0.0
       },
       {
         "nr": 12,
         "name": "Plöchinger Christian",
-        "stimmen": 889,
+        "stimmen": 974,
         "anteil": 0.0
       },
       {
         "nr": 14,
         "name": "Vogel Daniel",
-        "stimmen": 871,
+        "stimmen": 938,
         "anteil": 0.0
       },
       {
         "nr": 9,
         "name": "Hüfner Sven",
-        "stimmen": 854,
+        "stimmen": 931,
         "anteil": 0.0
       },
       {
         "nr": 11,
         "name": "Braner Christian",
-        "stimmen": 848,
-        "anteil": 0.0
-      },
-      {
-        "nr": 16,
-        "name": "von Moritz Paulina",
-        "stimmen": 823,
-        "anteil": 0.0
-      },
-      {
-        "nr": 19,
-        "name": "Ehrhardt Anja",
-        "stimmen": 821,
+        "stimmen": 924,
         "anteil": 0.0
       },
       {
         "nr": 17,
         "name": "Keck Manfred",
-        "stimmen": 818,
+        "stimmen": 924,
+        "anteil": 0.0
+      },
+      {
+        "nr": 16,
+        "name": "von Moritz Paulina",
+        "stimmen": 907,
+        "anteil": 0.0
+      },
+      {
+        "nr": 19,
+        "name": "Ehrhardt Anja",
+        "stimmen": 899,
         "anteil": 0.0
       },
       {
         "nr": 18,
         "name": "Trautmann Timo",
-        "stimmen": 812,
+        "stimmen": 884,
         "anteil": 0.0
       },
       {
         "nr": 15,
         "name": "Weinberger Sven",
-        "stimmen": 811,
+        "stimmen": 875,
         "anteil": 0.0
       },
       {
         "nr": 13,
         "name": "Schineis Manuel",
-        "stimmen": 796,
+        "stimmen": 869,
         "anteil": 0.0
       },
       {
         "nr": 21,
         "name": "Geistbeck David",
-        "stimmen": 790,
+        "stimmen": 866,
         "anteil": 0.0
       },
       {
         "nr": 22,
         "name": "Müller Petra",
-        "stimmen": 759,
+        "stimmen": 823,
         "anteil": 0.0
       },
       {
         "nr": 30,
         "name": "Puler Vincenzo",
-        "stimmen": 754,
-        "anteil": 0.0
-      },
-      {
-        "nr": 26,
-        "name": "Sauer Dieter",
-        "stimmen": 753,
-        "anteil": 0.0
-      },
-      {
-        "nr": 20,
-        "name": "Bauer Stefan",
-        "stimmen": 748,
+        "stimmen": 815,
         "anteil": 0.0
       },
       {
         "nr": 23,
         "name": "von Moritz Bernd",
-        "stimmen": 744,
+        "stimmen": 812,
+        "anteil": 0.0
+      },
+      {
+        "nr": 20,
+        "name": "Bauer Stefan",
+        "stimmen": 811,
+        "anteil": 0.0
+      },
+      {
+        "nr": 26,
+        "name": "Sauer Dieter",
+        "stimmen": 811,
         "anteil": 0.0
       },
       {
         "nr": 25,
         "name": "Knorr Matthias",
-        "stimmen": 731,
+        "stimmen": 792,
         "anteil": 0.0
       },
       {
         "nr": 24,
         "name": "Heinlein Ernest",
-        "stimmen": 725,
+        "stimmen": 784,
         "anteil": 0.0
       },
       {
         "nr": 27,
         "name": "Schmidt Olivia",
-        "stimmen": 715,
+        "stimmen": 779,
         "anteil": 0.0
       },
       {
         "nr": 28,
         "name": "Kestler Jakob",
-        "stimmen": 704,
+        "stimmen": 769,
         "anteil": 0.0
       },
       {
         "nr": 29,
         "name": "Thiel Thomas",
-        "stimmen": 658,
+        "stimmen": 714,
         "anteil": 0.0
       }
     ],
@@ -258,91 +258,91 @@
       {
         "nr": 1,
         "name": "Schmidt Ralf",
-        "stimmen": 573,
+        "stimmen": 597,
         "anteil": 0.0
       },
       {
         "nr": 2,
         "name": "Eder Elke",
-        "stimmen": 570,
+        "stimmen": 594,
         "anteil": 0.0
       },
       {
         "nr": 3,
         "name": "Junghaus Laszlo",
-        "stimmen": 359,
+        "stimmen": 367,
         "anteil": 0.0
       },
       {
         "nr": 13,
         "name": "Elezović Sascha",
-        "stimmen": 346,
+        "stimmen": 350,
         "anteil": 0.0
       },
       {
         "nr": 4,
         "name": "Hauck-Diethorn Karl-Heinz",
-        "stimmen": 328,
+        "stimmen": 333,
         "anteil": 0.0
       },
       {
         "nr": 5,
         "name": "Böhme Eva-Maria",
-        "stimmen": 305,
+        "stimmen": 309,
         "anteil": 0.0
       },
       {
         "nr": 8,
         "name": "Klumpp Sascha",
-        "stimmen": 304,
+        "stimmen": 308,
         "anteil": 0.0
       },
       {
         "nr": 6,
         "name": "Kirik Ahmet",
-        "stimmen": 296,
+        "stimmen": 300,
         "anteil": 0.0
       },
       {
         "nr": 11,
         "name": "Reichel Hanna",
-        "stimmen": 294,
+        "stimmen": 298,
         "anteil": 0.0
       },
       {
         "nr": 7,
         "name": "Krasniqi Lulzim",
-        "stimmen": 286,
+        "stimmen": 291,
         "anteil": 0.0
       },
       {
         "nr": 9,
         "name": "Zimmermann Martin",
-        "stimmen": 285,
+        "stimmen": 289,
         "anteil": 0.0
       },
       {
         "nr": 10,
         "name": "Diethorn Manfred",
-        "stimmen": 280,
+        "stimmen": 288,
         "anteil": 0.0
       },
       {
         "nr": 12,
         "name": "Kohl Simon",
-        "stimmen": 279,
+        "stimmen": 283,
         "anteil": 0.0
       },
       {
         "nr": 14,
         "name": "Boyer-Junghaus Regina",
-        "stimmen": 245,
+        "stimmen": 249,
         "anteil": 0.0
       },
       {
         "nr": 15,
         "name": "Übler Brigitta",
-        "stimmen": 230,
+        "stimmen": 234,
         "anteil": 0.0
       }
     ],
@@ -350,61 +350,61 @@
       {
         "nr": 1,
         "name": "Treuheit Bastian",
-        "stimmen": 2581,
+        "stimmen": 2752,
         "anteil": 0.0
       },
       {
         "nr": 2,
         "name": "Riedel Steffen",
-        "stimmen": 2316,
+        "stimmen": 2473,
         "anteil": 0.0
       },
       {
         "nr": 3,
         "name": "Stüwe Hans-Joachim",
-        "stimmen": 2257,
+        "stimmen": 2410,
         "anteil": 0.0
       },
       {
         "nr": 4,
         "name": "Fröhlich Günther",
-        "stimmen": 2257,
+        "stimmen": 2407,
         "anteil": 0.0
       },
       {
         "nr": 6,
         "name": "Rambeck Steven",
-        "stimmen": 2231,
-        "anteil": 0.0
-      },
-      {
-        "nr": 5,
-        "name": "Seibt Ralph",
-        "stimmen": 2218,
+        "stimmen": 2384,
         "anteil": 0.0
       },
       {
         "nr": 7,
         "name": "Seidel Mark",
-        "stimmen": 2214,
+        "stimmen": 2373,
+        "anteil": 0.0
+      },
+      {
+        "nr": 5,
+        "name": "Seibt Ralph",
+        "stimmen": 2371,
         "anteil": 0.0
       },
       {
         "nr": 8,
         "name": "Dietrich Sindy",
-        "stimmen": 2166,
-        "anteil": 0.0
-      },
-      {
-        "nr": 9,
-        "name": "Depta Wioletta",
-        "stimmen": 2144,
+        "stimmen": 2323,
         "anteil": 0.0
       },
       {
         "nr": 10,
         "name": "Veth Udo",
-        "stimmen": 2144,
+        "stimmen": 2300,
+        "anteil": 0.0
+      },
+      {
+        "nr": 9,
+        "name": "Depta Wioletta",
+        "stimmen": 2297,
         "anteil": 0.0
       }
     ],
@@ -412,109 +412,109 @@
       {
         "nr": 1,
         "name": "Thomas Cornelia",
-        "stimmen": 1544,
+        "stimmen": 1673,
         "anteil": 0.0
       },
       {
         "nr": 2,
         "name": "Poxleitner Lukas",
-        "stimmen": 1523,
+        "stimmen": 1637,
         "anteil": 0.0
       },
       {
         "nr": 4,
         "name": "Schäfer Walter",
-        "stimmen": 1368,
+        "stimmen": 1483,
         "anteil": 0.0
       },
       {
         "nr": 5,
         "name": "Dr. med. Engemann Timo",
-        "stimmen": 1279,
+        "stimmen": 1397,
         "anteil": 0.0
       },
       {
         "nr": 3,
         "name": "Krug Andrea",
-        "stimmen": 1257,
+        "stimmen": 1373,
         "anteil": 0.0
       },
       {
         "nr": 7,
         "name": "Dr. Wirner Gerhard",
-        "stimmen": 774,
+        "stimmen": 843,
         "anteil": 0.0
       },
       {
         "nr": 6,
         "name": "Sauerhöfer Heike",
-        "stimmen": 753,
+        "stimmen": 824,
         "anteil": 0.0
       },
       {
         "nr": 13,
         "name": "Schaa Angelika",
-        "stimmen": 386,
+        "stimmen": 419,
         "anteil": 0.0
       },
       {
         "nr": 11,
         "name": "Führes Kerstin",
-        "stimmen": 384,
+        "stimmen": 417,
         "anteil": 0.0
       },
       {
         "nr": 9,
         "name": "Aigner Heike",
-        "stimmen": 365,
+        "stimmen": 398,
         "anteil": 0.0
       },
       {
         "nr": 10,
         "name": "Hartmann Fabian",
-        "stimmen": 355,
+        "stimmen": 387,
         "anteil": 0.0
       },
       {
         "nr": 8,
         "name": "Haake Oliver",
-        "stimmen": 354,
+        "stimmen": 386,
         "anteil": 0.0
       },
       {
         "nr": 12,
         "name": "Link Reinhard",
-        "stimmen": 336,
+        "stimmen": 374,
         "anteil": 0.0
       },
       {
         "nr": 15,
         "name": "Link Karin",
-        "stimmen": 328,
+        "stimmen": 366,
         "anteil": 0.0
       },
       {
         "nr": 17,
         "name": "Sieber Sabine",
-        "stimmen": 316,
+        "stimmen": 350,
         "anteil": 0.0
       },
       {
         "nr": 16,
         "name": "Wimberger Johann",
-        "stimmen": 315,
+        "stimmen": 347,
         "anteil": 0.0
       },
       {
         "nr": 14,
         "name": "Schmidt Werner",
-        "stimmen": 307,
+        "stimmen": 339,
         "anteil": 0.0
       },
       {
         "nr": 18,
         "name": "Richter Christian",
-        "stimmen": 297,
+        "stimmen": 327,
         "anteil": 0.0
       }
     ],
@@ -522,181 +522,181 @@
       {
         "nr": 1,
         "name": "Hauber Sandra",
-        "stimmen": 1088,
+        "stimmen": 1167,
         "anteil": 0.0
       },
       {
         "nr": 3,
         "name": "Otto Sylke",
-        "stimmen": 858,
+        "stimmen": 922,
         "anteil": 0.0
       },
       {
         "nr": 5,
         "name": "Zahl Elke",
-        "stimmen": 733,
+        "stimmen": 785,
         "anteil": 0.0
       },
       {
         "nr": 4,
         "name": "Leikauf Walter",
-        "stimmen": 684,
+        "stimmen": 729,
         "anteil": 0.0
       },
       {
         "nr": 2,
         "name": "Bauer Frank",
-        "stimmen": 671,
+        "stimmen": 723,
         "anteil": 0.0
       },
       {
         "nr": 9,
         "name": "Hauber Arwen",
-        "stimmen": 593,
-        "anteil": 0.0
-      },
-      {
-        "nr": 8,
-        "name": "Götz Michael",
-        "stimmen": 563,
+        "stimmen": 631,
         "anteil": 0.0
       },
       {
         "nr": 6,
         "name": "Büsing Dirk",
-        "stimmen": 560,
+        "stimmen": 615,
+        "anteil": 0.0
+      },
+      {
+        "nr": 8,
+        "name": "Götz Michael",
+        "stimmen": 609,
         "anteil": 0.0
       },
       {
         "nr": 10,
         "name": "Taubmann Michael",
-        "stimmen": 554,
+        "stimmen": 598,
         "anteil": 0.0
       },
       {
         "nr": 7,
         "name": "Deisenrieder Nina",
-        "stimmen": 537,
+        "stimmen": 576,
         "anteil": 0.0
       },
       {
         "nr": 16,
         "name": "Dieng Oumar",
-        "stimmen": 522,
+        "stimmen": 560,
         "anteil": 0.0
       },
       {
         "nr": 12,
         "name": "Leikauf Bernd",
-        "stimmen": 517,
+        "stimmen": 555,
         "anteil": 0.0
       },
       {
         "nr": 13,
         "name": "Krause Kerstin",
-        "stimmen": 502,
+        "stimmen": 539,
         "anteil": 0.0
       },
       {
         "nr": 21,
         "name": "Ackermann Verena",
-        "stimmen": 495,
+        "stimmen": 539,
         "anteil": 0.0
       },
       {
         "nr": 24,
         "name": "Zwingel Stephan",
-        "stimmen": 490,
+        "stimmen": 524,
         "anteil": 0.0
       },
       {
         "nr": 15,
         "name": "Michaelis Brigitte",
-        "stimmen": 469,
-        "anteil": 0.0
-      },
-      {
-        "nr": 23,
-        "name": "Günther Nonna",
-        "stimmen": 461,
-        "anteil": 0.0
-      },
-      {
-        "nr": 11,
-        "name": "Offhaus Carola",
-        "stimmen": 455,
+        "stimmen": 505,
         "anteil": 0.0
       },
       {
         "nr": 17,
         "name": "Frei Anelli",
-        "stimmen": 454,
+        "stimmen": 499,
+        "anteil": 0.0
+      },
+      {
+        "nr": 23,
+        "name": "Günther Nonna",
+        "stimmen": 498,
+        "anteil": 0.0
+      },
+      {
+        "nr": 11,
+        "name": "Offhaus Carola",
+        "stimmen": 491,
         "anteil": 0.0
       },
       {
         "nr": 18,
         "name": "Helmer Karl-Heinz",
-        "stimmen": 451,
+        "stimmen": 487,
         "anteil": 0.0
       },
       {
         "nr": 14,
         "name": "Österle Markus",
-        "stimmen": 447,
+        "stimmen": 480,
         "anteil": 0.0
       },
       {
         "nr": 29,
         "name": "Nickel Werner",
-        "stimmen": 435,
-        "anteil": 0.0
-      },
-      {
-        "nr": 20,
-        "name": "Gräbner Alexander",
-        "stimmen": 423,
+        "stimmen": 462,
         "anteil": 0.0
       },
       {
         "nr": 19,
         "name": "Hartmann Franziska",
-        "stimmen": 417,
+        "stimmen": 455,
+        "anteil": 0.0
+      },
+      {
+        "nr": 20,
+        "name": "Gräbner Alexander",
+        "stimmen": 455,
         "anteil": 0.0
       },
       {
         "nr": 27,
         "name": "Enz Romina",
-        "stimmen": 408,
-        "anteil": 0.0
-      },
-      {
-        "nr": 30,
-        "name": "Vestner Dieter",
-        "stimmen": 402,
+        "stimmen": 439,
         "anteil": 0.0
       },
       {
         "nr": 25,
         "name": "Dodenhöft Aelita",
-        "stimmen": 401,
+        "stimmen": 432,
+        "anteil": 0.0
+      },
+      {
+        "nr": 30,
+        "name": "Vestner Dieter",
+        "stimmen": 431,
         "anteil": 0.0
       },
       {
         "nr": 22,
         "name": "Drawer Fabian",
-        "stimmen": 398,
-        "anteil": 0.0
-      },
-      {
-        "nr": 28,
-        "name": "Dr. Falk Wilhelm",
-        "stimmen": 395,
+        "stimmen": 429,
         "anteil": 0.0
       },
       {
         "nr": 26,
         "name": "Kolb Thomas",
-        "stimmen": 394,
+        "stimmen": 425,
+        "anteil": 0.0
+      },
+      {
+        "nr": 28,
+        "name": "Dr. Falk Wilhelm",
+        "stimmen": 421,
         "anteil": 0.0
       }
     ],
@@ -704,79 +704,79 @@
       {
         "nr": 2,
         "name": "Pfeffer Meike",
-        "stimmen": 672,
+        "stimmen": 723,
         "anteil": 0.0
       },
       {
         "nr": 1,
         "name": "Greser Robin",
-        "stimmen": 655,
+        "stimmen": 694,
         "anteil": 0.0
       },
       {
         "nr": 3,
         "name": "Jug Martin",
-        "stimmen": 529,
+        "stimmen": 569,
         "anteil": 0.0
       },
       {
         "nr": 4,
         "name": "Schmidt Kevin",
-        "stimmen": 512,
+        "stimmen": 546,
         "anteil": 0.0
       },
       {
         "nr": 5,
         "name": "Jug Yunaisy",
-        "stimmen": 465,
+        "stimmen": 499,
         "anteil": 0.0
       },
       {
         "nr": 6,
         "name": "Haug Volker",
-        "stimmen": 453,
+        "stimmen": 486,
         "anteil": 0.0
       },
       {
         "nr": 10,
         "name": "Berdich Volker",
-        "stimmen": 371,
+        "stimmen": 395,
         "anteil": 0.0
       },
       {
         "nr": 7,
         "name": "Schmidt Valeria",
-        "stimmen": 311,
+        "stimmen": 333,
         "anteil": 0.0
       },
       {
         "nr": 8,
         "name": "Fasching Elena-Mariana",
-        "stimmen": 311,
+        "stimmen": 333,
         "anteil": 0.0
       },
       {
         "nr": 9,
         "name": "Pleier Dominic",
-        "stimmen": 288,
+        "stimmen": 312,
         "anteil": 0.0
       },
       {
         "nr": 11,
         "name": "Zinser Lea",
-        "stimmen": 287,
+        "stimmen": 305,
         "anteil": 0.0
       },
       {
         "nr": 13,
         "name": "Pleier Marion",
-        "stimmen": 163,
+        "stimmen": 172,
         "anteil": 0.0
       },
       {
         "nr": 12,
         "name": "Aigner Magali",
-        "stimmen": 156,
+        "stimmen": 168,
         "anteil": 0.0
       }
     ],
@@ -784,49 +784,49 @@
       {
         "nr": 1,
         "name": "Reubel Paul",
-        "stimmen": 384,
+        "stimmen": 411,
         "anteil": 0.0
       },
       {
         "nr": 2,
         "name": "Bülbül Murat",
-        "stimmen": 301,
+        "stimmen": 314,
         "anteil": 0.0
       },
       {
         "nr": 3,
         "name": "Hackl Julia",
-        "stimmen": 219,
+        "stimmen": 226,
         "anteil": 0.0
       },
       {
         "nr": 5,
         "name": "Guttenberger Peter",
-        "stimmen": 208,
+        "stimmen": 211,
         "anteil": 0.0
       },
       {
         "nr": 4,
         "name": "Dr. Stottok Bernd",
-        "stimmen": 198,
+        "stimmen": 207,
         "anteil": 0.0
       },
       {
         "nr": 8,
         "name": "Reubel-Wirth Katrin",
-        "stimmen": 198,
+        "stimmen": 204,
         "anteil": 0.0
       },
       {
         "nr": 7,
         "name": "Garavello-Führhäußer Ana",
-        "stimmen": 170,
+        "stimmen": 177,
         "anteil": 0.0
       },
       {
         "nr": 6,
         "name": "Morgen Mirela",
-        "stimmen": 167,
+        "stimmen": 171,
         "anteil": 0.0
       }
     ],
@@ -834,67 +834,67 @@
       {
         "nr": 1,
         "name": "Krause Eike",
-        "stimmen": 616,
+        "stimmen": 640,
         "anteil": 0.0
       },
       {
         "nr": 3,
         "name": "Müller Christoph",
-        "stimmen": 516,
+        "stimmen": 540,
         "anteil": 0.0
       },
       {
         "nr": 4,
         "name": "Wittmann Marion",
-        "stimmen": 480,
+        "stimmen": 501,
         "anteil": 0.0
       },
       {
         "nr": 6,
         "name": "Dr. Eibl-Eibesfeldt Katharina",
-        "stimmen": 473,
+        "stimmen": 494,
         "anteil": 0.0
       },
       {
         "nr": 2,
         "name": "Flohry Liam",
-        "stimmen": 464,
+        "stimmen": 485,
         "anteil": 0.0
       },
       {
         "nr": 5,
         "name": "Neupert Emil",
-        "stimmen": 454,
+        "stimmen": 479,
         "anteil": 0.0
       },
       {
         "nr": 7,
         "name": "Häusinger Timo",
-        "stimmen": 358,
+        "stimmen": 376,
         "anteil": 0.0
       },
       {
         "nr": 8,
         "name": "Flohry Christina",
-        "stimmen": 335,
+        "stimmen": 353,
         "anteil": 0.0
       },
       {
         "nr": 10,
         "name": "Baritsch Marcus",
-        "stimmen": 330,
+        "stimmen": 345,
         "anteil": 0.0
       },
       {
         "nr": 11,
         "name": "Neupert Tim",
-        "stimmen": 281,
+        "stimmen": 296,
         "anteil": 0.0
       },
       {
         "nr": 9,
         "name": "Schmidt Daniel",
-        "stimmen": 240,
+        "stimmen": 255,
         "anteil": 0.0
       }
     ],
@@ -902,181 +902,181 @@
       {
         "nr": 1,
         "name": "Spath Marcus",
-        "stimmen": 2109,
+        "stimmen": 2287,
         "anteil": 0.0
       },
       {
         "nr": 2,
         "name": "Rieß Andreas",
-        "stimmen": 1529,
+        "stimmen": 1631,
         "anteil": 0.0
       },
       {
         "nr": 3,
         "name": "Felbinger Jochen",
-        "stimmen": 1388,
+        "stimmen": 1502,
         "anteil": 0.0
       },
       {
         "nr": 4,
         "name": "Zechentmayer Kerstin",
-        "stimmen": 1313,
+        "stimmen": 1435,
         "anteil": 0.0
       },
       {
         "nr": 9,
         "name": "Götz Gerd",
-        "stimmen": 1212,
+        "stimmen": 1313,
         "anteil": 0.0
       },
       {
         "nr": 13,
         "name": "Roth Nina",
-        "stimmen": 1203,
-        "anteil": 0.0
-      },
-      {
-        "nr": 7,
-        "name": "Förster Jessica",
-        "stimmen": 1147,
-        "anteil": 0.0
-      },
-      {
-        "nr": 15,
-        "name": "Janker Stefan",
-        "stimmen": 1096,
+        "stimmen": 1297,
         "anteil": 0.0
       },
       {
         "nr": 5,
         "name": "Hirmke Arnulf",
-        "stimmen": 1091,
+        "stimmen": 1258,
         "anteil": 0.0
       },
       {
-        "nr": 12,
-        "name": "Bauer Sarah",
-        "stimmen": 1083,
+        "nr": 7,
+        "name": "Förster Jessica",
+        "stimmen": 1253,
         "anteil": 0.0
       },
       {
         "nr": 8,
         "name": "Popp Stefan",
-        "stimmen": 1076,
+        "stimmen": 1189,
+        "anteil": 0.0
+      },
+      {
+        "nr": 15,
+        "name": "Janker Stefan",
+        "stimmen": 1179,
+        "anteil": 0.0
+      },
+      {
+        "nr": 12,
+        "name": "Bauer Sarah",
+        "stimmen": 1175,
         "anteil": 0.0
       },
       {
         "nr": 18,
         "name": "Loidold Frank",
-        "stimmen": 1055,
+        "stimmen": 1143,
         "anteil": 0.0
       },
       {
         "nr": 14,
         "name": "Hager Ricarda",
-        "stimmen": 1042,
+        "stimmen": 1135,
         "anteil": 0.0
       },
       {
         "nr": 10,
         "name": "Goldmann Nadja",
-        "stimmen": 1002,
+        "stimmen": 1086,
         "anteil": 0.0
       },
       {
         "nr": 6,
         "name": "Straßner Heinz",
-        "stimmen": 1000,
+        "stimmen": 1083,
         "anteil": 0.0
       },
       {
         "nr": 26,
         "name": "Spath Horst",
-        "stimmen": 978,
+        "stimmen": 1036,
         "anteil": 0.0
       },
       {
         "nr": 11,
         "name": "Grun Marcus",
-        "stimmen": 948,
-        "anteil": 0.0
-      },
-      {
-        "nr": 19,
-        "name": "Ulrich Robert",
-        "stimmen": 937,
+        "stimmen": 1026,
         "anteil": 0.0
       },
       {
         "nr": 17,
         "name": "Förster Daniel",
-        "stimmen": 934,
+        "stimmen": 1022,
+        "anteil": 0.0
+      },
+      {
+        "nr": 19,
+        "name": "Ulrich Robert",
+        "stimmen": 1012,
         "anteil": 0.0
       },
       {
         "nr": 16,
         "name": "Rupprecht Marcus",
-        "stimmen": 902,
+        "stimmen": 976,
         "anteil": 0.0
       },
       {
         "nr": 23,
         "name": "Eichhorn Dieter",
-        "stimmen": 897,
-        "anteil": 0.0
-      },
-      {
-        "nr": 21,
-        "name": "Schwippel Fabian",
-        "stimmen": 871,
+        "stimmen": 966,
         "anteil": 0.0
       },
       {
         "nr": 20,
         "name": "Scamperle Pivi",
-        "stimmen": 869,
+        "stimmen": 949,
         "anteil": 0.0
       },
       {
-        "nr": 28,
-        "name": "Hösch Klaus",
-        "stimmen": 827,
+        "nr": 21,
+        "name": "Schwippel Fabian",
+        "stimmen": 926,
         "anteil": 0.0
       },
       {
         "nr": 24,
         "name": "Preßl Patric",
-        "stimmen": 823,
+        "stimmen": 921,
         "anteil": 0.0
       },
       {
-        "nr": 25,
-        "name": "Traschewski Holk",
-        "stimmen": 799,
+        "nr": 28,
+        "name": "Hösch Klaus",
+        "stimmen": 896,
         "anteil": 0.0
       },
       {
         "nr": 22,
         "name": "Retzlik Mike",
-        "stimmen": 797,
+        "stimmen": 851,
+        "anteil": 0.0
+      },
+      {
+        "nr": 25,
+        "name": "Traschewski Holk",
+        "stimmen": 849,
         "anteil": 0.0
       },
       {
         "nr": 27,
         "name": "Goldmann Jens",
-        "stimmen": 754,
+        "stimmen": 803,
         "anteil": 0.0
       },
       {
         "nr": 29,
         "name": "Gerber Markus",
-        "stimmen": 754,
+        "stimmen": 803,
         "anteil": 0.0
       },
       {
         "nr": 30,
         "name": "Keller Alexander",
-        "stimmen": 726,
+        "stimmen": 774,
         "anteil": 0.0
       }
     ]

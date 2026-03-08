@@ -95,11 +95,18 @@ def parse_buergermeisterwahl(html: str) -> dict:
     status = parse_status(html)
 
     tables = re.findall(r"<table[^>]*>(.*?)</table>", html, re.DOTALL)
-    # Table layout on results page:
+    # Table layout during counting (3 tables):
     #   0 = Auszählungsstand (progress per Gebiet)
     #   1 = Potenzielle Stichwahlteilnehmer (top 2 only)
     #   2 = Stimmenanteile tabellarisch (all candidates + tfoot with KPI)
-    if len(tables) < 3:
+    # Table layout after final result (2 tables):
+    #   0 = Stichwahlteilnehmer
+    #   1 = Stimmenanteile tabellarisch (all candidates + tfoot with KPI)
+    if len(tables) >= 3:
+        table = tables[2]
+    elif len(tables) == 2:
+        table = tables[1]
+    else:
         return {
             "lastUpdated": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
             "status": status,
@@ -107,7 +114,7 @@ def parse_buergermeisterwahl(html: str) -> dict:
             "ungueltig": 0, "gueltig": 0, "candidates": []
         }
 
-    table = tables[2]  # "Stimmenanteile tabellarisch"
+    # "Stimmenanteile tabellarisch"
 
     # ── Kandidaten aus tbody ──
     candidates = []

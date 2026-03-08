@@ -185,8 +185,21 @@ def parse_gemeinderatswahl(html: str) -> dict:
     if not tables:
         return {"status": status, "parties": []}
 
-    # Table 1: party overview
-    rows = re.findall(r"<tr[^>]*>(.*?)</tr>", tables[0], re.DOTALL)
+    # Find Übersicht table by caption (robust against extra tables prepended)
+    uebersicht_idx = next(
+        (i for i, t in enumerate(tables) if re.search(r"<h3>[^<]*bersicht", t)), None
+    )
+    if uebersicht_idx is None:
+        uebersicht_idx = 0  # fallback
+
+    # Candidate tables: all tables after Übersicht (named "Kandidaten" or "Ergebnisse aller Bewerber*")
+    cand_tables = [
+        t for t in tables[uebersicht_idx + 1:]
+        if re.search(r"<h3>(Kandidaten|Ergebnisse aller Bewerber)", t)
+    ]
+
+    # ── Parteien aus Übersicht ──
+    rows = re.findall(r"<tr[^>]*>(.*?)</tr>", tables[uebersicht_idx], re.DOTALL)
     parties = []
     wahlberechtigte = waehler = ungueltig = gueltig = 0
 
@@ -202,11 +215,11 @@ def parse_gemeinderatswahl(html: str) -> dict:
 
         if "Stimmberechtigte" in label:
             wahlberechtigte = parse_num(cells[1])
-        elif label in ("Wähler", "Wahler"):
+        elif "hler" in label and "berechtigte" not in label:
             waehler = parse_num(cells[1])
-        elif "Ungültige" in label:
+        elif "Ungültige" in label or "ngiltig" in label:
             ungueltig = parse_num(cells[1])
-        elif "Gültige" in label:
+        elif "Gültige" in label or "ltige" in label and "Un" not in label:
             gueltig = parse_num(cells[1])
         elif len(cells) >= 3:
             party = label
@@ -223,9 +236,11 @@ def parse_gemeinderatswahl(html: str) -> dict:
 
     wahlbeteiligung = round(waehler / wahlberechtigte * 100, 1) if wahlberechtigte > 0 else 0.0
 
-    # Tables 2..10: candidates per party
+    # ── Kandidaten pro Partei ──
+    # Columns during counting: Nr | Name (only, no stimmen)
+    # Columns with results:    Nr | Name | Erreichter Platz | Stimmen | Gewählt
     candidates_by_party = {}
-    for i, table in enumerate(tables[1:], 0):
+    for i, table in enumerate(cand_tables):
         if i >= len(PARTY_NAMES):
             break
         pname = PARTY_NAMES[i]
@@ -235,14 +250,15 @@ def parse_gemeinderatswahl(html: str) -> dict:
             cells = get_row_cells(row)
             if len(cells) < 2:
                 continue
-            # Skip header rows
             try:
                 nr = int(cells[0])
             except ValueError:
                 continue
             name = cells[1]
-            stimmen = parse_num(cells[2]) if len(cells) > 2 else 0
-            anteil = parse_float(cells[3]) if len(cells) > 3 else 0.0
+            # With results: cells = [nr, name, erreichter_platz, stimmen, gewählt]
+            # Without results: cells = [nr, name]
+            stimmen = parse_num(cells[3]) if len(cells) > 3 else 0
+            anteil = parse_float(cells[4]) if len(cells) > 4 else 0.0
             if name:
                 cands.append({"nr": nr, "name": name, "stimmen": stimmen, "anteil": anteil})
         if cands:

@@ -73,49 +73,87 @@ def get_row_cells(row_html: str) -> list[str]:
     return [strip_tags(c) for c in cells]
 
 
+def parse_party_name(cell_html: str) -> str:
+    """Extract party short name from abbr tag or partei__name span."""
+    abbr = re.search(r"<abbr[^>]*>([^<]+)</abbr>", cell_html)
+    if abbr:
+        return strip_tags(abbr.group(1)).strip()
+    span = re.search(r'class="partei__name">\s*([^<]+)', cell_html)
+    if span:
+        return strip_tags(span.group(1)).strip()
+    return strip_tags(cell_html).strip()
+
+
+def parse_party_color(cell_html: str) -> str:
+    """Extract party color from inline style."""
+    m = re.search(r'partei__farbe"\s+style="color:([^"]+)"', cell_html)
+    return m.group(1).strip() if m else "#888"
+
+
 def parse_buergermeisterwahl(html: str) -> dict:
     status = parse_status(html)
 
     tables = re.findall(r"<table[^>]*>(.*?)</table>", html, re.DOTALL)
-    if not tables:
-        return {"status": status, "candidates": []}
+    # Table layout on results page:
+    #   0 = Auszählungsstand (progress per Gebiet)
+    #   1 = Potenzielle Stichwahlteilnehmer (top 2 only)
+    #   2 = Stimmenanteile tabellarisch (all candidates + tfoot with KPI)
+    if len(tables) < 3:
+        return {
+            "lastUpdated": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
+            "status": status,
+            "wahlberechtigte": 0, "waehler": 0, "wahlbeteiligung": 0.0,
+            "ungueltig": 0, "gueltig": 0, "candidates": []
+        }
 
-    rows = re.findall(r"<tr[^>]*>(.*?)</tr>", tables[0], re.DOTALL)
+    table = tables[2]  # "Stimmenanteile tabellarisch"
+
+    # ── Kandidaten aus tbody ──
     candidates = []
+    tbody = re.search(r"<tbody>(.*?)</tbody>", table, re.DOTALL)
+    if tbody:
+        for row in re.findall(r"<tr[^>]*>(.*?)</tr>", tbody.group(1), re.DOTALL):
+            # All th elements in the row
+            ths = re.findall(r"<th[^>]*>(.*?)</th>", row, re.DOTALL)
+            if len(ths) < 2:
+                continue
+            party = parse_party_name(ths[0])
+            color = parse_party_color(ths[0])
+            name = strip_tags(ths[1]).strip()
+            if not name:
+                continue
+            # Stimmen and Anteil from data-sort on td elements
+            td_sorts = re.findall(r'<td[^>]+data-sort="([^"]*)"', row)
+            stimmen = parse_num(td_sorts[0]) if td_sorts else 0
+            anteil = parse_float(td_sorts[1]) if len(td_sorts) > 1 else 0.0
+            candidates.append({
+                "party": party,
+                "color": PARTY_COLORS.get(party, color),
+                "name": name,
+                "stimmen": stimmen,
+                "anteil": anteil,
+            })
+
+    # ── KPI-Werte aus tfoot ──
     wahlberechtigte = waehler = ungueltig = gueltig = 0
-
-    skip_labels = {"Partei", "Direktkandidat", "Stimmen", "Anteil", ""}
-
-    for row in rows:
-        cells = get_row_cells(row)
-        if len(cells) < 3:
-            continue
-        label = cells[0]
-        if label in skip_labels or label == "Partei":
-            continue
-
-        if "Wahlberechtigte" in label:
-            wahlberechtigte = parse_num(cells[2]) if len(cells) > 2 else 0
-        elif label in ("Wähler", "Wahler"):
-            waehler = parse_num(cells[2]) if len(cells) > 2 else 0
-        elif "Ungültige" in label or "Ungultige" in label:
-            ungueltig = parse_num(cells[2]) if len(cells) > 2 else 0
-        elif "Gültige" in label or "Gultige" in label:
-            gueltig = parse_num(cells[2]) if len(cells) > 2 else 0
-        else:
-            # Candidate row: Party | Name | Stimmen | Anteil
-            if len(cells) >= 4:
-                party = cells[0]
-                name = cells[1]
-                stimmen = parse_num(cells[2])
-                anteil = parse_float(cells[3])
-                candidates.append({
-                    "party": party,
-                    "color": PARTY_COLORS.get(party, "#888"),
-                    "name": name,
-                    "stimmen": stimmen,
-                    "anteil": anteil
-                })
+    tfoot = re.search(r"<tfoot>(.*?)</tfoot>", table, re.DOTALL)
+    if tfoot:
+        for row in re.findall(r"<tr[^>]*>(.*?)</tr>", tfoot.group(1), re.DOTALL):
+            cells = get_row_cells(row)
+            if not cells:
+                continue
+            label = cells[0]
+            # Use data-sort for numeric value (avoid thousand-dot ambiguity)
+            num_sort = re.findall(r'data-sort="(\d+)"', row)
+            val = int(num_sort[0]) if num_sort else 0
+            if "Wahlberechtigte" in label:
+                wahlberechtigte = val
+            elif "hler" in label and "berechtigte" not in label:
+                waehler = val
+            elif "ngiltig" in label or "ngültig" in label or "Ung" in label:
+                ungueltig = val
+            elif "ltige" in label and "Un" not in label:
+                gueltig = val
 
     wahlbeteiligung = round(waehler / wahlberechtigte * 100, 1) if wahlberechtigte > 0 else 0.0
     candidates.sort(key=lambda x: x["stimmen"], reverse=True)
@@ -128,7 +166,7 @@ def parse_buergermeisterwahl(html: str) -> dict:
         "wahlbeteiligung": wahlbeteiligung,
         "ungueltig": ungueltig,
         "gueltig": gueltig,
-        "candidates": candidates
+        "candidates": candidates,
     }
 
 

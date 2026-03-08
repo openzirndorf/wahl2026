@@ -1,74 +1,74 @@
 {
-  "lastUpdated": "2026-03-08T18:14:12Z",
-  "status": "Ausgezählte Gebiete: 32 von 34, 08.03.2026, 19:07:06",
+  "lastUpdated": "2026-03-08T18:16:11Z",
+  "status": "Ausgezählte Gebiete: 33 von 34, 08.03.2026, 19:14:28",
   "wahlberechtigte": 21137,
-  "waehler": 12387,
-  "wahlbeteiligung": 58.6,
-  "ungueltig": 55,
-  "gueltig": 12332,
+  "waehler": 12875,
+  "wahlbeteiligung": 60.9,
+  "ungueltig": 61,
+  "gueltig": 12814,
   "candidates": [
     {
       "party": "ZBG",
       "color": "#4F8F17",
       "name": "Spath Marcus",
-      "stimmen": 4230,
-      "anteil": 34.3
+      "stimmen": 4422,
+      "anteil": 34.5
     },
     {
       "party": "CSU",
       "color": "#005CA9",
       "name": "Hesselberger Tom",
-      "stimmen": 2893,
+      "stimmen": 3014,
       "anteil": 23.5
     },
     {
       "party": "SPD",
       "color": "#E3000F",
       "name": "Hauber Sandra",
-      "stimmen": 2085,
+      "stimmen": 2170,
       "anteil": 16.9
     },
     {
       "party": "AfD",
       "color": "#009DE0",
       "name": "Treuheit Bastian",
-      "stimmen": 1415,
-      "anteil": 11.5
+      "stimmen": 1453,
+      "anteil": 11.3
     },
     {
       "party": "GRÜNE",
       "color": "#1FAB2C",
       "name": "Poxleitner Lukas",
-      "stimmen": 738,
-      "anteil": 6.0
+      "stimmen": 751,
+      "anteil": 5.9
     },
     {
       "party": "FREIE WÄHLER",
       "color": "#FF6600",
       "name": "Schmidt Ralf",
-      "stimmen": 415,
+      "stimmen": 431,
       "anteil": 3.4
     },
     {
       "party": "DIE LINKE",
       "color": "#d01d5c",
       "name": "Greser Robin",
-      "stimmen": 266,
-      "anteil": 2.2
+      "stimmen": 273,
+      "anteil": 2.1
     },
     {
       "party": "Volt",
       "color": "#562883",
       "name": "Krause Eike",
-      "stimmen": 174,
+      "stimmen": 177,
       "anteil": 1.4
     },
     {
       "party": "FDP",
       "color": "#FFED00",
       "name": "Reubel Paul",
-      "stimmen": 116,
-      "anteil": 0.9
+      "stimmen": 123,
+      "anteil": 1.0
     }
   ]
 }

@@ -1,73 +1,73 @@
 {
-  "lastUpdated": "2026-03-08T18:04:10Z",
-  "status": "Ausgezählte Gebiete: 30 von 34, 08.03.2026, 19:02:57",
+  "lastUpdated": "2026-03-08T18:06:09Z",
+  "status": "Ausgezählte Gebiete: 31 von 34, 08.03.2026, 19:04:36",
   "wahlberechtigte": 21137,
-  "waehler": 11396,
-  "wahlbeteiligung": 53.9,
-  "ungueltig": 48,
-  "gueltig": 11348,
+  "waehler": 11886,
+  "wahlbeteiligung": 56.2,
+  "ungueltig": 50,
+  "gueltig": 11836,
   "candidates": [
     {
       "party": "ZBG",
       "color": "#4F8F17",
       "name": "Spath Marcus",
-      "stimmen": 3825,
-      "anteil": 33.7
+      "stimmen": 3999,
+      "anteil": 33.8
     },
     {
       "party": "CSU",
       "color": "#005CA9",
       "name": "Hesselberger Tom",
-      "stimmen": 2652,
-      "anteil": 23.4
+      "stimmen": 2794,
+      "anteil": 23.6
     },
     {
       "party": "SPD",
       "color": "#E3000F",
       "name": "Hauber Sandra",
-      "stimmen": 1922,
-      "anteil": 16.9
+      "stimmen": 1992,
+      "anteil": 16.8
     },
     {
       "party": "AfD",
       "color": "#009DE0",
       "name": "Treuheit Bastian",
-      "stimmen": 1333,
+      "stimmen": 1380,
       "anteil": 11.7
     },
     {
       "party": "GRÜNE",
       "color": "#1FAB2C",
       "name": "Poxleitner Lukas",
-      "stimmen": 696,
+      "stimmen": 722,
       "anteil": 6.1
     },
     {
       "party": "FREIE WÄHLER",
       "color": "#FF6600",
       "name": "Schmidt Ralf",
-      "stimmen": 390,
+      "stimmen": 404,
       "anteil": 3.4
     },
     {
       "party": "DIE LINKE",
       "color": "#d01d5c",
       "name": "Greser Robin",
-      "stimmen": 253,
+      "stimmen": 262,
       "anteil": 2.2
     },
     {
       "party": "Volt",
       "color": "#562883",
       "name": "Krause Eike",
-      "stimmen": 167,
-      "anteil": 1.5
+      "stimmen": 170,
+      "anteil": 1.4
     },
     {
       "party": "FDP",
       "color": "#FFED00",
       "name": "Reubel Paul",
-      "stimmen": 110,
+      "stimmen": 113,
       "anteil": 1.0
     }
   ]

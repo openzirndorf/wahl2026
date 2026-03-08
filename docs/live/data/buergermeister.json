@@ -1,74 +1,74 @@
 {
-  "lastUpdated": "2026-03-08T17:52:33Z",
-  "status": "Ausgez&auml;hlte Gebiete: 22 von 34, 08.03.2026, 18:50:18",
-  "wahlberechtigte": 20079,
-  "waehler": 7649,
-  "wahlbeteiligung": 38.1,
-  "ungueltig": 30,
-  "gueltig": 7619,
+  "lastUpdated": "2026-03-08T17:54:10Z",
+  "status": "Ausgez&auml;hlte Gebiete: 23 von 34, 08.03.2026, 18:52:35",
+  "wahlberechtigte": 21137,
+  "waehler": 7938,
+  "wahlbeteiligung": 37.6,
+  "ungueltig": 31,
+  "gueltig": 7907,
   "candidates": [
     {
       "party": "ZBG",
       "color": "#4F8F17",
       "name": "Spath Marcus",
-      "stimmen": 2457,
-      "anteil": 32.2
+      "stimmen": 2519,
+      "anteil": 31.9
     },
     {
       "party": "CSU",
       "color": "#005CA9",
       "name": "Hesselberger Tom",
-      "stimmen": 1784,
-      "anteil": 23.4
+      "stimmen": 1855,
+      "anteil": 23.5
     },
     {
       "party": "SPD",
       "color": "#E3000F",
       "name": "Hauber Sandra",
-      "stimmen": 1230,
-      "anteil": 16.1
+      "stimmen": 1292,
+      "anteil": 16.3
     },
     {
       "party": "AfD",
       "color": "#009DE0",
       "name": "Treuheit Bastian",
-      "stimmen": 1062,
+      "stimmen": 1101,
       "anteil": 13.9
     },
     {
       "party": "GRÜNE",
       "color": "#1FAB2C",
       "name": "Poxleitner Lukas",
-      "stimmen": 466,
+      "stimmen": 486,
       "anteil": 6.1
     },
     {
       "party": "FREIE WÄHLER",
       "color": "#FF6600",
       "name": "Schmidt Ralf",
-      "stimmen": 253,
-      "anteil": 3.3
+      "stimmen": 265,
+      "anteil": 3.4
     },
     {
       "party": "DIE LINKE",
       "color": "#d01d5c",
       "name": "Greser Robin",
-      "stimmen": 187,
+      "stimmen": 194,
       "anteil": 2.5
     },
     {
       "party": "Volt",
       "color": "#562883",
       "name": "Krause Eike",
-      "stimmen": 109,
-      "anteil": 1.4
+      "stimmen": 119,
+      "anteil": 1.5
     },
     {
       "party": "FDP",
       "color": "#FFED00",
       "name": "Reubel Paul",
-      "stimmen": 71,
-      "anteil": 0.9
+      "stimmen": 76,
+      "anteil": 1.0
     }
   ]
 }

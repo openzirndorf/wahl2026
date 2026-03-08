@@ -1,10 +1,74 @@
 {
-  "lastUpdated": "2026-03-08T17:52:09Z",
+  "lastUpdated": "2026-03-08T17:52:33Z",
   "status": "Ausgez&auml;hlte Gebiete: 22 von 34, 08.03.2026, 18:50:18",
-  "wahlberechtigte": 0,
-  "waehler": 0,
-  "wahlbeteiligung": 0.0,
-  "ungueltig": 0,
-  "gueltig": 0,
-  "candidates": []
+  "wahlberechtigte": 20079,
+  "waehler": 7649,
+  "wahlbeteiligung": 38.1,
+  "ungueltig": 30,
+  "gueltig": 7619,
+  "candidates": [
+    {
+      "party": "ZBG",
+      "color": "#4F8F17",
+      "name": "Spath Marcus",
+      "stimmen": 2457,
+      "anteil": 32.2
+    },
+    {
+      "party": "CSU",
+      "color": "#005CA9",
+      "name": "Hesselberger Tom",
+      "stimmen": 1784,
+      "anteil": 23.4
+    },
+    {
+      "party": "SPD",
+      "color": "#E3000F",
+      "name": "Hauber Sandra",
+      "stimmen": 1230,
+      "anteil": 16.1
+    },
+    {
+      "party": "AfD",
+      "color": "#009DE0",
+      "name": "Treuheit Bastian",
+      "stimmen": 1062,
+      "anteil": 13.9
+    },
+    {
+      "party": "GRÜNE",
+      "color": "#1FAB2C",
+      "name": "Poxleitner Lukas",
+      "stimmen": 466,
+      "anteil": 6.1
+    },
+    {
+      "party": "FREIE WÄHLER",
+      "color": "#FF6600",
+      "name": "Schmidt Ralf",
+      "stimmen": 253,
+      "anteil": 3.3
+    },
+    {
+      "party": "DIE LINKE",
+      "color": "#d01d5c",
+      "name": "Greser Robin",
+      "stimmen": 187,
+      "anteil": 2.5
+    },
+    {
+      "party": "Volt",
+      "color": "#562883",
+      "name": "Krause Eike",
+      "stimmen": 109,
+      "anteil": 1.4
+    },
+    {
+      "party": "FDP",
+      "color": "#FFED00",
+      "name": "Reubel Paul",
+      "stimmen": 71,
+      "anteil": 0.9
+    }
+  ]
 }

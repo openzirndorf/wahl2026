@@ -1,73 +1,73 @@
 {
-  "lastUpdated": "2026-03-08T17:56:07Z",
-  "status": "Ausgezählte Gebiete: 23 von 34, 08.03.2026, 18:52:35",
+  "lastUpdated": "2026-03-08T17:58:12Z",
+  "status": "Ausgezählte Gebiete: 24 von 34, 08.03.2026, 18:55:24",
   "wahlberechtigte": 21137,
-  "waehler": 7938,
-  "wahlbeteiligung": 37.6,
-  "ungueltig": 31,
-  "gueltig": 7907,
+  "waehler": 8438,
+  "wahlbeteiligung": 39.9,
+  "ungueltig": 35,
+  "gueltig": 8403,
   "candidates": [
     {
       "party": "ZBG",
       "color": "#4F8F17",
       "name": "Spath Marcus",
-      "stimmen": 2519,
-      "anteil": 31.9
+      "stimmen": 2730,
+      "anteil": 32.5
     },
     {
       "party": "CSU",
       "color": "#005CA9",
       "name": "Hesselberger Tom",
-      "stimmen": 1855,
-      "anteil": 23.5
+      "stimmen": 1965,
+      "anteil": 23.4
     },
     {
       "party": "SPD",
       "color": "#E3000F",
       "name": "Hauber Sandra",
-      "stimmen": 1292,
+      "stimmen": 1373,
       "anteil": 16.3
     },
     {
       "party": "AfD",
       "color": "#009DE0",
       "name": "Treuheit Bastian",
-      "stimmen": 1101,
-      "anteil": 13.9
+      "stimmen": 1136,
+      "anteil": 13.5
     },
     {
       "party": "GRÜNE",
       "color": "#1FAB2C",
       "name": "Poxleitner Lukas",
-      "stimmen": 486,
+      "stimmen": 510,
       "anteil": 6.1
     },
     {
       "party": "FREIE WÄHLER",
       "color": "#FF6600",
       "name": "Schmidt Ralf",
-      "stimmen": 265,
-      "anteil": 3.4
+      "stimmen": 280,
+      "anteil": 3.3
     },
     {
       "party": "DIE LINKE",
       "color": "#d01d5c",
       "name": "Greser Robin",
-      "stimmen": 194,
-      "anteil": 2.5
+      "stimmen": 200,
+      "anteil": 2.4
     },
     {
       "party": "Volt",
       "color": "#562883",
       "name": "Krause Eike",
-      "stimmen": 119,
+      "stimmen": 124,
       "anteil": 1.5
     },
     {
       "party": "FDP",
       "color": "#FFED00",
       "name": "Reubel Paul",
-      "stimmen": 76,
+      "stimmen": 85,
       "anteil": 1.0
     }
   ]

@@ -1,16 +1,16 @@
 {
-  "lastUpdated": "2026-03-09T00:12:12Z",
-  "status": "Ausgezählte Gebiete: 30 von 34, 09.03.2026, 01:05:28",
+  "lastUpdated": "2026-03-09T00:14:10Z",
+  "status": "Ausgezählte Gebiete: 30 von 34, 09.03.2026, 01:13:12",
   "wahlberechtigte": 20821,
   "waehler": 11378,
   "wahlbeteiligung": 54.6,
-  "ungueltig": 236,
-  "gueltig": 308008,
+  "ungueltig": 238,
+  "gueltig": 308028,
   "parties": [
     {
       "party": "ZBG",
       "color": "#4F8F17",
-      "stimmen": 82861,
+      "stimmen": 82862,
       "anteil": 26.9,
       "gv": "26,9"
     },
@@ -31,14 +31,14 @@
     {
       "party": "SPD",
       "color": "#E3000F",
-      "stimmen": 40374,
+      "stimmen": 40382,
       "anteil": 13.1,
       "gv": "-14,7"
     },
     {
       "party": "GRÜNE",
       "color": "#1FAB2C",
-      "stimmen": 29577,
+      "stimmen": 29583,
       "anteil": 9.6,
       "gv": "-8,4"
     },
@@ -52,7 +52,7 @@
     {
       "party": "Die Linke",
       "color": "#BE3075",
-      "stimmen": 11135,
+      "stimmen": 11140,
       "anteil": 3.6,
       "gv": "3,6"
     },
@@ -412,31 +412,31 @@
       {
         "nr": 2,
         "name": "Poxleitner Lukas",
-        "stimmen": 3932,
+        "stimmen": 3933,
         "anteil": 0.0
       },
       {
         "nr": 1,
         "name": "Thomas Cornelia",
-        "stimmen": 3671,
+        "stimmen": 3673,
         "anteil": 0.0
       },
       {
         "nr": 4,
         "name": "Schäfer Walter",
-        "stimmen": 3421,
+        "stimmen": 3422,
         "anteil": 0.0
       },
       {
         "nr": 5,
         "name": "Dr. med. Engemann Timo",
-        "stimmen": 3237,
+        "stimmen": 3238,
         "anteil": 0.0
       },
       {
         "nr": 3,
         "name": "Krug Andrea",
-        "stimmen": 2910,
+        "stimmen": 2911,
         "anteil": 0.0
       },
       {
@@ -522,37 +522,37 @@
       {
         "nr": 1,
         "name": "Hauber Sandra",
-        "stimmen": 3346,
+        "stimmen": 3347,
         "anteil": 0.0
       },
       {
         "nr": 3,
         "name": "Otto Sylke",
-        "stimmen": 2506,
+        "stimmen": 2507,
         "anteil": 0.0
       },
       {
         "nr": 5,
         "name": "Zahl Elke",
-        "stimmen": 2070,
+        "stimmen": 2071,
         "anteil": 0.0
       },
       {
         "nr": 4,
         "name": "Leikauf Walter",
-        "stimmen": 1929,
+        "stimmen": 1930,
         "anteil": 0.0
       },
       {
         "nr": 2,
         "name": "Bauer Frank",
-        "stimmen": 1827,
+        "stimmen": 1828,
         "anteil": 0.0
       },
       {
         "nr": 8,
         "name": "Götz Michael",
-        "stimmen": 1543,
+        "stimmen": 1544,
         "anteil": 0.0
       },
       {
@@ -564,7 +564,7 @@
       {
         "nr": 6,
         "name": "Büsing Dirk",
-        "stimmen": 1404,
+        "stimmen": 1405,
         "anteil": 0.0
       },
       {
@@ -582,7 +582,7 @@
       {
         "nr": 7,
         "name": "Deisenrieder Nina",
-        "stimmen": 1300,
+        "stimmen": 1301,
         "anteil": 0.0
       },
       {
@@ -704,19 +704,19 @@
       {
         "nr": 2,
         "name": "Pfeffer Meike",
-        "stimmen": 1593,
+        "stimmen": 1594,
         "anteil": 0.0
       },
       {
         "nr": 1,
         "name": "Greser Robin",
-        "stimmen": 1462,
+        "stimmen": 1465,
         "anteil": 0.0
       },
       {
         "nr": 3,
         "name": "Jug Martin",
-        "stimmen": 1107,
+        "stimmen": 1108,
         "anteil": 0.0
       },
       {
@@ -1034,7 +1034,7 @@
       {
         "nr": 21,
         "name": "Schwippel Fabian",
-        "stimmen": 2160,
+        "stimmen": 2161,
         "anteil": 0.0
       },
       {

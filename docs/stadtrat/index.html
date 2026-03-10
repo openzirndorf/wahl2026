@@ -1,0 +1,574 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Neuer Stadtrat Zirndorf 2026 | Sitzverteilung &amp; Mehrheiten</title>
+  <meta name="description" content="Sitzverteilung im neuen Stadtrat Zirndorf nach der Kommunalwahl 2026 – Tortendiagramm, gewählte Mitglieder und Mehrheitsrechner." />
+  <link rel="stylesheet" href="/assets/styles.css" />
+  <style>
+    /* ─── Layout ─────────────────────────────────────────────── */
+    .page-head { margin: 0 0 1.6rem; }
+    .page-kicker { margin: 0 0 .35rem; font-size: .82rem; font-weight: 700; letter-spacing: .6px; text-transform: uppercase; color: var(--muted); }
+    .page-head h1 { font-size: clamp(1.6rem, 3.5vw, 2.4rem); margin: 0 0 .5rem; }
+    .page-head .lead { margin: 0; }
+
+    /* ─── Sitzverteilung / Chart ─────────────────────────────── */
+    .seats-layout {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+      align-items: start;
+    }
+    @media (max-width: 680px) { .seats-layout { grid-template-columns: 1fr; } }
+
+    .donut-wrap {
+      display: flex; flex-direction: column; align-items: center;
+      gap: .8rem; padding: 1.2rem;
+    }
+    .donut-wrap canvas { display: block; max-width: 240px; width: 100%; }
+
+    .legend-list {
+      list-style: none; padding: 0; margin: 0;
+      display: grid; gap: .45rem;
+    }
+    .legend-item {
+      display: flex; align-items: center; gap: .55rem;
+      font-size: .9rem;
+    }
+    .legend-dot {
+      width: 13px; height: 13px; border-radius: 3px; flex-shrink: 0;
+    }
+    .legend-party { font-weight: 700; min-width: 90px; }
+    .legend-seats { font-weight: 800; min-width: 28px; }
+    .legend-pct { color: var(--muted); font-size: .8rem; }
+
+    /* ─── Mitglieder-Karten ──────────────────────────────────── */
+    .members-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: .9rem;
+    }
+    .party-card {
+      background: var(--panel); border: 1px solid var(--line);
+      border-radius: var(--radius); overflow: hidden;
+    }
+    .party-card-head {
+      padding: .65rem .9rem;
+      display: flex; align-items: center; gap: .6rem;
+      border-bottom: 1px solid var(--line);
+    }
+    .party-swatch {
+      width: 14px; height: 14px; border-radius: 3px; flex-shrink: 0;
+    }
+    .party-card-name { font-weight: 800; font-size: .95rem; flex: 1; }
+    .party-seat-badge {
+      background: var(--bg); border: 1px solid var(--line);
+      border-radius: 999px; font-size: .78rem; font-weight: 800;
+      padding: .15rem .55rem; white-space: nowrap;
+    }
+    .member-list {
+      list-style: none; padding: .45rem .9rem; margin: 0;
+      display: grid; gap: .3rem;
+    }
+    .member-list li {
+      font-size: .84rem; display: flex; align-items: baseline; gap: .4rem;
+    }
+    .member-rank {
+      font-size: .72rem; color: var(--muted); min-width: 18px; text-align: right;
+    }
+
+    /* ─── Mehrheitsrechner ───────────────────────────────────── */
+    .coalition-tool {
+      background: var(--panel); border: 1px solid var(--line);
+      border-radius: var(--radius); padding: 1.1rem 1.3rem;
+    }
+    .coalition-tool h2 { margin: 0 0 .3rem; font-size: 1.2rem; }
+    .coalition-hint { color: var(--muted); font-size: .84rem; margin: 0 0 1rem; }
+
+    .coalition-parties {
+      display: flex; flex-wrap: wrap; gap: .5rem; margin-bottom: 1rem;
+    }
+    .coalition-btn {
+      display: inline-flex; align-items: center; gap: .45rem;
+      padding: .4rem .8rem; border-radius: 999px;
+      border: 2px solid transparent; cursor: pointer;
+      font-size: .87rem; font-weight: 700; transition: all .15s;
+      background: var(--bg); color: var(--ink);
+      user-select: none;
+    }
+    .coalition-btn .btn-swatch {
+      width: 10px; height: 10px; border-radius: 50%;
+    }
+    .coalition-btn.selected {
+      color: #fff;
+    }
+    .coalition-btn .btn-seats {
+      font-size: .78rem; opacity: .85;
+    }
+
+    .coalition-result {
+      border-top: 1px solid var(--line); padding-top: .9rem;
+      display: flex; flex-wrap: wrap; gap: 1rem; align-items: center;
+    }
+    .coalition-meter { flex: 1; min-width: 200px; }
+    .meter-track {
+      height: 20px; border-radius: 999px; background: var(--bg);
+      border: 1px solid var(--line); overflow: hidden; position: relative;
+    }
+    .meter-fill {
+      height: 100%; border-radius: 999px; transition: width .3s ease;
+      background: var(--primary);
+    }
+    .meter-marker {
+      position: absolute; top: 0; bottom: 0; width: 2px;
+      background: #c0392b; left: calc(50% + 1px);
+    }
+    .meter-labels {
+      display: flex; justify-content: space-between;
+      font-size: .72rem; color: var(--muted); margin-top: .3rem;
+    }
+    .coalition-stats { text-align: center; }
+    .coalition-seats-big { font-size: 2rem; font-weight: 900; line-height: 1; }
+    .coalition-seats-label { font-size: .78rem; color: var(--muted); }
+    .coalition-verdict {
+      font-size: .9rem; font-weight: 700; padding: .35rem .75rem;
+      border-radius: 999px; white-space: nowrap;
+    }
+    .verdict-yes { background: #e8f4dc; color: #2f5c0e; }
+    .verdict-no  { background: #fde8e8; color: #c0392b; }
+    .verdict-exact { background: #fff3cd; color: #7a5200; }
+
+    /* ─── Hinweis-Box ────────────────────────────────────────── */
+    .info-box {
+      background: #f0f5ff; border: 1px solid #c5d6f5;
+      border-radius: var(--radius); padding: .8rem 1rem;
+      font-size: .84rem; color: #2c4580;
+      display: flex; gap: .55rem; align-items: flex-start;
+    }
+    .info-icon { flex-shrink: 0; margin-top: .05rem; }
+
+    section + section { padding-top: 0; }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="wrap nav">
+      <a class="brand" href="/"><img src="/assets/logo.png" alt="OpenZirndorf Logo" /><strong>Zirndorf wählt 2026</strong></a>
+      <nav class="menu" aria-label="Navigation">
+        <a href="/">Start</a>
+        <a href="/prompt/">Prompt</a>
+        <a href="/ergebnisse/">KI-Bewertungen</a>
+        <a href="/parteiantworten/">Parteiantworten</a>
+        <a href="/live/">Live-Ergebnisse</a>
+        <a href="/stadtrat/" aria-current="page">Stadtrat</a>
+        <a href="/disclaimer/">Disclaimer</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <section>
+      <div class="page-head">
+        <p class="page-kicker">Kommunalwahl · 8. März 2026 · Zirndorf</p>
+        <h1>Neuer Stadtrat 2026</h1>
+        <p class="lead">30 Stadtratssitze nach Hare-Niemeyer plus Bürgermeister/in (stimmberechtigt, Art. 31 BayGO) = <strong>31 Stimmen gesamt</strong>. Absolute Mehrheit: 16 Stimmen.</p>
+      </div>
+
+      <div class="info-box" style="margin-bottom:1.2rem">
+        <svg class="info-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><circle cx="12" cy="16" r=".5" fill="currentColor"/></svg>
+        <span>Die Sitzberechnung basiert auf dem Hare-Niemeyer-Verfahren (Art. 42 GLKrWG Bayern). Die 30 Stadtratsmitglieder werden durch den/die Bürgermeister/in ergänzt, der/die nach Art. 31 BayGO ebenfalls stimmberechtigt ist (kein separater Stichentscheid – bei Gleichstand gilt der Antrag als abgelehnt, Art. 51 BayGO). Da die Bürgermeisterwahl in die <strong>Stichwahl</strong> zwischen Spath Marcus (ZBG, 34,5 %) und Hesselberger Tom (CSU, 23,6 %) geht, zeigt der Mehrheitsrechner unten beide Szenarien.</span>
+      </div>
+
+      <!-- Donut + Legende -->
+      <div class="panel seats-layout" style="margin-bottom:1rem">
+        <div class="donut-wrap">
+          <canvas id="donut" width="240" height="240"></canvas>
+          <div id="donut-center" style="display:none"></div>
+        </div>
+        <div style="padding:1rem 1rem 1rem 0; display:flex; flex-direction:column; justify-content:center;">
+          <ul class="legend-list" id="legend-list"></ul>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2 style="margin:0 0 .8rem">Gewählte Stadtratsmitglieder</h2>
+      <div class="members-grid" id="members-grid"></div>
+    </section>
+
+    <section>
+      <div class="coalition-tool">
+        <h2>Mehrheitsrechner</h2>
+        <p class="coalition-hint">Szenario wählen + Stadtratsfraktionen anklicken. Gesamt: 31 Stimmen (30 Stadtrat + BM), Mehrheit ab 16.</p>
+
+        <!-- BM-Szenario-Toggle -->
+        <div style="margin-bottom:1rem;">
+          <div style="font-size:.8rem;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);margin-bottom:.45rem;">
+            Bürgermeister/in nach Stichwahl:
+          </div>
+          <div style="display:flex;gap:.5rem;flex-wrap:wrap;">
+            <button class="bm-btn active" id="bm-zbg" onclick="setBM('ZBG')"
+              style="display:inline-flex;align-items:center;gap:.45rem;padding:.4rem .85rem;border-radius:999px;border:2px solid #009FA1;background:#009FA1;color:#fff;font-weight:700;font-size:.87rem;cursor:pointer;">
+              <span style="width:10px;height:10px;border-radius:50%;background:#fff;display:inline-block;"></span>
+              Spath Marcus (ZBG) · 34,5 %
+            </button>
+            <button class="bm-btn" id="bm-csu" onclick="setBM('CSU')"
+              style="display:inline-flex;align-items:center;gap:.45rem;padding:.4rem .85rem;border-radius:999px;border:2px solid #005CA9;background:var(--bg);color:var(--ink);font-weight:700;font-size:.87rem;cursor:pointer;">
+              <span style="width:10px;height:10px;border-radius:50%;background:#005CA9;display:inline-block;"></span>
+              Hesselberger Tom (CSU) · 23,6 %
+            </button>
+          </div>
+        </div>
+
+        <!-- Stadtratsfraktionen -->
+        <div style="font-size:.8rem;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);margin-bottom:.45rem;">
+          Stadtratsfraktionen:
+        </div>
+        <div class="coalition-parties" id="coalition-parties"></div>
+
+        <div class="coalition-result">
+          <div class="coalition-stats">
+            <div class="coalition-seats-big" id="c-seats">0</div>
+            <div class="coalition-seats-label" id="c-label">von 31 Stimmen</div>
+          </div>
+          <div class="coalition-meter">
+            <div class="meter-track">
+              <div class="meter-fill" id="c-fill" style="width:0%"></div>
+              <div class="meter-marker" title="Mehrheitsgrenze (16)" style="left:calc(16/31*100%)"></div>
+            </div>
+            <div class="meter-labels">
+              <span>0</span>
+              <span style="font-weight:700;color:#c0392b">16 (Mehrheit)</span>
+              <span>31</span>
+            </div>
+          </div>
+          <div class="coalition-verdict verdict-no" id="c-verdict">Bitte auswählen</div>
+        </div>
+
+        <!-- BM-Hinweis -->
+        <div id="bm-hint" style="margin-top:.75rem;font-size:.8rem;color:var(--muted);border-top:1px solid var(--line);padding-top:.65rem;"></div>
+      </div>
+    </section>
+  </main>
+
+  <footer style="border-top:1px solid var(--line);padding:1.2rem 0;color:var(--muted);font-size:.82rem;">
+    <div class="wrap" style="display:flex;gap:.8rem;flex-wrap:wrap;justify-content:space-between;align-items:center;">
+      <span>© 2026 OpenZirndorf · Daten: amtliches Endergebnis Stadtratswahl Zirndorf 2026</span>
+      <div style="display:flex;gap:1rem;">
+        <a href="/impressum/">Impressum</a>
+        <a href="/datenschutz/">Datenschutz</a>
+        <a href="/disclaimer/">Disclaimer</a>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+  // ─── Daten ───────────────────────────────────────────────────────────────
+  const COUNCIL_SEATS = 30;  // gewählte Stadtratsmitglieder
+  const TOTAL_VOTES = 31;    // inkl. Bürgermeister/in (Art. 31 BayGO)
+  const MAJORITY = 16;
+
+  // Bürgermeister-Szenarien (Stichwahl)
+  const BM_SCENARIOS = {
+    ZBG: { name: "Spath Marcus", party: "ZBG", color: "#009FA1", pct: "34,5" },
+    CSU: { name: "Hesselberger Tom", party: "CSU", color: "#005CA9", pct: "23,6" },
+  };
+  let currentBM = "ZBG";
+
+  const parties = [
+    {
+      party: "ZBG",
+      color: "#009FA1",
+      seats: 8,
+      members: [
+        "Spath Marcus", "Rieß Andreas", "Felbinger Jochen", "Zechentmayer Kerstin",
+        "Götz Gerd", "Roth Nina", "Loidold Frank", "Hirmke Arnulf"
+      ],
+      bmCandidate: "Spath Marcus",
+      nachrücker: "Förster Jessica"
+    },
+    {
+      party: "CSU",
+      color: "#005CA9",
+      seats: 7,
+      members: [
+        "Hesselberger Tom", "Seifert Adelheid", "Nürnberger Udo",
+        "Maderer Michael", "Spitzer Ines", "Rauch Ursula", "Schemm Florian"
+      ],
+      bmCandidate: "Hesselberger Tom",
+      nachrücker: "Huber Monika"
+    },
+    {
+      party: "AfD",
+      color: "#009DE0",
+      seats: 4,
+      members: [
+        "Treuheit Bastian", "Riedel Steffen", "Fröhlich Günther", "Stüwe Hans-Joachim"
+      ]
+    },
+    {
+      party: "SPD",
+      color: "#E3000F",
+      seats: 4,
+      members: [
+        "Hauber Sandra", "Otto Sylke", "Zahl Elke", "Leikauf Walter"
+      ]
+    },
+    {
+      party: "GRÜNE",
+      color: "#1FAB2C",
+      seats: 3,
+      members: [
+        "Poxleitner Lukas", "Thomas Cornelia", "Schäfer Walter"
+      ]
+    },
+    {
+      party: "FREIE WÄHLER",
+      color: "#FF6600",
+      seats: 1,
+      members: ["Eder Elke"]
+    },
+    {
+      party: "Die Linke",
+      color: "#BE3075",
+      seats: 1,
+      members: ["Pfeffer Meike"]
+    },
+    {
+      party: "Volt",
+      color: "#562883",
+      seats: 1,
+      members: ["Krause Eike"]
+    },
+    {
+      party: "FDP",
+      color: "#FFED00",
+      seats: 1,
+      members: ["Reubel Paul"]
+    },
+  ];
+
+  // ─── Donut-Diagramm ──────────────────────────────────────────────────────
+  function drawDonut() {
+    const canvas = document.getElementById("donut");
+    const ctx = canvas.getContext("2d");
+    const cx = canvas.width / 2, cy = canvas.height / 2;
+    const r = Math.min(cx, cy) - 12;
+    const inner = r * 0.55;
+    let start = -Math.PI / 2;
+
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    parties.forEach(p => {
+      const slice = (p.seats / COUNCIL_SEATS) * 2 * Math.PI;
+      ctx.beginPath();
+      ctx.moveTo(cx, cy);
+      ctx.arc(cx, cy, r, start, start + slice);
+      ctx.closePath();
+      ctx.fillStyle = p.color;
+      ctx.fill();
+      start += slice;
+    });
+
+    // Inner circle (hole)
+    ctx.beginPath();
+    ctx.arc(cx, cy, inner, 0, 2 * Math.PI);
+    ctx.fillStyle = getComputedStyle(document.documentElement)
+      .getPropertyValue('--panel').trim() || "#fffdf8";
+    ctx.fill();
+
+    // Center text
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    ctx.fillStyle = "#0f1312";
+    ctx.font = `800 ${Math.round(inner * 0.55)}px "Avenir Next", "Nunito Sans", sans-serif`;
+    ctx.fillText("30", cx, cy - inner * 0.12);
+    ctx.font = `600 ${Math.round(inner * 0.26)}px "Avenir Next", "Nunito Sans", sans-serif`;
+    ctx.fillStyle = "#4d5a56";
+    ctx.fillText("Sitze", cx, cy + inner * 0.28);
+  }
+
+  // ─── Legende ─────────────────────────────────────────────────────────────
+  function buildLegend() {
+    const ul = document.getElementById("legend-list");
+    parties.forEach(p => {
+      const pct = ((p.seats / COUNCIL_SEATS) * 100).toFixed(1);
+      const li = document.createElement("li");
+      li.className = "legend-item";
+      li.innerHTML = `
+        <span class="legend-dot" style="background:${p.color}"></span>
+        <span class="legend-party">${p.party}</span>
+        <span class="legend-seats">${p.seats}</span>
+        <span class="legend-pct">(${pct} %)</span>
+      `;
+      ul.appendChild(li);
+    });
+  }
+
+  // ─── Mitgliederkarten ────────────────────────────────────────────────────
+  function renderMemberList(p) {
+    const isBMParty = p.bmCandidate && currentBM === p.party;
+    let displayMembers = p.members;
+    let bmNote = "";
+    let nachrückerItem = "";
+
+    if (isBMParty) {
+      displayMembers = p.members.filter(m => m !== p.bmCandidate);
+      bmNote = `<div style="font-size:.78rem;color:var(--muted);padding:.3rem .9rem .1rem;display:flex;align-items:center;gap:.35rem;">
+        <span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:${p.color}"></span>
+        <strong>${p.bmCandidate}</strong>&ensp;→&ensp;Bürgermeister/in
+      </div>`;
+      nachrückerItem = `<li style="color:var(--muted);">
+        <span class="member-rank">${displayMembers.length + 1}.</span>
+        ${p.nachrücker}
+        <span style="font-size:.7rem;background:#fff3cd;color:#7a5200;border-radius:999px;padding:.1rem .4rem;margin-left:.3rem;font-weight:700;">Nachrücker/in</span>
+      </li>`;
+    }
+
+    const memberItems = displayMembers.map((m, i) =>
+      `<li><span class="member-rank">${i + 1}.</span>${m}</li>`
+    ).join("") + nachrückerItem;
+
+    return { bmNote, memberItems };
+  }
+
+  function buildMemberCards() {
+    const grid = document.getElementById("members-grid");
+    parties.forEach(p => {
+      const card = document.createElement("div");
+      card.className = "party-card";
+      card.id = `card-${p.party.replace(/\s+/g, "-")}`;
+      const plural = p.seats === 1 ? "Sitz" : "Sitze";
+      card.innerHTML = `
+        <div class="party-card-head">
+          <span class="party-swatch" style="background:${p.color}"></span>
+          <span class="party-card-name">${p.party}</span>
+          <span class="party-seat-badge">${p.seats} ${plural}</span>
+        </div>
+        <ul class="member-list"></ul>
+      `;
+      grid.appendChild(card);
+    });
+    // Initialen Zustand rendern (inkl. BM-Hinweis)
+    updateMemberCards();
+  }
+
+  function updateMemberCards() {
+    parties.forEach(p => {
+      const card = document.getElementById(`card-${p.party.replace(/\s+/g, "-")}`);
+      if (!card) return;
+      const { bmNote, memberItems } = renderMemberList(p);
+      card.querySelector(".member-list").innerHTML = memberItems;
+      const existingNote = card.querySelector(".bm-note");
+      if (existingNote) existingNote.remove();
+      if (bmNote) {
+        const noteEl = document.createElement("div");
+        noteEl.className = "bm-note";
+        noteEl.innerHTML = bmNote;
+        card.querySelector(".party-card-head").after(noteEl);
+      }
+    });
+  }
+
+  // ─── Mehrheitsrechner ────────────────────────────────────────────────────
+  const selected = new Set();
+
+  function setBM(party) {
+    currentBM = party;
+    // Toggle-Buttons stylen
+    const bm = BM_SCENARIOS[party];
+    document.getElementById("bm-zbg").style.background = party === "ZBG" ? "#009FA1" : "var(--bg)";
+    document.getElementById("bm-zbg").style.color = party === "ZBG" ? "#fff" : "var(--ink)";
+    document.getElementById("bm-csu").style.background = party === "CSU" ? "#005CA9" : "var(--bg)";
+    document.getElementById("bm-csu").style.color = party === "CSU" ? "#fff" : "var(--ink)";
+    updateMemberCards();
+    updateCoalition();
+  }
+
+  function updateCoalition() {
+    const bm = BM_SCENARIOS[currentBM];
+    let councilVotes = 0;
+    selected.forEach(name => {
+      const p = parties.find(x => x.party === name);
+      if (p) councilVotes += p.seats;
+    });
+    // BM-Stimme hinzuzählen wenn seine Partei ausgewählt ist
+    const bmPartySelected = selected.has(bm.party);
+    const total = councilVotes + (bmPartySelected ? 1 : 0);
+
+    document.getElementById("c-seats").textContent = total;
+    document.getElementById("c-label").textContent =
+      `von 31 Stimmen (inkl. BM ${bm.name})`;
+
+    const fillPct = Math.min((total / TOTAL_VOTES) * 100, 100);
+    document.getElementById("c-fill").style.width = fillPct + "%";
+
+    const verdict = document.getElementById("c-verdict");
+    const fill = document.getElementById("c-fill");
+    const hint = document.getElementById("bm-hint");
+
+    // BM-Hinweis
+    if (selected.size === 0) {
+      hint.innerHTML = "";
+    } else if (bmPartySelected) {
+      hint.innerHTML = `<strong>${bm.name} (${bm.party})</strong> stimmt als Bürgermeister/in mit — +1 Stimme für ${bm.party} eingerechnet.`;
+    } else {
+      hint.innerHTML = `<strong>${bm.name} (${bm.party})</strong> ist nicht in der gewählten Koalition → seine/ihre Stimme fehlt. Bei Gleichstand: Antrag gilt als abgelehnt (Art. 51 BayGO).`;
+    }
+
+    if (selected.size === 0) {
+      verdict.textContent = "Bitte auswählen";
+      verdict.className = "coalition-verdict verdict-no";
+      fill.style.background = "#aaa";
+    } else if (total >= MAJORITY) {
+      verdict.textContent = total === MAJORITY ? "Knappe Mehrheit ✓" : "Mehrheit ✓";
+      verdict.className = "coalition-verdict verdict-" + (total === MAJORITY ? "exact" : "yes");
+      fill.style.background = total === MAJORITY ? "#e6a817" : "#009FA1";
+    } else {
+      verdict.textContent = `${MAJORITY - total} Stimme${MAJORITY - total === 1 ? "" : "n"} fehlen`;
+      verdict.className = "coalition-verdict verdict-no";
+      fill.style.background = "#c0392b";
+    }
+  }
+
+  function buildCoalitionButtons() {
+    const container = document.getElementById("coalition-parties");
+    parties.forEach(p => {
+      const btn = document.createElement("button");
+      btn.className = "coalition-btn";
+      btn.dataset.party = p.party;
+      btn.style.borderColor = p.color + "55";
+      btn.innerHTML = `
+        <span class="btn-swatch" style="background:${p.color}"></span>
+        ${p.party}
+        <span class="btn-seats">(${p.seats})</span>
+      `;
+      btn.addEventListener("click", () => {
+        if (selected.has(p.party)) {
+          selected.delete(p.party);
+          btn.classList.remove("selected");
+          btn.style.background = "";
+          btn.style.color = "";
+          btn.style.borderColor = p.color + "55";
+        } else {
+          selected.add(p.party);
+          btn.classList.add("selected");
+          btn.style.background = p.color;
+          btn.style.borderColor = p.color;
+          btn.style.color = p.party === "FDP" ? "#333" : "#fff";
+        }
+        updateCoalition();
+      });
+      container.appendChild(btn);
+    });
+  }
+
+  // ─── Init ─────────────────────────────────────────────────────────────────
+  drawDonut();
+  buildLegend();
+  buildMemberCards();
+  buildCoalitionButtons();
+  </script>
+</body>
+</html>

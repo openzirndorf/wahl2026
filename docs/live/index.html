@@ -163,6 +163,45 @@
     @media(max-width:600px) {
       .bar-row { grid-template-columns: 90px 1fr 52px; font-size: .8rem; }
     }
+
+    /* ─── Stichwahl-Live ──────────────────────────────────────── */
+    .sw-section {
+      background: linear-gradient(145deg, #ecf9e4, #f7fbf1);
+      border: 1px solid #c7d8b8; border-radius: var(--radius);
+      padding: 1.2rem 1.4rem; margin-bottom: 1.2rem;
+    }
+    .sw-section-head {
+      display: flex; align-items: center; justify-content: space-between;
+      flex-wrap: wrap; gap: .4rem; margin-bottom: .9rem;
+    }
+    .sw-section-head h2 { margin: 0; font-size: 1.1rem; }
+    .sw-bar-row {
+      display: grid; grid-template-columns: 120px 1fr 80px;
+      align-items: center; gap: .6rem; margin-bottom: .5rem;
+    }
+    .sw-bar-label { font-weight: 800; font-size: 1rem; }
+    .sw-bar-party { font-size: .78rem; color: var(--muted); font-weight: 600; display: block; }
+    .sw-bar-track {
+      height: 32px; background: var(--line); border-radius: 6px; overflow: hidden;
+    }
+    .sw-bar-fill { height: 100%; border-radius: 6px; transition: width .6s cubic-bezier(.4,0,.2,1); }
+    .sw-bar-pct { text-align: right; font-weight: 800; font-size: 1.2rem; font-variant-numeric: tabular-nums; }
+    .sw-bar-stimmen { text-align: right; font-size: .75rem; color: var(--muted); }
+    .sw-kpi-row { display: flex; flex-wrap: wrap; gap: .5rem; margin-bottom: .9rem; }
+    .sw-kpi { background: #fff; border: 1px solid #c7d8b8; border-radius: 8px; padding: .45rem .75rem; text-align: center; flex: 1; min-width: 100px; }
+    .sw-kpi-value { font-size: 1.25rem; font-weight: 800; line-height: 1; }
+    .sw-kpi-label { font-size: .68rem; color: var(--muted); font-weight: 600; text-transform: uppercase; letter-spacing: .3px; }
+    .archive-divider {
+      display: flex; align-items: center; gap: .75rem; margin: 1.6rem 0 1rem;
+      font-size: .8rem; color: var(--muted); font-weight: 700; text-transform: uppercase; letter-spacing: .5px;
+    }
+    .archive-divider::before, .archive-divider::after {
+      content: ''; flex: 1; height: 1px; background: var(--line);
+    }
+    @media(max-width:600px) {
+      .sw-bar-row { grid-template-columns: 80px 1fr 56px; }
+      .sw-bar-pct { font-size: 1rem; }
+    }
   </style>
 </head>
 <body>
@@ -177,20 +216,38 @@
         <a href="/ergebnisse/">KI-Bewertungen</a>
         <a href="/parteiantworten/">Parteiantworten</a>
         <a aria-current="page" href="/live/" style="color:#c0392b;font-weight:800">● Live-Ergebnisse</a>
-        <a href="/stadtrat/">Stadtrat</a><a href="/disclaimer/">Disclaimer</a>
+        <div class="nav-dropdown"><a href="/stichwahl/warum/" class="dropdown-trigger nav-stichwahl">Stichwahl</a><div class="nav-dropdown-menu"><a href="/stichwahl/warum/">Warum Stichwahl?</a><a href="/stichwahl/vergleich/">Kandidatenvergleich</a><a href="/stichwahl/ki-analyse/">KI-Analyse</a><a href="/stichwahl/live/">Live-Ergebnisse</a></div></div><a href="/stichwahl/warum/" class="nav-stichwahl nav-mobile-show">Warum Stichwahl?</a><a href="/stichwahl/vergleich/" class="nav-stichwahl nav-mobile-show">Kandidatenvergleich</a><a href="/stichwahl/ki-analyse/" class="nav-stichwahl nav-mobile-show">KI-Analyse</a><a href="/stichwahl/live/" class="nav-stichwahl nav-mobile-show">Live-Ergebnisse</a><a href="/stadtrat/">Neuer Stadtrat</a><a href="/disclaimer/">Disclaimer</a>
       </nav>
     </div>
   </header>
 
   <main class="wrap">
     <section style="padding-bottom:0">
-      <p class="home-kicker">Kommunalwahl 8. März 2026 · Stadt Zirndorf</p>
+      <p class="home-kicker">Bürgermeisterwahl Zirndorf 2026</p>
       <div style="display:flex;align-items:center;gap:.7rem;flex-wrap:wrap;margin-bottom:.5rem">
-        <h1 style="margin:0;font-size:clamp(1.5rem,3vw,2.1rem)">Live-Ergebnisse</h1>
+        <h1 style="margin:0;font-size:clamp(1.5rem,3vw,2.1rem)">Wahlergebnisse</h1>
         <span id="live-badge" class="live-badge"><span class="live-dot"></span>Wird aktualisiert</span>
       </div>
       <p class="lead" style="margin-bottom:.9rem">Auszählungsstand in Echtzeit – Daten direkt vom offiziellen Wahlsystem des Bayerischen Staatsministeriums des Innern.</p>
     </section>
+
+    <!-- Stichwahl Live -->
+    <div class="sw-section">
+      <div class="sw-section-head">
+        <h2>Stichwahl · 22. März 2026</h2>
+        <span id="sw-status-badge" class="live-badge"><span class="live-dot"></span>Wartet auf Ergebnisse</span>
+      </div>
+      <div id="sw-status-bar" style="font-size:.82rem;color:var(--muted);margin-bottom:.7rem">
+        <span id="sw-status-text">Wird geladen…</span>
+        <span id="sw-last-updated" style="margin-left:.75rem"></span>
+      </div>
+      <div class="sw-kpi-row">
+        <div class="sw-kpi"><div class="sw-kpi-value" id="sw-kpi-beteiligung">–</div><div class="sw-kpi-label">Wahlbeteiligung</div></div>
+        <div class="sw-kpi"><div class="sw-kpi-value" id="sw-kpi-waehler">–</div><div class="sw-kpi-label">Wähler</div></div>
+        <div class="sw-kpi"><div class="sw-kpi-value" id="sw-kpi-gueltig">–</div><div class="sw-kpi-label">Gültige Stimmen</div></div>
+      </div>
+      <div id="sw-chart"></div>
+    </div>
 
     <!-- Refresh-Controls -->
     <div class="refresh-bar">
@@ -211,6 +268,8 @@
         Laden fehlgeschlagen – nächster Versuch läuft
       </div>
     </div>
+
+    <div class="archive-divider">Archiv · Erster Wahlgang · 8. März 2026</div>
 
     <div id="status-bm" class="status-bar">
       <span><strong>Bürgermeisterwahl:</strong> <span id="bm-status-text">Wird geladen…</span></span>
@@ -292,7 +351,7 @@
   <footer>
     <div class="footer-grid">
       <div>entwickelt mit ❤️ in Zirndorf</div>
-      <div><a href="/impressum/">Impressum</a><a href="/datenschutz/">Datenschutz</a><a href="/stadtrat/">Stadtrat</a><a href="/disclaimer/">Disclaimer</a><a href="https://github.com/openzirndorf/wahl2026">GitHub Repo</a></div>
+      <div><a href="/impressum/">Impressum</a><a href="/datenschutz/">Datenschutz</a><a href="/stadtrat/">Neuer Stadtrat</a><a href="/disclaimer/">Disclaimer</a><a href="https://github.com/openzirndorf/wahl2026">GitHub Repo</a></div>
     </div>
   </footer>
 
@@ -475,6 +534,50 @@
         .replace(/>/g, '&gt;').replace(/"/g, '&quot;');
     }
 
+    /* ── Stichwahl Render ── */
+    function renderStichwahl(data) {
+      document.getElementById('sw-status-text').textContent = data.status || 'Kein Eingang';
+      document.getElementById('sw-last-updated').textContent =
+        data.lastUpdated ? 'Stand: ' + fmtTime(data.lastUpdated) + ' Uhr' : '';
+
+      const swHasData = data.waehler > 0 || data.candidates?.some(c => c.stimmen > 0);
+      const swBadge = document.getElementById('sw-status-badge');
+      swBadge.classList.toggle('live', swHasData);
+      swBadge.innerHTML = swHasData
+        ? '<span class="live-dot"></span>Live'
+        : '<span class="live-dot"></span>Wartet auf Ergebnisse';
+
+      document.getElementById('sw-kpi-beteiligung').textContent =
+        data.wahlbeteiligung > 0 ? fmtPct(data.wahlbeteiligung) : '–';
+      document.getElementById('sw-kpi-waehler').textContent =
+        data.waehler > 0 ? fmt(data.waehler) : '–';
+      document.getElementById('sw-kpi-gueltig').textContent =
+        data.gueltig > 0 ? fmt(data.gueltig) : '–';
+
+      const container = document.getElementById('sw-chart');
+      if (!swHasData) {
+        container.innerHTML = `<div style="text-align:center;padding:1.2rem;color:var(--muted);font-size:.88rem">
+          Auszählung beginnt nach Schließung der Wahllokale um 18:00 Uhr.
+        </div>`;
+        return;
+      }
+      const maxPct = Math.max(...data.candidates.map(c => c.anteil), 1);
+      container.innerHTML = data.candidates.map(c => `
+        <div class="sw-bar-row">
+          <div class="sw-bar-label">
+            ${esc(c.party)}
+            <span class="sw-bar-party">${esc(c.name)}</span>
+          </div>
+          <div class="sw-bar-track">
+            <div class="sw-bar-fill" style="width:${(c.anteil/maxPct*100).toFixed(1)}%;background:${c.color}"></div>
+          </div>
+          <div>
+            <div class="sw-bar-pct">${c.anteil > 0 ? fmtPct(c.anteil) : '–'}</div>
+            <div class="sw-bar-stimmen">${c.stimmen > 0 ? fmt(c.stimmen) + ' Stimmen' : ''}</div>
+          </div>
+        </div>`).join('');
+    }
+
     /* ── Fetch & Refresh ── */
     async function load() {
       const btn = document.getElementById('reload-btn');
@@ -483,21 +586,24 @@
       btn.classList.add('loading');
 
       try {
-        const [bmResp, grResp] = await Promise.all([
+        const [swResp, bmResp, grResp] = await Promise.all([
+          fetch(BASE + 'stichwahl.json?t=' + Date.now()),
           fetch(BASE + 'buergermeister.json?t=' + Date.now()),
           fetch(BASE + 'gemeinderat.json?t=' + Date.now())
         ]);
+        const sw = await swResp.json();
         const bm = await bmResp.json();
         const gr = await grResp.json();
         window._grData = gr;
+        renderStichwahl(sw);
         renderBM(bm);
         renderGR(gr);
         errHint.classList.remove('visible');
 
-        const anyData = hasData(bm) || hasData(gr);
+        const swHasData = sw.waehler > 0 || sw.candidates?.some(c => c.stimmen > 0);
         const badge = document.getElementById('live-badge');
-        badge.classList.toggle('live', anyData);
-        badge.innerHTML = anyData
+        badge.classList.toggle('live', swHasData);
+        badge.innerHTML = swHasData
           ? '<span class="live-dot"></span>Live'
           : '<span class="live-dot"></span>Wartet auf Ergebnisse';
       } catch (e) {

@@ -1,0 +1,13 @@
+{
+  "lastUpdated": "2026-03-22T00:00:00Z",
+  "status": "Kein Eingang",
+  "wahlberechtigte": 0,
+  "waehler": 0,
+  "wahlbeteiligung": 0.0,
+  "ungueltig": 0,
+  "gueltig": 0,
+  "candidates": [
+    { "party": "ZBG", "color": "#4F8F17", "name": "Spath Marcus",       "stimmen": 0, "anteil": 0.0 },
+    { "party": "CSU", "color": "#005CA9", "name": "Hesselberger Tom",   "stimmen": 0, "anteil": 0.0 }
+  ]
+}

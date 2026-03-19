@@ -1,0 +1,251 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>KI-Analyse der Stichwahl-Interviews | Zirndorf wählt 2026</title>
+  <meta name="description" content="Drei unabhängige KI-Analysen (ChatGPT, Gemini, Claude) der Stichwahl-Interviews von Marcus Spath und Tom Hesselberger. Neutral, metodisch offen, ohne Wahlempfehlung." />
+  <link rel="stylesheet" href="/assets/styles.css" />
+  <style>
+    .breadcrumb { font-size: .82rem; color: var(--muted); margin-bottom: 1.2rem; }
+    .breadcrumb a { text-decoration: none; color: var(--primary-dark); font-weight: 600; }
+    .nav-stichwahl { color: var(--primary-dark) !important; font-weight: 700 !important; }
+    .method-warning {
+      background: #fffbea;
+      border: 1px solid #f5d36d;
+      border-left: 4px solid #e6b800;
+      border-radius: 0 var(--radius) var(--radius) 0;
+      padding: 1.1rem 1.25rem;
+      margin: 1rem 0 1.5rem;
+    }
+    .method-warning strong { display: block; margin-bottom: .3rem; font-size: 1rem; }
+    .prompt-box {
+      background: #181c1a;
+      color: #d8f9c2;
+      border-radius: var(--radius);
+      padding: 1rem 1.25rem;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size: .88rem;
+      line-height: 1.65;
+      margin: .8rem 0 1.2rem;
+    }
+    .ki-section {
+      margin-top: 1.8rem;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: #fff;
+      overflow: hidden;
+    }
+    .ki-header {
+      display: flex;
+      align-items: center;
+      gap: .7rem;
+      padding: .85rem 1.1rem;
+      background: #f9f9f7;
+      border-bottom: 1px solid var(--line);
+    }
+    .ki-icon {
+      font-size: 1.4rem;
+    }
+    .ki-header h3 { margin: 0; font-size: 1.05rem; }
+    .ki-body { padding: 1rem 1.1rem; }
+    .ki-body h4 { margin: 1rem 0 .35rem; font-size: .98rem; }
+    .ki-body h4:first-child { margin-top: 0; }
+    .ki-body p { margin: 0 0 .5rem; font-size: .93rem; line-height: 1.65; }
+    .ki-score {
+      display: inline-block;
+      font-size: .8rem;
+      color: var(--muted);
+      margin-top: .2rem;
+    }
+    .stars-table { width: 100%; margin: .8rem 0 1.2rem; }
+    .stars-table th, .stars-table td { padding: .5rem .75rem; font-size: .92rem; }
+    .stars-cell { letter-spacing: .05em; font-size: 1rem; }
+    .sources-section { margin-top: 2.5rem; }
+    .source-group { margin-top: 1.2rem; }
+    .source-group h3 { font-size: .95rem; margin-bottom: .4rem; color: var(--muted); }
+    .legend { font-size: .82rem; color: var(--muted); margin-top: .5rem; }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="wrap nav">
+      <a class="brand" href="/"><img src="/assets/logo.png" alt="OpenZirndorf Logo" /><strong>Zirndorf wählt 2026</strong></a>
+      <nav class="menu" aria-label="Navigation">
+        <a href="/">Start</a>
+        <a href="/prompt/">Prompt</a>
+        <a href="/ergebnisse/">KI-Bewertungen</a>
+        <a href="/parteiantworten/">Parteiantworten</a>
+        <a href="/live/">Wahlergebnis</a>
+        <div class="nav-dropdown"><a href="/stichwahl/warum/" class="dropdown-trigger nav-stichwahl" aria-current="page">Stichwahl</a><div class="nav-dropdown-menu"><a href="/stichwahl/warum/">Warum Stichwahl?</a><a href="/stichwahl/vergleich/">Kandidatenvergleich</a><a href="/stichwahl/ki-analyse/" aria-current="page">KI-Analyse</a><a href="/stichwahl/live/">Live-Ergebnisse</a></div></div><a href="/stichwahl/warum/" class="nav-stichwahl nav-mobile-show">Warum Stichwahl?</a><a href="/stichwahl/vergleich/" class="nav-stichwahl nav-mobile-show">Kandidatenvergleich</a><a href="/stichwahl/ki-analyse/" class="nav-stichwahl nav-mobile-show" aria-current="page">KI-Analyse</a><a href="/stichwahl/live/" class="nav-stichwahl nav-mobile-show">Live-Ergebnisse</a>
+        <a href="/stadtrat/">Neuer Stadtrat</a>
+        <a href="/disclaimer/">Disclaimer</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <section>
+      <p class="breadcrumb"><a href="/">Start</a> › <a href="/stichwahl/warum/">Stichwahl</a> › KI-Analyse</p>
+      <p class="home-kicker">Stichwahl · 22. März 2026</p>
+      <h1>KI-Analyse der Stichwahl-Interviews</h1>
+      <p class="lead">Fürth Aktuell hat beiden Kandidaten dieselben vier Fragen gestellt. Wir haben die unveränderten Antworten mit drei KI-Systemen analysiert: <strong>ChatGPT, Gemini und Claude</strong>. Identischer Prompt, unabhängige Analysen, keine Wahlempfehlung.</p>
+    </section>
+
+    <section>
+      <h2>Kontext</h2>
+      <p>Das Interview erschien auf <a href="https://fuerthaktuell.de/zirndorf/9575/vor-der-stichwahl-in-zirndorf-tom-hesselberger-und-marcus-spath-beantworten-fragen-zu-bibert-bad-verkehr-ortsteilen-und-transparenz/" target="_blank" rel="noopener">Fürth Aktuell ↗</a> kurz vor der Stichwahl. Die vier Fragen betrafen: Finanzierung des Bibert Bads, Verkehrspolitik (inkl. Zirndorfer Brücke), Lebensqualität in den Außenorten und Bürgerbeteiligung. Die Antworten wurden von der Redaktion nicht verändert – identische Fragen für beide Kandidaten.</p>
+    </section>
+
+    <section>
+      <h2>Der Analyse-Prompt</h2>
+      <p>Allen drei KI-Systemen wurde folgender Prompt gestellt:</p>
+      <div class="prompt-box">„Analysiere das folgende Interview mit den Bürgermeisterkandidaten Marcus Spath (ZBG) und Tom Hesselberger (CSU) vor der Stichwahl in Zirndorf am 22. März 2026. Bewerte für jeden Kandidaten zu den Themen Bibert-Bad, Verkehr, Ortsteile und Bürgerbeteiligung: (1) Konkretheit der Aussagen auf einer Skala von 1–5, (2) erkennbare inhaltliche Position, (3) Stärken und Schwächen der Argumentation. Halte die Analyse neutral und faktenbasiert. Keine Wahlempfehlung."</div>
+    </section>
+
+    <section>
+      <h2>Ergebnisse</h2>
+
+      <!-- ChatGPT -->
+      <div class="ki-section">
+        <div class="ki-header">
+          <span class="ki-icon">🤖</span>
+          <h3>ChatGPT (GPT-4o)</h3>
+        </div>
+        <div class="ki-body">
+          <h4>Bibert-Bad</h4>
+          <p>Spath ist der konkretere Kandidat: Er nennt drei umsetzbare Maßnahmen – Ausgliederung der Gastronomie (die laut ihm ein Defizit von 190.000 € verursacht), eine Namenspartnerschaft nach dem Vorbild der Fackelmann-Therme sowie die Einbindung von DLRG und Wasserwacht in die Badaufsicht. Er verbindet das mit einem sozialen Argument (Familien, Schulen, Senioren), das erklärt, warum der Erhalt politische Priorität sein sollte.</p>
+          <p>Hesselberger verweist auf ein gemeinsam mit Staatssekretär Martin Schöffel erarbeitetes Konsolidierungsprogramm und hebt seinen direkten Draht zu Entscheidungsträgern hervor. Er ist der Einzige, der die Ernsthaftigkeit der Lage benennt – „eine Schließung steht im Raum" – was Glaubwürdigkeit signalisiert, aber keine eigenen Zahlen oder Einzelmaßnahmen liefert.</p>
+          <p class="ki-score">Konkretheit Spath: 5/5 · Konkretheit Hesselberger: 3/5</p>
+
+          <h4>Verkehr</h4>
+          <p>Beide adressieren die Zirndorfer Brücke als Beispiel – Spath will aktiv den Kontakt zu OB Thomas Jung (Fürth) suchen und transparent kommunizieren. Hesselberger betont inter-kommunale Kooperation und verweist darauf, dass die CSU als einzige Kraft dieses Thema mit Fachleuten bearbeitet habe. Spaths Antwort ist breiter angelegt (ÖPNV, Radwege, Schulwege), Hesselbergers kürzer und prinzipienorientierter.</p>
+          <p class="ki-score">Konkretheit Spath: 3/5 · Konkretheit Hesselberger: 3/5</p>
+
+          <h4>Außenorte</h4>
+          <p>Spath schlägt einen eigenen Referenten für die Außenorte vor – eine strukturelle Maßnahme, die über reine Absichtsbekundungen hinausgeht. Dazu regelmäßige Bürgerversammlungen direkt in den Ortsteilen. Hesselberger nennt Bürgerbuskonzepte und 24/7-Läden für Nahversorgung als innovative Ansätze. Beide überzeugen – mit unterschiedlichem Fokus: Spath institutionell, Hesselberger serviceorientiert.</p>
+          <p class="ki-score">Konkretheit Spath: 4/5 · Konkretheit Hesselberger: 4/5</p>
+
+          <h4>Bürgerbeteiligung</h4>
+          <p>Hesselberger führt das breiteste Format-Portfolio auf: Bürgerversammlungen, Telefonsprechstunden, Bürgertische in allen Ortsteilen, digitale Formate (Videoschalten) und Social Media als tägliches Transparenzinstrument. Spath setzt auf Bürgersprechstunden, digitale Kontaktmöglichkeiten und informelle Treffen in Gaststätten und Vereinsheimen. Beide setzen auf persönliche Zugänglichkeit, Hesselberger benennt mehr unterschiedliche Formate.</p>
+          <p class="ki-score">Konkretheit Spath: 3/5 · Konkretheit Hesselberger: 4/5</p>
+        </div>
+      </div>
+
+      <!-- Gemini -->
+      <div class="ki-section">
+        <div class="ki-header">
+          <span class="ki-icon">🤖</span>
+          <h3>Gemini (Google)</h3>
+        </div>
+        <div class="ki-body">
+          <h4>Gesamteindruck</h4>
+          <p>Das Interview zeigt zwei Kandidaten mit deutlich unterschiedlichen Kommunikationsstilen. Spath argumentiert substanziell und zieht seine Sachkenntnis aus 12 Jahren Stadtratsarbeit – er kennt Zahlen (190.000 € Gastronomiedefizit), Strukturen (DLRG-Einbindung) und Vergleichsfälle (Fackelmann-Therme). Hesselberger argumentiert relational und netzwerkorientiert: Er verweist auf Kooperationspartner (Staatssekretär Schöffel), auf die CSU als politischen Akteur und auf seinen direkten Draht zu Entscheidungsträgern.</p>
+
+          <h4>Bibert-Bad</h4>
+          <p>Der deutlichste Unterschied im gesamten Interview. Spath liefert drei prüfbare Maßnahmen mit einer konkreten Einsparsumme. Hesselberger benennt die Ernsthaftigkeit der Lage glaubwürdig – „eine Schließung steht im Raum" ist eine ehrliche Einschätzung – verweist aber auf ein Konsolidierungsprogramm, dessen Inhalte im Interview nicht ausgeführt werden. Das Netzwerkargument (direkter Draht) ist ein Versprechen, kein Plan.</p>
+
+          <h4>Außenorte</h4>
+          <p>Beide Antworten sind überzeugend, aber in verschiedenen Dimensionen: Spaths Referenten-Idee schafft eine dauerhafte institutionelle Antwort. Hesselbergers Bürgerbuskonzept und 24/7-Läden adressieren konkrete Alltagsprobleme (Mobilität, Nahversorgung). Das ist einer der wenigen Punkte, an denen beide ungefähr gleichauf liegen – und an dem Hesselberger mit ungewöhnlichen, innovativen Ideen punktet.</p>
+
+          <h4>Bürgerbeteiligung</h4>
+          <p>Hesselberger überrascht hier mit der Breite seiner Antwort: Bürgertische in allen Ortsteilen, Videoschalten, Telefonsprechstunden und tägliche Social-Media-Präsenz – das ist ein vollständiges Ökosystem aus Formaten. Spath setzt auf Qualität über Quantität: weniger Formate, dafür betont er die informelle Dimension (Treffen in Gaststätten). Welcher Ansatz mehr Menschen tatsächlich erreicht, ist eine empirische, keine analytische Frage.</p>
+
+          <h4>Rhetorische Muster</h4>
+          <p>Auffällig: Hesselberger verwendet in mehreren Antworten die Wendung „Wir als CSU sind die einzige politische Kraft, die …" – ein Framing, das politisches Kapital aus Einzigartigkeit zieht. Ob das als Stärke oder als Überhöhung wahrgenommen wird, hängt vom Leser ab. Spath formuliert sachlicher und verzichtet auf Parteimarketing.</p>
+        </div>
+      </div>
+
+      <!-- Claude -->
+      <div class="ki-section">
+        <div class="ki-header">
+          <span class="ki-icon">🤖</span>
+          <h3>Claude (Anthropic)</h3>
+        </div>
+        <div class="ki-body">
+          <h4>Was das Interview zeigt – und was nicht</h4>
+          <p>Ein Interview mit vier Fragen ist kein Regierungsprogramm. Beide Kandidaten wählen ihre Antworten strategisch – sie betonen, was ihnen nützt, und lassen offen, was politisch riskant wäre. Das ist keine Kritik, sondern der Normalzustand im Wahlkampf. Die Frage ist: Wer überzeugt im Rahmen dieser Einschränkung mehr?</p>
+
+          <h4>Bibert-Bad</h4>
+          <p>Spaths Antwort ist die stärkste des gesamten Interviews. Er nennt eine konkrete Zahl (190.000 € Gastronomiedefizit), drei operative Maßnahmen und ein Vergleichsbeispiel. Das ist selten in kommunalen Wahlkämpfen. Er verknüpft das zudem mit einem sozialen Argument, das den Erhalt moralisch untermauert – Senioren, Schulen, Vereine. Hesselberger ist ehrlich, wenn er sagt, eine Schließung stehe im Raum. Sein Verweis auf das Konsolidierungsprogramm mit Staatssekretär Schöffel ist ein Netzwerkargument, kein Sachargument. Es bleibt offen, was dieses Programm konkret vorsieht.</p>
+
+          <h4>Verkehr</h4>
+          <p>Beide Antworten sind solide, keine ist überragend. Spath skizziert einen ausgewogenen Ansatz (Straßen + ÖPNV + Radwege + Schulwege) und benennt einen konkreten Gesprächspartner (OB Thomas Jung, Fürth). Hesselberger betont das Prinzip der interkommunalen Kooperation. Der Unterschied: Spath benennt, was er tun will; Hesselberger betont, wie er es tun will. Beide sind komplementär, keine Antwort liefert einen vollständigen Plan.</p>
+
+          <h4>Außenorte</h4>
+          <p>Das ist der ausgewogenste Teil des Interviews. Spath denkt institutionell (Referent), Hesselberger denkt funktional (Bürgerbuskonzept, 24/7-Läden). Beide treffen echte Bedürfnisse. Hesselbergers Idee der 24/7-Läden ist unkonventionell für einen Bürgermeisterkandidaten – was nicht heißt, dass sie schlecht ist, aber Bürgermeister haben dort wenig direkte Gestaltungsmacht.</p>
+
+          <h4>Bürgerbeteiligung</h4>
+          <p>Hier zeigt sich ein charakteristischer Unterschied: Hesselberger denkt in Formaten (Bürgertische, Telefonsprechstunden, Videoschalten, Social Media), Spath denkt in Atmosphäre (Treffen bei einem Getränk in Gaststätten). Hesselbergers Liste ist länger und strukturierter. Spaths Ansatz ist informeller und vielleicht niedrigschwelliger. Keine Antwort enthält institutionelle Transparenzversprechen wie Livestreams oder digitale Informationsveröffentlichungen – das wäre die Sollbruchstelle, an der man prüfen könnte, ob Beteiligung über den Bürgermeister hinaus verankert wird.</p>
+
+          <h4>Fazit</h4>
+          <p>Das Interview verschiebt das Bild gegenüber dem, was aus Wahlprogrammen und Medienberichten ablesbar war: Spath ist beim Bibert-Bad überraschend substanziell. Hesselberger ist bei der Bürgerbeteiligung formatreicher als erwartet. Beim Verkehr liegen beide näher zusammen als gedacht. Das Grundmuster bleibt: Spath argumentiert aus dem System heraus, Hesselberger setzt auf Netzwerk und Kooperation. Welche Strategie Zirndorf 2026 braucht, ist keine analytische Frage.</p>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2>Übersichtstabelle: Konkretheit der Aussagen im Interview</h2>
+      <table class="stars-table">
+        <thead>
+          <tr>
+            <th>Thema</th>
+            <th>Spath (ZBG)</th>
+            <th>Hesselberger (CSU)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>Bibert-Bad</td><td class="stars-cell">★★★★★</td><td class="stars-cell">★★★☆☆</td></tr>
+          <tr><td>Verkehr</td><td class="stars-cell">★★★☆☆</td><td class="stars-cell">★★★☆☆</td></tr>
+          <tr><td>Außenorte</td><td class="stars-cell">★★★★☆</td><td class="stars-cell">★★★★☆</td></tr>
+          <tr><td>Bürgerbeteiligung</td><td class="stars-cell">★★★☆☆</td><td class="stars-cell">★★★★☆</td></tr>
+        </tbody>
+      </table>
+      <p class="legend">Skala: Konkretheit der Aussagen im Interview (1–5). Bewertet wird die Messbarkeit und Spezifität – nicht die politische Qualität oder Richtigkeit.</p>
+    </section>
+
+    <section class="sources-section">
+      <h2>Vollständige Quellenübersicht</h2>
+      <p>Alle für diese Analyse herangezogenen Quellen:</p>
+      <table>
+        <thead><tr><th>Quelle</th><th>Typ</th><th>Datum</th></tr></thead>
+        <tbody>
+          <tr><td><a href="https://fuerthaktuell.de/zirndorf/9575/vor-der-stichwahl-in-zirndorf-tom-hesselberger-und-marcus-spath-beantworten-fragen-zu-bibert-bad-verkehr-ortsteilen-und-transparenz/" target="_blank" rel="noopener">Fürth Aktuell – Stichwahl-Interview ↗</a></td><td>Interview (primäre Analysegrundlage)</td><td>März 2026</td></tr>
+          <tr><td><a href="https://www.youtube.com/watch?v=ayhkWsXPvGc" target="_blank" rel="noopener">YouTube – Video-Interview ↗</a></td><td>Interview (Video)</td><td>März 2026</td></tr>
+          <tr><td><a href="https://www.tomhesselberger.de/th/homepage" target="_blank" rel="noopener">tomhesselberger.de ↗</a></td><td>Kandidaten-Website</td><td>März 2026</td></tr>
+          <tr><td><a href="https://www.zirndorfer-buerger.de/wahl-2026/" target="_blank" rel="noopener">zirndorfer-buerger.de/wahl-2026 ↗</a></td><td>Wahlprogramm ZBG</td><td>März 2026</td></tr>
+          <tr><td><a href="https://www.csu.de/verbaende/ov/zirndorf/regionales/oktober-2025/unsere-stadtratsliste-fuer-den-8-maerz-26-steht/" target="_blank" rel="noopener">CSU Zirndorf – Stadtratsliste ↗</a></td><td>Programm CSU</td><td>Okt. 2025</td></tr>
+          <tr><td><a href="https://fuerthaktuell.de/zirndorf/8580/kommunen-unter-druck-csu-zirndorf-sucht-im-oeffentlichen-dialog-nach-auswegen-aus-der-finanzkrise/" target="_blank" rel="noopener">Fürth Aktuell – Kommunen unter Druck ↗</a></td><td>Veranstaltungsbericht</td><td>Jan. 2026</td></tr>
+          <tr><td><a href="https://fuerthaktuell.de/zirndorf/9249/schulterschluss-fuer-den-neubau-die-zirndorfer-bruecke-war-thema-bei-csu-veranstaltung/" target="_blank" rel="noopener">Fürth Aktuell – Zirndorfer Brücke ↗</a></td><td>Medienbericht</td><td>Feb. 2026</td></tr>
+          <tr><td><a href="https://fuerthaktuell.de/nachrichten-aus-der-stadt-fuerth/9420/machtwechsel-im-rathaus-zirndorf-waehlt-nach-acht-jahrzehnten-die-spd-ab/" target="_blank" rel="noopener">Fürth Aktuell – Machtwechsel ↗</a></td><td>Wahlergebnis</td><td>09.03.2026</td></tr>
+          <tr><td><a href="https://www.nn.de/fuerth/csu-will-den-burgermeister-in-zirndorf-stellen-tom-hesselberger-soll-den-bann-brechen-1.14608181" target="_blank" rel="noopener">NN – Hesselberger nominiert ↗</a></td><td>Kandidatenportrait</td><td>März 2025</td></tr>
+          <tr><td><a href="https://ju-zirndorf.de/" target="_blank" rel="noopener">ju-zirndorf.de ↗</a></td><td>Profil JU / Beruf Hesselberger</td><td>März 2026</td></tr>
+          <tr><td><a href="https://www.zirndorf.de/fileadmin/Dateien/01Website/Dateien/Wahlen/Kommunalwahl_2026/Wahlbekanntmachung_Anlage_Muster_Stimmzettel_Stadtrat.pdf" target="_blank" rel="noopener">Amtlicher Stimmzettel Zirndorf (PDF) ↗</a></td><td>Amtliches Dokument</td><td>2026</td></tr>
+          <tr><td><a href="https://wahlen.osrz-akdb.de/mf-p/573134/1/20260308/buergermeisterwahl_gemeinde/index.html" target="_blank" rel="noopener">Amtliches Wahlergebnis OSRZ-AKDB ↗</a></td><td>Amtliches Endergebnis</td><td>März 2026</td></tr>
+          <tr><td><a href="https://www.petitionen.com/nein_zur_schliessung_bibertbad_bleibt" target="_blank" rel="noopener">Petitionen.com – Bibert-Bad ↗</a></td><td>Hintergrunddokument</td><td>Nov. 2024</td></tr>
+          <tr><td><a href="https://wahl2026.openzirndorf.de/prompt/" target="_blank" rel="noopener">wahl2026.openzirndorf.de/prompt ↗</a></td><td>Ursprünglicher Analyse-Prompt (1. Wahlgang)</td><td>Feb./März 2026</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <p style="font-size:.82rem;color:var(--muted);margin-top:2rem;">
+      Diese Analyse ist Teil des OpenZirndorf-Projekts zur transparenten Wahlbegleitung. Keine Wahlempfehlung. Methodik und Quellen sind vollständig offengelegt.<br>
+      <a href="/prompt/">Zum vollständigen Analyse-Prompt (1. Wahlgang)</a> · <a href="/disclaimer/">Disclaimer</a> · <a href="https://github.com/openzirndorf/wahl2026" target="_blank" rel="noopener">GitHub Repo</a>
+    </p>
+  </main>
+
+  <footer>
+    <div class="footer-grid">
+      <div>entwickelt mit ❤️ in Zirndorf</div>
+      <div>
+        <a href="/impressum/">Impressum</a>
+        <a href="/datenschutz/">Datenschutz</a>
+        <a href="/stadtrat/">Neuer Stadtrat</a>
+        <a href="/disclaimer/">Disclaimer</a>
+        <a href="https://github.com/openzirndorf/wahl2026">GitHub Repo</a>
+      </div>
+    </div>
+  </footer>
+  <script src="/assets/app.js"></script>
+</body>
+</html>

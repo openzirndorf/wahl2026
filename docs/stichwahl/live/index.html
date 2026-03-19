@@ -1,0 +1,305 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Stichwahl Live · 22. März 2026 | Zirndorf wählt 2026</title>
+  <meta name="description" content="Live-Ergebnisse der Bürgermeister-Stichwahl Zirndorf am 22. März 2026 – Spath (ZBG) vs. Hesselberger (CSU)." />
+  <link rel="stylesheet" href="/assets/styles.css" />
+  <style>
+    .live-badge {
+      display: inline-flex; align-items: center; gap: .35rem;
+      background: #fff3cd; color: #795000; border: 1px solid #f5d36d;
+      border-radius: 999px; font-size: .72rem; font-weight: 700;
+      padding: .18rem .52rem; letter-spacing: .3px; text-transform: uppercase;
+    }
+    .live-badge.live { background: #fde8e8; color: #c0392b; border-color: #f5b4b4; }
+    .live-dot {
+      width: 7px; height: 7px; border-radius: 50%; background: currentColor;
+      animation: pulse 1.4s infinite;
+    }
+    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.35} }
+
+    .kpi-row {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+      gap: .6rem; margin-bottom: 1.2rem;
+    }
+    .kpi-card {
+      background: var(--panel); border: 1px solid var(--line);
+      border-radius: var(--radius); padding: .65rem .75rem; text-align: center;
+    }
+    .kpi-value { font-size: 1.55rem; font-weight: 800; line-height: 1; margin-bottom: .2rem; }
+    .kpi-label { font-size: .72rem; color: var(--muted); font-weight: 600; text-transform: uppercase; letter-spacing: .3px; }
+
+    .kandidat-bars { display: grid; gap: .9rem; margin-bottom: 1.2rem; }
+    .kandidat-bar-row {
+      display: grid; grid-template-columns: 140px 1fr 90px;
+      align-items: center; gap: .7rem;
+    }
+    .kandidat-label { font-weight: 800; font-size: 1rem; }
+    .kandidat-party { font-size: .78rem; color: var(--muted); font-weight: 600; display: block; }
+    .kandidat-track {
+      height: 36px; background: var(--line); border-radius: 6px; overflow: hidden;
+    }
+    .kandidat-fill { height: 100%; border-radius: 6px; transition: width .6s cubic-bezier(.4,0,.2,1); }
+    .kandidat-pct-col { text-align: right; }
+    .kandidat-pct { font-weight: 800; font-size: 1.4rem; font-variant-numeric: tabular-nums; line-height: 1; }
+    .kandidat-stimmen { font-size: .75rem; color: var(--muted); }
+
+    .no-data-box {
+      text-align: center; padding: 2rem 1rem; color: var(--muted); font-size: .9rem;
+      background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius);
+    }
+
+    .status-bar {
+      display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between;
+      gap: .5rem; padding: .6rem .9rem;
+      background: var(--panel); border: 1px solid var(--line);
+      border-radius: var(--radius); margin-bottom: .8rem;
+      font-size: .85rem; color: var(--muted);
+    }
+
+    .refresh-bar {
+      display: flex; align-items: center; gap: .6rem; flex-wrap: wrap;
+      font-size: .8rem; color: var(--muted); margin-bottom: 1rem;
+    }
+    .reload-btn {
+      display: inline-flex; align-items: center; gap: .35rem;
+      padding: .32rem .75rem; border-radius: 999px;
+      border: 1.5px solid var(--line); background: #fff;
+      font-size: .8rem; font-weight: 700; cursor: pointer;
+      transition: border-color .15s, box-shadow .15s;
+    }
+    .reload-btn:hover { border-color: var(--primary); box-shadow: 0 2px 8px rgba(79,143,23,.15); }
+    .reload-btn:disabled { opacity: .5; cursor: not-allowed; }
+    .auto-toggle {
+      display: inline-flex; align-items: center; gap: .4rem;
+      cursor: pointer; user-select: none; font-weight: 600;
+    }
+    .toggle-track {
+      width: 32px; height: 18px; border-radius: 999px; background: var(--line);
+      position: relative; transition: background .2s; flex-shrink: 0;
+    }
+    .toggle-track.on { background: var(--primary); }
+    .toggle-knob {
+      width: 13px; height: 13px; border-radius: 50%; background: #fff;
+      position: absolute; top: 2.5px; left: 2.5px;
+      transition: transform .2s; box-shadow: 0 1px 3px rgba(0,0,0,.2);
+    }
+    .toggle-track.on .toggle-knob { transform: translateX(14px); }
+    .countdown { font-variant-numeric: tabular-nums; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .reload-btn.loading svg { animation: spin .7s linear infinite; }
+
+    .breadcrumb { font-size: .82rem; color: var(--muted); margin-bottom: 1.2rem; }
+    .breadcrumb a { text-decoration: none; color: var(--primary-dark); font-weight: 600; }
+    .nav-stichwahl { color: var(--primary-dark) !important; font-weight: 700 !important; }
+
+    @media(max-width:600px) {
+      .kandidat-bar-row { grid-template-columns: 90px 1fr 64px; }
+      .kandidat-pct { font-size: 1.1rem; }
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="wrap nav">
+      <a class="brand" href="/"><img src="/assets/logo.png" alt="OpenZirndorf Logo" /><strong>Zirndorf wählt 2026</strong></a>
+      <nav class="menu" aria-label="Navigation">
+        <a href="/">Start</a>
+        <a href="/prompt/">Prompt</a>
+        <a href="/ergebnisse/">KI-Bewertungen</a>
+        <a href="/parteiantworten/">Parteiantworten</a>
+        <a href="/live/">Wahlergebnis</a>
+        <div class="nav-dropdown"><a href="/stichwahl/warum/" class="dropdown-trigger nav-stichwahl" aria-current="page">Stichwahl</a><div class="nav-dropdown-menu"><a href="/stichwahl/warum/">Warum Stichwahl?</a><a href="/stichwahl/vergleich/">Kandidatenvergleich</a><a href="/stichwahl/ki-analyse/">KI-Analyse</a><a href="/stichwahl/live/" aria-current="page">Live-Ergebnisse</a></div></div><a href="/stichwahl/warum/" class="nav-stichwahl nav-mobile-show">Warum Stichwahl?</a><a href="/stichwahl/vergleich/" class="nav-stichwahl nav-mobile-show">Kandidatenvergleich</a><a href="/stichwahl/ki-analyse/" class="nav-stichwahl nav-mobile-show">KI-Analyse</a><a href="/stichwahl/live/" class="nav-stichwahl nav-mobile-show" aria-current="page">Live-Ergebnisse</a>
+        <a href="/stadtrat/">Neuer Stadtrat</a>
+        <a href="/disclaimer/">Disclaimer</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <section style="padding-bottom:0">
+      <p class="breadcrumb"><a href="/">Start</a> › <a href="/stichwahl/warum/">Stichwahl</a> › Live-Ergebnisse</p>
+      <p class="home-kicker">Stichwahl · 22. März 2026 · Zirndorf</p>
+      <div style="display:flex;align-items:center;gap:.7rem;flex-wrap:wrap;margin-bottom:.5rem">
+        <h1 style="margin:0;font-size:clamp(1.5rem,3vw,2.1rem)">Spath vs. Hesselberger</h1>
+        <span id="live-badge" class="live-badge"><span class="live-dot"></span>Wartet auf Ergebnisse</span>
+      </div>
+      <p class="lead" style="margin-bottom:.9rem">Live-Auszählung der Bürgermeister-Stichwahl – Daten direkt vom offiziellen Wahlsystem.</p>
+    </section>
+
+    <div class="refresh-bar">
+      <button class="reload-btn" id="reload-btn" onclick="manualReload()">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+          <path d="M1 4v6h6"/><path d="M23 20v-6h-6"/>
+          <path d="M20.49 9A9 9 0 0 0 5.64 5.64L1 10m22 4-4.64 4.36A9 9 0 0 1 3.51 15"/>
+        </svg>
+        Jetzt laden
+      </button>
+      <label class="auto-toggle" title="Automatische Aktualisierung alle 2 Minuten">
+        <div class="toggle-track on" id="auto-track"><div class="toggle-knob"></div></div>
+        <span>Auto</span>
+      </label>
+      <span class="countdown" id="countdown"></span>
+    </div>
+
+    <div class="status-bar">
+      <span id="status-text">Wird geladen…</span>
+      <span style="font-size:.75rem" id="last-updated"></span>
+    </div>
+
+    <div class="kpi-row">
+      <div class="kpi-card">
+        <div class="kpi-value" id="kpi-beteiligung">–</div>
+        <div class="kpi-label">Wahlbeteiligung</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-value" id="kpi-waehler">–</div>
+        <div class="kpi-label">Wähler</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-value" id="kpi-gueltig">–</div>
+        <div class="kpi-label">Gültige Stimmen</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-value" id="kpi-ungueltig">–</div>
+        <div class="kpi-label">Ungültige Stimmen</div>
+      </div>
+    </div>
+
+    <div id="chart"></div>
+
+    <p style="font-size:.75rem;color:var(--muted);margin-top:2rem;text-align:center">
+      Datenquelle: <a href="https://wahlen.osrz-akdb.de/" target="_blank" rel="noopener" style="color:var(--primary)">wahlen.osrz-akdb.de</a> (OSRZ AKDB) · Keine Gewähr für Vollständigkeit
+    </p>
+  </main>
+
+  <footer>
+    <div class="footer-grid">
+      <div>entwickelt mit ❤️ in Zirndorf</div>
+      <div>
+        <a href="/impressum/">Impressum</a>
+        <a href="/datenschutz/">Datenschutz</a>
+        <a href="/stadtrat/">Neuer Stadtrat</a>
+        <a href="/disclaimer/">Disclaimer</a>
+        <a href="https://github.com/openzirndorf/wahl2026">GitHub Repo</a>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+  (() => {
+    const DATA_URL = '/live/data/stichwahl.json';
+    const REFRESH_MS = 120_000;
+    let autoRefresh = true;
+    let refreshTimer = null;
+    let countdownTimer = null;
+    let nextRefreshAt = null;
+
+    const fmt = n => n.toLocaleString('de-DE');
+    const fmtPct = p => p.toFixed(1).replace('.', ',') + ' %';
+    const fmtTime = iso => new Date(iso).toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+
+    const track = document.getElementById('auto-track');
+    track.parentElement.addEventListener('click', () => {
+      autoRefresh = !autoRefresh;
+      track.classList.toggle('on', autoRefresh);
+      if (autoRefresh) scheduleRefresh();
+      else {
+        clearTimeout(refreshTimer); clearInterval(countdownTimer);
+        document.getElementById('countdown').textContent = 'Auto-Refresh pausiert';
+      }
+    });
+
+    function scheduleRefresh() {
+      clearTimeout(refreshTimer); clearInterval(countdownTimer);
+      nextRefreshAt = Date.now() + REFRESH_MS;
+      refreshTimer = setTimeout(() => { load(); scheduleRefresh(); }, REFRESH_MS);
+      countdownTimer = setInterval(updateCountdown, 1000);
+      updateCountdown();
+    }
+
+    function updateCountdown() {
+      const secs = Math.max(0, Math.round((nextRefreshAt - Date.now()) / 1000));
+      document.getElementById('countdown').textContent =
+        secs > 0 ? `Nächste Aktualisierung in ${secs} s` : '';
+    }
+
+    window.manualReload = () => {
+      const btn = document.getElementById('reload-btn');
+      if (btn.disabled) return;
+      load();
+      if (autoRefresh) scheduleRefresh();
+    };
+
+    function render(data) {
+      document.getElementById('status-text').textContent = data.status || 'Kein Eingang';
+      document.getElementById('last-updated').textContent =
+        data.lastUpdated ? 'Stand: ' + fmtTime(data.lastUpdated) + ' Uhr' : '';
+
+      const hasData = data.waehler > 0 || data.candidates?.some(c => c.stimmen > 0);
+      const badge = document.getElementById('live-badge');
+      badge.classList.toggle('live', hasData);
+      badge.innerHTML = hasData
+        ? '<span class="live-dot"></span>Live'
+        : '<span class="live-dot"></span>Wartet auf Ergebnisse';
+
+      document.getElementById('kpi-beteiligung').textContent =
+        data.wahlbeteiligung > 0 ? fmtPct(data.wahlbeteiligung) : '–';
+      document.getElementById('kpi-waehler').textContent =
+        data.waehler > 0 ? fmt(data.waehler) : '–';
+      document.getElementById('kpi-gueltig').textContent =
+        data.gueltig > 0 ? fmt(data.gueltig) : '–';
+      document.getElementById('kpi-ungueltig').textContent =
+        data.ungueltig > 0 ? fmt(data.ungueltig) : '–';
+
+      const container = document.getElementById('chart');
+      if (!hasData) {
+        container.innerHTML = `<div class="no-data-box">
+          Auszählung beginnt nach Schließung der Wahllokale um 18:00 Uhr.
+        </div>`;
+        return;
+      }
+      const maxPct = Math.max(...data.candidates.map(c => c.anteil), 1);
+      container.innerHTML = `<div class="kandidat-bars">` +
+        data.candidates.map(c => `
+          <div class="kandidat-bar-row">
+            <div class="kandidat-label">
+              ${esc(c.party)}
+              <span class="kandidat-party">${esc(c.name)}</span>
+            </div>
+            <div class="kandidat-track">
+              <div class="kandidat-fill" style="width:${(c.anteil/maxPct*100).toFixed(1)}%;background:${c.color}"></div>
+            </div>
+            <div class="kandidat-pct-col">
+              <div class="kandidat-pct">${c.anteil > 0 ? fmtPct(c.anteil) : '–'}</div>
+              <div class="kandidat-stimmen">${c.stimmen > 0 ? fmt(c.stimmen) + ' Stimmen' : ''}</div>
+            </div>
+          </div>`).join('') + `</div>`;
+    }
+
+    function esc(s) {
+      return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+    }
+
+    async function load() {
+      const btn = document.getElementById('reload-btn');
+      btn.disabled = true; btn.classList.add('loading');
+      try {
+        const resp = await fetch(DATA_URL + '?t=' + Date.now());
+        const data = await resp.json();
+        render(data);
+      } catch(e) {
+        console.error(e);
+      } finally {
+        btn.disabled = false; btn.classList.remove('loading');
+      }
+    }
+
+    load();
+    scheduleRefresh();
+  })();
+  </script>
+</body>
+</html>

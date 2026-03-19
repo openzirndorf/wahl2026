@@ -11,6 +11,7 @@ from datetime import datetime, timezone
 
 BM_URL = "https://wahlen.osrz-akdb.de/mf-p/573134/1/20260308/buergermeisterwahl_gemeinde/ergebnisse.html"
 GR_URL = "https://wahlen.osrz-akdb.de/mf-p/573134/2/20260308/gemeinderatswahl_gemeinde/ergebnisse.html"
+STICHWAHL_URL = "https://wahlen.osrz-akdb.de/mf-p/573134/1/20260322/buergermeisterwahl_gemeinde/ergebnisse.html"
 
 PARTY_NAMES = ["CSU", "FREIE WÄHLER", "AfD", "GRÜNE", "SPD", "Die Linke", "FDP", "Volt", "ZBG"]
 PARTY_COLORS = {
@@ -282,7 +283,15 @@ def parse_gemeinderatswahl(html: str) -> dict:
 def main():
     output_dir = sys.argv[1] if len(sys.argv) > 1 else "docs/live/data"
 
-    print("Fetching Bürgermeisterwahl...")
+    print("Fetching Stichwahl Bürgermeisterwahl...")
+    sw_html = fetch(STICHWAHL_URL)
+    sw_data = parse_buergermeisterwahl(sw_html)
+    sw_path = f"{output_dir}/stichwahl.json"
+    with open(sw_path, "w", encoding="utf-8") as f:
+        json.dump(sw_data, f, ensure_ascii=False, indent=2)
+    print(f"  → {sw_path} | Status: {sw_data['status']} | Kandidaten: {len(sw_data['candidates'])}")
+
+    print("Fetching Bürgermeisterwahl (1. Wahlgang)...")
     bm_html = fetch(BM_URL)
     bm_data = parse_buergermeisterwahl(bm_html)
     bm_path = f"{output_dir}/buergermeister.json"

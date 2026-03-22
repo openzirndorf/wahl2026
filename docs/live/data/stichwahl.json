@@ -1,13 +1,25 @@
 {
-  "lastUpdated": "2026-03-22T00:00:00Z",
-  "status": "Kein Eingang",
-  "wahlberechtigte": 0,
-  "waehler": 0,
-  "wahlbeteiligung": 0.0,
-  "ungueltig": 0,
-  "gueltig": 0,
+  "lastUpdated": "2026-03-22T18:12:49Z",
+  "status": "Vorläufiges Endergebnis",
+  "wahlberechtigte": 21077,
+  "waehler": 10831,
+  "wahlbeteiligung": 51.4,
+  "ungueltig": 49,
+  "gueltig": 10782,
   "candidates": [
-    { "party": "ZBG", "color": "#4F8F17", "name": "Spath Marcus",       "stimmen": 0, "anteil": 0.0 },
-    { "party": "CSU", "color": "#005CA9", "name": "Hesselberger Tom",   "stimmen": 0, "anteil": 0.0 }
+    {
+      "party": "ZBG",
+      "color": "#4F8F17",
+      "name": "Spath Marcus",
+      "stimmen": 7502,
+      "anteil": 69.6
+    },
+    {
+      "party": "CSU",
+      "color": "#005CA9",
+      "name": "Hesselberger Tom",
+      "stimmen": 3280,
+      "anteil": 30.4
+    }
   ]
 }

@@ -239,11 +239,17 @@
         data.lastUpdated ? 'Stand: ' + fmtTime(data.lastUpdated) + ' Uhr' : '';
 
       const hasData = data.waehler > 0 || data.candidates?.some(c => c.stimmen > 0);
+      const isFinal = hasData && data.status && data.status.toLowerCase().includes('endergebnis');
       const badge = document.getElementById('live-badge');
-      badge.classList.toggle('live', hasData);
-      badge.innerHTML = hasData
-        ? '<span class="live-dot"></span>Live'
-        : '<span class="live-dot"></span>Wartet auf Ergebnisse';
+      badge.classList.toggle('live', hasData && !isFinal);
+      if (isFinal) {
+        badge.style.background = '#e8f4dc'; badge.style.color = '#2f5c0e'; badge.style.borderColor = '#9ac96e';
+        badge.innerHTML = 'Endergebnis';
+      } else if (hasData) {
+        badge.innerHTML = '<span class="live-dot"></span>Live';
+      } else {
+        badge.innerHTML = '<span class="live-dot"></span>Wartet auf Ergebnisse';
+      }
 
       document.getElementById('kpi-beteiligung').textContent =
         data.wahlbeteiligung > 0 ? fmtPct(data.wahlbeteiligung) : '–';
@@ -262,12 +268,16 @@
         return;
       }
       const maxPct = Math.max(...data.candidates.map(c => c.anteil), 1);
+      const winner = isFinal ? data.candidates.reduce((a, b) => a.stimmen > b.stimmen ? a : b, data.candidates[0]) : null;
       container.innerHTML = `<div class="kandidat-bars">` +
-        data.candidates.map(c => `
-          <div class="kandidat-bar-row">
+        data.candidates.map(c => {
+          const isWinner = winner && c.name === winner.name;
+          return `
+          <div class="kandidat-bar-row" style="${isWinner ? 'background:var(--panel);border-radius:8px;padding:.3rem .5rem;margin:-.3rem -.5rem;' : ''}">
             <div class="kandidat-label">
               ${esc(c.party)}
               <span class="kandidat-party">${esc(c.name)}</span>
+              ${isWinner ? '<span style="display:inline-block;margin-top:.2rem;font-size:.7rem;font-weight:800;background:#e8f4dc;color:#2f5c0e;border-radius:999px;padding:.1rem .45rem;">Gewählt</span>' : ''}
             </div>
             <div class="kandidat-track">
               <div class="kandidat-fill" style="width:${(c.anteil/maxPct*100).toFixed(1)}%;background:${c.color}"></div>
@@ -276,7 +286,8 @@
               <div class="kandidat-pct">${c.anteil > 0 ? fmtPct(c.anteil) : '–'}</div>
               <div class="kandidat-stimmen">${c.stimmen > 0 ? fmt(c.stimmen) + ' Stimmen' : ''}</div>
             </div>
-          </div>`).join('') + `</div>`;
+          </div>`;
+        }).join('') + `</div>`;
     }
 
     function esc(s) {

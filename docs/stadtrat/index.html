@@ -177,7 +177,7 @@
 
       <div class="info-box" style="margin-bottom:1.2rem">
         <svg class="info-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><circle cx="12" cy="16" r=".5" fill="currentColor"/></svg>
-        <span>Die Sitzberechnung basiert auf dem Hare-Niemeyer-Verfahren (Art. 42 GLKrWG Bayern). Die 30 Stadtratsmitglieder werden durch den/die Bürgermeister/in ergänzt, der/die nach Art. 31 BayGO ebenfalls stimmberechtigt ist (kein separater Stichentscheid – bei Gleichstand gilt der Antrag als abgelehnt, Art. 51 BayGO). Da die Bürgermeisterwahl in die <strong>Stichwahl</strong> zwischen Spath Marcus (ZBG, 34,5 %) und Hesselberger Tom (CSU, 23,6 %) geht, zeigt der Mehrheitsrechner unten beide Szenarien.</span>
+        <span>Die Sitzberechnung basiert auf dem Hare-Niemeyer-Verfahren (Art. 42 GLKrWG Bayern). Die 30 Stadtratsmitglieder werden durch den Bürgermeister ergänzt, der nach Art. 31 BayGO ebenfalls stimmberechtigt ist (kein separater Stichentscheid – bei Gleichstand gilt der Antrag als abgelehnt, Art. 51 BayGO). <strong>Spath Marcus (ZBG)</strong> hat die Stichwahl am 22. März 2026 mit 69,6 % gewonnen und wird neuer Bürgermeister.</span>
       </div>
 
       <!-- Donut + Legende -->
@@ -200,26 +200,7 @@
     <section>
       <div class="coalition-tool">
         <h2>Mehrheitsrechner</h2>
-        <p class="coalition-hint">Szenario wählen + Stadtratsfraktionen anklicken. Gesamt: 31 Stimmen (30 Stadtrat + BM), Mehrheit ab 16.</p>
-
-        <!-- BM-Szenario-Toggle -->
-        <div style="margin-bottom:1rem;">
-          <div style="font-size:.8rem;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);margin-bottom:.45rem;">
-            Bürgermeister/in nach Stichwahl:
-          </div>
-          <div style="display:flex;gap:.5rem;flex-wrap:wrap;">
-            <button class="bm-btn active" id="bm-zbg" onclick="setBM('ZBG')"
-              style="display:inline-flex;align-items:center;gap:.45rem;padding:.4rem .85rem;border-radius:999px;border:2px solid #009FA1;background:#009FA1;color:#fff;font-weight:700;font-size:.87rem;cursor:pointer;">
-              <span style="width:10px;height:10px;border-radius:50%;background:#fff;display:inline-block;"></span>
-              Spath Marcus (ZBG) · 34,5 %
-            </button>
-            <button class="bm-btn" id="bm-csu" onclick="setBM('CSU')"
-              style="display:inline-flex;align-items:center;gap:.45rem;padding:.4rem .85rem;border-radius:999px;border:2px solid #005CA9;background:var(--bg);color:var(--ink);font-weight:700;font-size:.87rem;cursor:pointer;">
-              <span style="width:10px;height:10px;border-radius:50%;background:#005CA9;display:inline-block;"></span>
-              Hesselberger Tom (CSU) · 23,6 %
-            </button>
-          </div>
-        </div>
+        <p class="coalition-hint">Stadtratsfraktionen anklicken. Gesamt: 31 Stimmen (30 Stadtrat + BM Spath Marcus, ZBG), Mehrheit ab 16.</p>
 
         <!-- Stadtratsfraktionen -->
         <div style="font-size:.8rem;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);margin-bottom:.45rem;">
@@ -269,12 +250,11 @@
   const TOTAL_VOTES = 31;    // inkl. Bürgermeister/in (Art. 31 BayGO)
   const MAJORITY = 16;
 
-  // Bürgermeister-Szenarien (Stichwahl)
+  // Bürgermeister (Ergebnis Stichwahl 22. März 2026)
   const BM_SCENARIOS = {
-    ZBG: { name: "Spath Marcus", party: "ZBG", color: "#009FA1", pct: "34,5" },
-    CSU: { name: "Hesselberger Tom", party: "CSU", color: "#005CA9", pct: "23,6" },
+    ZBG: { name: "Spath Marcus", party: "ZBG", color: "#009FA1", pct: "69,6" },
   };
-  let currentBM = "ZBG";
+  const currentBM = "ZBG";
 
   const parties = [
     {
@@ -474,19 +454,7 @@
   // ─── Mehrheitsrechner ────────────────────────────────────────────────────
   const selected = new Set();
 
-  function setBM(party) {
-    currentBM = party;
-    // Toggle-Buttons stylen
-    const bm = BM_SCENARIOS[party];
-    document.getElementById("bm-zbg").style.background = party === "ZBG" ? "#009FA1" : "var(--bg)";
-    document.getElementById("bm-zbg").style.color = party === "ZBG" ? "#fff" : "var(--ink)";
-    document.getElementById("bm-csu").style.background = party === "CSU" ? "#005CA9" : "var(--bg)";
-    document.getElementById("bm-csu").style.color = party === "CSU" ? "#fff" : "var(--ink)";
-    updateMemberCards();
-    updateCoalition();
-  }
-
-  function updateCoalition() {
+function updateCoalition() {
     const bm = BM_SCENARIOS[currentBM];
     let councilVotes = 0;
     selected.forEach(name => {

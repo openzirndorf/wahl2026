@@ -105,8 +105,8 @@ def parse_buergermeisterwahl(html: str) -> dict:
     #   1 = Stimmenanteile tabellarisch (all candidates + tfoot with KPI)
     if len(tables) >= 3:
         table = tables[2]
-    elif len(tables) == 2:
-        table = tables[1]
+    elif len(tables) >= 1:
+        table = tables[-1]  # letztes / einziges (Stichwahl hat nur 1 Tabelle)
     else:
         return {
             "lastUpdated": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),

@@ -1,10 +1,25 @@
 {
-  "lastUpdated": "2026-03-22T17:08:08Z",
-  "status": "Kein Eingang",
-  "wahlberechtigte": 0,
-  "waehler": 0,
-  "wahlbeteiligung": 0.0,
-  "ungueltig": 0,
-  "gueltig": 0,
-  "candidates": []
+  "lastUpdated": "2026-03-22T17:10:08Z",
+  "status": "Ausgezählte Gebiete: 2 von 34, 22.03.2026, 18:07:11",
+  "wahlberechtigte": 2051,
+  "waehler": 478,
+  "wahlbeteiligung": 23.3,
+  "ungueltig": 2,
+  "gueltig": 476,
+  "candidates": [
+    {
+      "party": "ZBG",
+      "color": "#4F8F17",
+      "name": "Spath Marcus",
+      "stimmen": 366,
+      "anteil": 76.9
+    },
+    {
+      "party": "CSU",
+      "color": "#005CA9",
+      "name": "Hesselberger Tom",
+      "stimmen": 110,
+      "anteil": 23.1
+    }
+  ]
 }

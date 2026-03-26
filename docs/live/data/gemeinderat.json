@@ -1,11 +1,11 @@
 {
-  "lastUpdated": "2026-03-24T11:54:47Z",
+  "lastUpdated": "2026-03-26T15:29:53Z",
   "status": "Endergebnis",
-  "wahlberechtigte": 20821,
+  "wahlberechtigte": 21137,
   "waehler": 13360,
-  "wahlbeteiligung": 64.2,
+  "wahlbeteiligung": 63.2,
   "ungueltig": 281,
-  "gueltig": 362284,
+  "gueltig": 362285,
   "parties": [
     {
       "party": "ZBG",
@@ -45,7 +45,7 @@
     {
       "party": "FREIE WÄHLER",
       "color": "#FF6600",
-      "stimmen": 13980,
+      "stimmen": 13981,
       "anteil": 3.9,
       "gv": "-7,0"
     },
@@ -324,7 +324,7 @@
       {
         "nr": 7,
         "name": "Krasniqi Lulzim",
-        "stimmen": 691,
+        "stimmen": 692,
         "anteil": 0.0
       },
       {
@@ -900,12 +900,6 @@
     ],
     "ZBG": [
       {
-        "nr": 1,
-        "name": "Spath Marcus",
-        "stimmen": 8097,
-        "anteil": 0.0
-      },
-      {
         "nr": 2,
         "name": "Rieß Andreas",
         "stimmen": 5354,
@@ -951,6 +945,12 @@
         "nr": 7,
         "name": "Förster Jessica",
         "stimmen": 3636,
+        "anteil": 0.0
+      },
+      {
+        "nr": 1,
+        "name": "Spath Marcus",
+        "stimmen": 8097,
         "anteil": 0.0
       },
       {

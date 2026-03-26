@@ -1,0 +1,637 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Wahlanalyse 2020 → 2026 | Zirndorf wählt 2026</title>
+  <meta name="description" content="Detaillierter Vergleich Zirndorf 2020 vs. 2026: Voronoi-Karte, Stimmbezirke, Parteigewinne, alle 247 Kandidaten." />
+  <link rel="stylesheet" href="/assets/styles.css" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="https://unpkg.com/@turf/turf@6/turf.min.js"></script>
+  <style>
+    .page-kicker{margin:0 0 .3rem;font-size:.82rem;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:var(--muted)}
+    .page-head h1{font-size:clamp(1.6rem,3.5vw,2.4rem);margin:0 0 .45rem}
+    .section-title{font-size:1.3rem;font-weight:800;margin:0 0 .6rem}
+    .section-sub{color:var(--muted);font-size:.9rem;margin:-.4rem 0 .8rem}
+    /* KPIs */
+    .kpi4{display:grid;grid-template-columns:repeat(4,1fr);gap:.75rem}
+    @media(max-width:720px){.kpi4{grid-template-columns:repeat(2,1fr)}}
+    .kpi-card{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:.9rem 1rem}
+    .kpi-label{font-size:.78rem;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.4px;margin-bottom:.3rem}
+    .kpi-value{font-size:1.7rem;font-weight:900;line-height:1.1}
+    .kpi-sub{font-size:.8rem;color:var(--muted);margin-top:.2rem}
+    .kpi-up{color:#2f7a10}.kpi-down{color:#c0392b}
+    /* ── Map ── */
+    .map-wrap{border-radius:var(--radius);border:1px solid var(--line);overflow:hidden;box-shadow:var(--shadow)}
+    .map-toggle-bar{display:flex;align-items:center;justify-content:space-between;gap:.8rem;padding:.65rem .9rem;background:var(--panel);border-bottom:1px solid var(--line)}
+    .map-toggle-group{display:flex;background:#e8e6df;border-radius:999px;padding:3px;gap:2px}
+    .map-toggle-btn{border:none;background:transparent;border-radius:999px;padding:.38rem .95rem;font-weight:700;font-size:.85rem;cursor:pointer;font-family:inherit;color:var(--muted);transition:all .2s ease}
+    .map-toggle-btn.active{background:#fff;color:var(--ink);box-shadow:0 1px 4px rgba(0,0,0,.14)}
+    .map-toggle-info{font-size:.82rem;color:var(--muted);font-weight:600}
+    .the-map{height:480px}
+    .map-footer{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:.5rem;padding:.55rem .9rem;background:var(--panel);border-top:1px solid var(--line)}
+    .map-note-inline{font-size:.75rem;color:var(--muted)}
+    .map-legend{display:flex;flex-wrap:wrap;gap:.3rem .7rem}
+    .leg-item{display:flex;align-items:center;gap:.3rem;font-size:.78rem;font-weight:600}
+    .leg-dot{width:10px;height:10px;border-radius:3px;flex-shrink:0}
+    /* Custom popup */
+    .leaflet-popup-content-wrapper{border-radius:12px!important;box-shadow:0 8px 28px rgba(0,0,0,.16)!important;padding:0!important;overflow:hidden}
+    .leaflet-popup-content{margin:0!important;width:240px!important}
+    .pop-head{padding:.65rem .8rem .4rem;border-bottom:1px solid #eee}
+    .pop-nr{font-size:.72rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.4px}
+    .pop-name{font-weight:800;font-size:.95rem;margin:.1rem 0 0;line-height:1.2}
+    .pop-meta{font-size:.75rem;color:var(--muted);margin-top:.2rem}
+    .pop-bars{padding:.55rem .8rem .65rem}
+    .pop-bar-row{display:flex;align-items:center;gap:.45rem;margin-bottom:.32rem;font-size:.78rem}
+    .pop-party{min-width:70px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .pop-track{flex:1;background:#e8e6df;border-radius:99px;height:6px;overflow:hidden}
+    .pop-fill{height:100%;border-radius:99px;transition:width .4s ease}
+    .pop-pct{min-width:34px;text-align:right;font-weight:700;font-size:.75rem}
+    .pop-winner{font-size:.72rem;font-weight:800;padding:.18rem .45rem;border-radius:5px;color:#fff;margin-top:.3rem;display:inline-block}
+    /* Party compare */
+    .party-compare{display:grid;gap:.5rem}
+    .prow-head{display:grid;grid-template-columns:110px 1fr 70px;gap:.6rem;padding:.3rem .9rem;color:var(--muted);font-size:.77rem;font-weight:700;text-transform:uppercase;letter-spacing:.4px}
+    .prow{display:grid;grid-template-columns:110px 1fr 70px;align-items:center;gap:.6rem;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:.6rem .9rem}
+    @media(max-width:540px){.prow,.prow-head{grid-template-columns:80px 1fr 55px;gap:.4rem;padding:.5rem .65rem}}
+    .prow-name{font-weight:800;font-size:.9rem;display:flex;align-items:center;gap:.4rem}
+    .prow-swatch{width:10px;height:10px;border-radius:2px;flex-shrink:0}
+    .bars{display:flex;flex-direction:column;gap:3px}
+    .brow{display:flex;align-items:center;gap:.4rem;font-size:.78rem}
+    .byr{min-width:30px;color:var(--muted);font-weight:700}
+    .btrack{flex:1;background:#e8e6df;border-radius:99px;height:7px;overflow:hidden}
+    .bfill{height:100%;border-radius:99px}
+    .bpct{min-width:36px;font-weight:700;text-align:right}
+    .pdelta{font-weight:800;font-size:.88rem;text-align:right}
+    .dpos{color:#c0392b}.dneg{color:#2f7a10}.dnew{color:var(--muted);font-size:.78rem}
+    /* Seats */
+    .seats-compare{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+    @media(max-width:620px){.seats-compare{grid-template-columns:1fr}}
+    .seats-panel{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:1rem}
+    .seats-year{font-size:.78rem;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);margin-bottom:.6rem}
+    .seat-row{display:flex;align-items:center;gap:.55rem;margin-bottom:.4rem;font-size:.88rem}
+    .seat-sw{width:12px;height:12px;border-radius:3px;flex-shrink:0}
+    .seat-nm{flex:1;font-weight:700}
+    .seat-n{font-weight:900;min-width:22px;text-align:right}
+    .seat-bar{flex:2;background:#e8e6df;border-radius:99px;height:6px;overflow:hidden}
+    .seat-bf{height:100%;border-radius:99px}
+    /* BM */
+    .bm-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+    @media(max-width:620px){.bm-grid{grid-template-columns:1fr}}
+    .bm-card{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:1rem}
+    .bm-winner{border-color:#c7d8b8;background:linear-gradient(145deg,#f5faee 0%,#fff 100%)}
+    .bm-yr{font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);margin-bottom:.7rem}
+    .bm-pct{font-size:1.4rem;font-weight:900}
+    .bm-tag{font-size:.72rem;font-weight:700;padding:.15rem .4rem;border-radius:4px;color:#fff}
+    .bm-row{display:flex;align-items:center;gap:.5rem;margin-bottom:.3rem;font-size:.88rem}
+    /* Persons */
+    .persons-controls{display:flex;gap:.6rem;flex-wrap:wrap;margin-bottom:.8rem;align-items:center}
+    .persons-search{flex:1;min-width:180px;border:1px solid var(--line);border-radius:8px;padding:.45rem .7rem;font-size:.9rem;font-family:inherit;background:#fff;outline:none}
+    .persons-search:focus{border-color:var(--primary)}
+    .filter-btn{border:1px solid var(--line);background:#fff;border-radius:999px;padding:.3rem .65rem;font-size:.8rem;font-weight:700;cursor:pointer;font-family:inherit}
+    .filter-btn.active{background:var(--primary);border-color:var(--primary);color:#fff}
+    .ptable{width:100%;border-collapse:collapse;font-size:.82rem}
+    .ptable th,.ptable td{border:1px solid var(--line);padding:.35rem .55rem;text-align:left;vertical-align:middle}
+    .ptable th{background:#f5f5f0;font-weight:700;cursor:pointer;white-space:nowrap;user-select:none}
+    .ptable th:hover{background:#ebebeb}
+    .ptable tr:hover td{background:#fafaf8}
+    .ptable tr.elected td{background:#f0fae8}
+    .ptable tr.elected td:first-child::before{content:"★ ";color:var(--primary)}
+    .party-chip{display:inline-block;border-radius:4px;padding:.1rem .38rem;font-size:.72rem;font-weight:700;color:#fff;white-space:nowrap}
+    .switch-arrow{color:var(--accent);font-weight:800}
+    .wrap-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch}
+    .persons-count{font-size:.82rem;color:var(--muted);margin-bottom:.5rem}
+    /* Career */
+    .career-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:.75rem}
+    @media(max-width:620px){.career-grid{grid-template-columns:1fr}}
+    .career-card{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:.9rem 1rem;display:grid;gap:.4rem}
+    .career-name{font-weight:800;font-size:1rem}
+    .career-path{display:flex;align-items:center;gap:.5rem;flex-wrap:wrap;font-size:.85rem}
+    .career-tag{padding:.18rem .45rem;border-radius:5px;color:#fff;font-size:.78rem;font-weight:700}
+    .career-note{font-size:.82rem;color:var(--muted)}
+    .career-highlight{border-color:#c7d8b8;background:linear-gradient(145deg,#f5faee 0%,#fff 100%)}
+    /* Tables */
+    .btable,.bz26-table{width:100%;border-collapse:collapse;font-size:.82rem}
+    .btable th,.btable td,.bz26-table th,.bz26-table td{border:1px solid var(--line);padding:.35rem .55rem;text-align:left}
+    .btable th,.bz26-table th{background:#f5f5f0;font-weight:700}
+    .btable tr:hover,.bz26-table tr:hover{background:#fafaf7}
+    .toc-nav{display:flex;gap:.5rem;flex-wrap:wrap;margin-bottom:.5rem}
+    .toc-nav a{text-decoration:none;border:1px solid var(--line);background:#fff;border-radius:999px;padding:.28rem .62rem;font-size:.82rem;font-weight:600}
+    .toc-nav a:hover{border-color:var(--primary)}
+    section{padding:1.2rem 0 .2rem}
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="wrap nav">
+      <a class="brand" href="/"><img src="/assets/logo.png" alt="OpenZirndorf Logo" /><strong>Zirndorf wählt 2026</strong></a>
+      <nav class="menu" aria-label="Navigation">
+        <a href="/">Start</a>
+        <a href="/prompt/">Prompt</a>
+        <a href="/ergebnisse/">KI-Bewertungen</a>
+        <a href="/parteiantworten/">Parteiantworten</a>
+        <a href="/live/">Wahlergebnis</a>
+        <div class="nav-dropdown"><a href="/stichwahl/warum/" class="dropdown-trigger nav-stichwahl">Stichwahl</a><div class="nav-dropdown-menu"><a href="/stichwahl/warum/">Warum Stichwahl?</a><a href="/stichwahl/vergleich/">Kandidatenvergleich</a><a href="/stichwahl/ki-analyse/">KI-Analyse</a><a href="/stichwahl/live/">Live-Ergebnisse</a></div></div><a href="/stichwahl/warum/" class="nav-stichwahl nav-mobile-show">Warum Stichwahl?</a><a href="/stichwahl/vergleich/" class="nav-stichwahl nav-mobile-show">Kandidatenvergleich</a><a href="/stichwahl/ki-analyse/" class="nav-stichwahl nav-mobile-show">KI-Analyse</a><a href="/stichwahl/live/" class="nav-stichwahl nav-mobile-show">Live-Ergebnisse</a>
+        <a href="/stadtrat/" class="nav-highlight">Neuer Stadtrat</a>
+        <a aria-current="page" href="/analyse/" class="nav-highlight">Analyse</a>
+      </nav>
+    </div>
+  </header>
+  <main>
+    <div class="wrap">
+      <div class="page-head" style="margin:1.2rem 0 .8rem">
+        <p class="page-kicker">Detailanalyse</p>
+        <h1>Kommunalwahl 2020 → 2026</h1>
+        <p class="lead">Voronoi-Karte der Stimmbezirke, Vergleich aller Parteien und 247 Kandidatinnen &amp; Kandidaten.</p>
+      </div>
+      <nav class="toc-nav">
+        <a href="#kpis">Kennzahlen</a>
+        <a href="#parteien">Parteien</a>
+        <a href="#sitze">Sitze</a>
+        <a href="#bm">Bürgermeister</a>
+        <a href="#personen">Alle Personen</a>
+        <a href="#karriere">Karrieren</a>
+        <a href="#map26">Karte Stimmbezirke</a>
+        <a href="#bezirke">Stimmbezirke</a>
+      </nav>
+
+      <!-- KPIs -->
+      <section id="kpis">
+        <div class="kpi4">
+          <div class="kpi-card"><div class="kpi-label">Wahlbeteiligung</div><div class="kpi-value kpi-up">64,2 %</div><div class="kpi-sub">2020: 55,2 % <span class="kpi-up">↑ +9 Pp</span></div></div>
+          <div class="kpi-card"><div class="kpi-label">Wahlberechtigte</div><div class="kpi-value">20.821</div><div class="kpi-sub">2020: 20.790 ↑ +31</div></div>
+          <div class="kpi-card"><div class="kpi-label">Parteien</div><div class="kpi-value kpi-up">9</div><div class="kpi-sub">2020: 7 · +ZBG, +Volt</div></div>
+          <div class="kpi-card"><div class="kpi-label">Neuer Bürgermeister</div><div class="kpi-value" style="font-size:1.1rem;line-height:1.3">Spath Marcus</div><div class="kpi-sub">ZBG · ex-SPD-Stadtrat</div></div>
+        </div>
+      </section>
+
+      <!-- Party compare -->
+      <section id="parteien">
+        <h2 class="section-title">Parteivergleich 2020 vs. 2026</h2>
+        <p class="section-sub">% der gültigen Listenstimmen. ZBG und Volt 2026 neu.</p>
+        <div class="party-compare">
+          <div class="prow-head"><div>Partei</div><div>2020 → 2026</div><div style="text-align:right">Δ Pp</div></div>
+          <div class="prow"><div class="prow-name"><span class="prow-swatch" style="background:#009FA1"></span>ZBG</div><div class="bars"><div class="brow"><span class="byr">2020</span><div class="btrack"><div class="bfill" style="width:0%;background:#009FA1"></div></div><span class="bpct" style="color:var(--muted)">–</span></div><div class="brow"><span class="byr">2026</span><div class="btrack"><div class="bfill" style="width:27.4%;background:#009FA1"></div></div><span class="bpct">27,4 %</span></div></div><div class="pdelta dnew">Neu</div></div>
+          <div class="prow"><div class="prow-name"><span class="prow-swatch" style="background:#005CA9"></span>CSU</div><div class="bars"><div class="brow"><span class="byr">2020</span><div class="btrack"><div class="bfill" style="width:32%;background:#005CA9"></div></div><span class="bpct">32,1 %</span></div><div class="brow"><span class="byr">2026</span><div class="btrack"><div class="bfill" style="width:24.3%;background:#005CA9"></div></div><span class="bpct">24,3 %</span></div></div><div class="pdelta dneg">−7,8</div></div>
+          <div class="prow"><div class="prow-name"><span class="prow-swatch" style="background:#E3000F"></span>SPD</div><div class="bars"><div class="brow"><span class="byr">2020</span><div class="btrack"><div class="bfill" style="width:27.8%;background:#E3000F"></div></div><span class="bpct">27,8 %</span></div><div class="brow"><span class="byr">2026</span><div class="btrack"><div class="bfill" style="width:13.8%;background:#E3000F"></div></div><span class="bpct">13,8 %</span></div></div><div class="pdelta dneg">−14,1</div></div>
+          <div class="prow"><div class="prow-name"><span class="prow-swatch" style="background:#009DE0"></span>AfD</div><div class="bars"><div class="brow"><span class="byr">2020</span><div class="btrack"><div class="bfill" style="width:6.3%;background:#009DE0"></div></div><span class="bpct">6,3 %</span></div><div class="brow"><span class="byr">2026</span><div class="btrack"><div class="bfill" style="width:12.9%;background:#009DE0"></div></div><span class="bpct">12,9 %</span></div></div><div class="pdelta dpos">+6,6</div></div>
+          <div class="prow"><div class="prow-name"><span class="prow-swatch" style="background:#1FAB2C"></span>GRÜNE</div><div class="bars"><div class="brow"><span class="byr">2020</span><div class="btrack"><div class="bfill" style="width:18%;background:#1FAB2C"></div></div><span class="bpct">18,1 %</span></div><div class="brow"><span class="byr">2026</span><div class="btrack"><div class="bfill" style="width:9.4%;background:#1FAB2C"></div></div><span class="bpct">9,4 %</span></div></div><div class="pdelta dneg">−8,6</div></div>
+          <div class="prow"><div class="prow-name"><span class="prow-swatch" style="background:#FF6600"></span>FW</div><div class="bars"><div class="brow"><span class="byr">2020</span><div class="btrack"><div class="bfill" style="width:10.8%;background:#FF6600"></div></div><span class="bpct">10,8 %</span></div><div class="brow"><span class="byr">2026</span><div class="btrack"><div class="bfill" style="width:3.9%;background:#FF6600"></div></div><span class="bpct">3,9 %</span></div></div><div class="pdelta dneg">−7,0</div></div>
+          <div class="prow"><div class="prow-name"><span class="prow-swatch" style="background:#BE3075"></span>Linke</div><div class="bars"><div class="brow"><span class="byr">2020</span><div class="btrack"><div class="bfill" style="width:2.6%;background:#BE3075"></div></div><span class="bpct">2,6 %</span></div><div class="brow"><span class="byr">2026</span><div class="btrack"><div class="bfill" style="width:3.5%;background:#BE3075"></div></div><span class="bpct">3,5 %</span></div></div><div class="pdelta dpos">+0,9</div></div>
+          <div class="prow"><div class="prow-name"><span class="prow-swatch" style="background:#562883"></span>Volt</div><div class="bars"><div class="brow"><span class="byr">2020</span><div class="btrack"><div class="bfill" style="width:0%;background:#562883"></div></div><span class="bpct" style="color:var(--muted)">–</span></div><div class="brow"><span class="byr">2026</span><div class="btrack"><div class="bfill" style="width:3.1%;background:#562883"></div></div><span class="bpct">3,1 %</span></div></div><div class="pdelta dnew">Neu</div></div>
+          <div class="prow"><div class="prow-name"><span class="prow-swatch" style="background:#c9a900"></span>FDP</div><div class="bars"><div class="brow"><span class="byr">2020</span><div class="btrack"><div class="bfill" style="width:2.3%;background:#c9a900"></div></div><span class="bpct">2,3 %</span></div><div class="brow"><span class="byr">2026</span><div class="btrack"><div class="bfill" style="width:1.8%;background:#c9a900"></div></div><span class="bpct">1,8 %</span></div></div><div class="pdelta dneg">−0,6</div></div>
+        </div>
+      </section>
+
+      <!-- Seats -->
+      <section id="sitze">
+        <h2 class="section-title">Stadtratssitze 2020 vs. 2026</h2>
+        <p class="section-sub">30 Sitze + Bürgermeister = 31 Stimmen. Berechnung nach Hare-Niemeyer (Art. 42 GLKrWG Bayern).</p>
+        <div class="seats-compare">
+          <div class="seats-panel">
+            <div class="seats-year">Stadtrat 2020 · BM Zwingel Thomas (SPD)</div>
+            <div class="seat-row"><span class="seat-sw" style="background:#005CA9"></span><span class="seat-nm">CSU</span><span class="seat-n">10</span><div class="seat-bar"><div class="seat-bf" style="width:100%;background:#005CA9"></div></div></div>
+            <div class="seat-row"><span class="seat-sw" style="background:#E3000F"></span><span class="seat-nm">SPD</span><span class="seat-n">8</span><div class="seat-bar"><div class="seat-bf" style="width:80%;background:#E3000F"></div></div></div>
+            <div class="seat-row"><span class="seat-sw" style="background:#1FAB2C"></span><span class="seat-nm">GRÜNE</span><span class="seat-n">5</span><div class="seat-bar"><div class="seat-bf" style="width:50%;background:#1FAB2C"></div></div></div>
+            <div class="seat-row"><span class="seat-sw" style="background:#FF6600"></span><span class="seat-nm">FREIE WÄHLER</span><span class="seat-n">3</span><div class="seat-bar"><div class="seat-bf" style="width:30%;background:#FF6600"></div></div></div>
+            <div class="seat-row"><span class="seat-sw" style="background:#009DE0"></span><span class="seat-nm">AfD</span><span class="seat-n">2</span><div class="seat-bar"><div class="seat-bf" style="width:20%;background:#009DE0"></div></div></div>
+            <div class="seat-row"><span class="seat-sw" style="background:#c9a900"></span><span class="seat-nm">FDP</span><span class="seat-n">1</span><div class="seat-bar"><div class="seat-bf" style="width:10%;background:#c9a900"></div></div></div>
+            <div class="seat-row"><span class="seat-sw" style="background:#BE3075"></span><span class="seat-nm">DIE LINKE</span><span class="seat-n">1</span><div class="seat-bar"><div class="seat-bf" style="width:10%;background:#BE3075"></div></div></div>
+          </div>
+          <div class="seats-panel">
+            <div class="seats-year">Stadtrat 2026 · BM Spath Marcus (ZBG)</div>
+            <div class="seat-row"><span class="seat-sw" style="background:#009FA1"></span><span class="seat-nm">ZBG</span><span class="seat-n">8</span><div class="seat-bar"><div class="seat-bf" style="width:80%;background:#009FA1"></div></div></div>
+            <div class="seat-row"><span class="seat-sw" style="background:#005CA9"></span><span class="seat-nm">CSU</span><span class="seat-n">7</span><div class="seat-bar"><div class="seat-bf" style="width:70%;background:#005CA9"></div></div></div>
+            <div class="seat-row"><span class="seat-sw" style="background:#009DE0"></span><span class="seat-nm">AfD</span><span class="seat-n">4</span><div class="seat-bar"><div class="seat-bf" style="width:40%;background:#009DE0"></div></div></div>
+            <div class="seat-row"><span class="seat-sw" style="background:#E3000F"></span><span class="seat-nm">SPD</span><span class="seat-n">4</span><div class="seat-bar"><div class="seat-bf" style="width:40%;background:#E3000F"></div></div></div>
+            <div class="seat-row"><span class="seat-sw" style="background:#1FAB2C"></span><span class="seat-nm">GRÜNE</span><span class="seat-n">3</span><div class="seat-bar"><div class="seat-bf" style="width:30%;background:#1FAB2C"></div></div></div>
+            <div class="seat-row"><span class="seat-sw" style="background:#FF6600"></span><span class="seat-nm">FREIE WÄHLER</span><span class="seat-n">1</span><div class="seat-bar"><div class="seat-bf" style="width:10%;background:#FF6600"></div></div></div>
+            <div class="seat-row"><span class="seat-sw" style="background:#BE3075"></span><span class="seat-nm">Die Linke</span><span class="seat-n">1</span><div class="seat-bar"><div class="seat-bf" style="width:10%;background:#BE3075"></div></div></div>
+            <div class="seat-row"><span class="seat-sw" style="background:#562883"></span><span class="seat-nm">Volt</span><span class="seat-n">1</span><div class="seat-bar"><div class="seat-bf" style="width:10%;background:#562883"></div></div></div>
+            <div class="seat-row"><span class="seat-sw" style="background:#c9a900"></span><span class="seat-nm">FDP</span><span class="seat-n">1</span><div class="seat-bar"><div class="seat-bf" style="width:10%;background:#c9a900"></div></div></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- BM -->
+      <section id="bm">
+        <h2 class="section-title">Bürgermeisterwahl 2020 und 2026</h2>
+        <div class="bm-grid">
+          <div class="bm-card">
+            <div class="bm-yr">15. März 2020 · 1. Wahlgang</div>
+            <div class="bm-row"><span class="bm-tag" style="background:#E3000F">SPD</span><strong>Zwingel Thomas</strong></div>
+            <div class="bm-pct">42,9 %</div>
+            <div style="font-size:.82rem;color:var(--muted);margin:.3rem 0 .7rem">4.903 Stimmen · Keine Mehrheit → Stichwahl</div>
+            <div style="font-size:.82rem">
+              <div class="bm-row"><span class="bm-tag" style="background:#005CA9;font-size:.7rem">CSU</span>Klaski Bernd<span style="margin-left:auto;font-weight:800">28,4 %</span></div>
+              <div class="bm-row"><span class="bm-tag" style="background:#1FAB2C;font-size:.7rem">GRÜ</span>Schäfer Walter<span style="margin-left:auto;font-weight:800">10,5 %</span></div>
+              <div class="bm-row"><span class="bm-tag" style="background:#FF6600;font-size:.7rem">FW</span>Baritsch Marcus<span style="margin-left:auto;font-weight:800">10,4 %</span></div>
+              <div class="bm-row"><span class="bm-tag" style="background:#009DE0;font-size:.7rem">AfD</span>Pleyer Claus-Georg<span style="margin-left:auto;font-weight:800">4,3 %</span></div>
+              <div class="bm-row"><span class="bm-tag" style="background:#c9a900;font-size:.7rem">FDP</span>Reubel Paul<span style="margin-left:auto;font-weight:800">1,8 %</span></div>
+              <div class="bm-row"><span class="bm-tag" style="background:#BE3075;font-size:.7rem">LNK</span>Berdich Volker<span style="margin-left:auto;font-weight:800">1,7 %</span></div>
+            </div>
+          </div>
+          <div class="bm-card bm-winner">
+            <div class="bm-yr">29. März 2020 · Stichwahl (Briefwahl/COVID)</div>
+            <div class="bm-row"><span class="bm-tag" style="background:#E3000F">SPD</span><strong>Zwingel Thomas ✓ gewählt</strong></div>
+            <div class="bm-pct">51,1 %</div>
+            <div style="font-size:.82rem;color:var(--muted);margin:.3rem 0 .7rem">6.373 Stimmen · Vorsprung: 279 Stimmen · Beteiligung 60,2 %</div>
+            <div style="font-size:.82rem"><div class="bm-row"><span class="bm-tag" style="background:#005CA9;font-size:.7rem">CSU</span>Klaski Bernd<span style="margin-left:auto;font-weight:800">48,9 %</span></div></div>
+          </div>
+          <div class="bm-card">
+            <div class="bm-yr">8. März 2026 · 1. Wahlgang</div>
+            <div class="bm-row"><span class="bm-tag" style="background:#009FA1">ZBG</span><strong>Spath Marcus</strong></div>
+            <div class="bm-pct">34,5 %</div>
+            <div style="font-size:.82rem;color:var(--muted);margin:.3rem 0 .7rem">4.591 Stimmen · Keine Mehrheit → Stichwahl</div>
+            <div style="font-size:.82rem">
+              <div class="bm-row"><span class="bm-tag" style="background:#005CA9;font-size:.7rem">CSU</span>Hesselberger Tom<span style="margin-left:auto;font-weight:800">23,6 %</span></div>
+              <div class="bm-row"><span class="bm-tag" style="background:#E3000F;font-size:.7rem">SPD</span>Hauber Sandra<span style="margin-left:auto;font-weight:800">17,1 %</span></div>
+              <div class="bm-row"><span class="bm-tag" style="background:#009DE0;font-size:.7rem">AfD</span>Treuheit Bastian<span style="margin-left:auto;font-weight:800">11,2 %</span></div>
+              <div class="bm-row"><span class="bm-tag" style="background:#1FAB2C;font-size:.7rem">GRÜ</span>Poxleitner Lukas<span style="margin-left:auto;font-weight:800">5,8 %</span></div>
+              <div class="bm-row"><span class="bm-tag" style="background:#FF6600;font-size:.7rem">FW</span>Schmidt Ralf<span style="margin-left:auto;font-weight:800">3,4 %</span></div>
+              <div class="bm-row"><span class="bm-tag" style="background:#BE3075;font-size:.7rem">LNK</span>Greser Robin<span style="margin-left:auto;font-weight:800">2,2 %</span></div>
+              <div class="bm-row"><span class="bm-tag" style="background:#562883;font-size:.7rem">VLT</span>Krause Eike<span style="margin-left:auto;font-weight:800">1,4 %</span></div>
+              <div class="bm-row"><span class="bm-tag" style="background:#c9a900;font-size:.7rem">FDP</span>Reubel Paul<span style="margin-left:auto;font-weight:800">0,9 %</span></div>
+            </div>
+          </div>
+          <div class="bm-card bm-winner">
+            <div class="bm-yr">22. März 2026 · Stichwahl</div>
+            <div class="bm-row"><span class="bm-tag" style="background:#009FA1">ZBG</span><strong>Spath Marcus ✓ gewählt</strong></div>
+            <div class="bm-pct">69,6 %</div>
+            <div style="font-size:.82rem;color:var(--muted);margin:.3rem 0 .7rem">7.502 Stimmen · Vorsprung: 4.222 Stimmen · Beteiligung 51,4 %</div>
+            <div style="font-size:.82rem"><div class="bm-row"><span class="bm-tag" style="background:#005CA9;font-size:.7rem">CSU</span>Hesselberger Tom<span style="margin-left:auto;font-weight:800">30,4 %</span></div></div>
+            <div style="font-size:.8rem;color:var(--muted);margin-top:.6rem">Zum Vergleich 2020: Zwingel gewann Stichwahl mit nur 279 Stimmen Vorsprung.</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- All Persons -->
+      <section id="personen">
+        <h2 class="section-title">Alle Kandidatinnen &amp; Kandidaten</h2>
+        <p class="section-sub">247 Personen aus Stadtratswahl 2020 und/oder 2026. ★ = im Stadtrat 2026. Spalten sortierbar. Suche und Filter kombinierbar.</p>
+        <div class="persons-controls">
+          <input type="search" class="persons-search" id="p-search" placeholder="Name suchen…" />
+          <button class="filter-btn active" data-filter="all">Alle (247)</button>
+          <button class="filter-btn" data-filter="both">Beide Wahlen</button>
+          <button class="filter-btn" data-filter="switch">Parteiwechsel</button>
+          <button class="filter-btn" data-filter="elected">Im Stadtrat 2026</button>
+          <button class="filter-btn" data-filter="only26">Nur 2026</button>
+          <button class="filter-btn" data-filter="only20">Nur 2020</button>
+        </div>
+        <div class="persons-count" id="p-count"></div>
+        <div class="wrap-scroll">
+          <table class="ptable">
+            <thead>
+              <tr>
+                <th onclick="sortTable(0)">Name ↕</th>
+                <th onclick="sortTable(1)">Partei 2020</th>
+                <th onclick="sortTable(2)">Stimmen 2020 ↕</th>
+                <th onclick="sortTable(3)">Partei 2026</th>
+                <th onclick="sortTable(4)">Stimmen 2026 ↕</th>
+                <th onclick="sortTable(5)">Δ Stimmen ↕</th>
+              </tr>
+            </thead>
+            <tbody id="p-tbody"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- Career -->
+      <section id="karriere">
+        <h2 class="section-title">Karriereverläufe &amp; Parteiwechsel</h2>
+        <p class="section-sub">9 Kandidatinnen/Kandidaten mit Parteiwechsel zwischen 2020 und 2026. Interessanteste Verläufe hervorgehoben.</p>
+        <div class="career-grid" id="career-grid"></div>
+      </section>
+
+      <!-- Map -->
+      <section id="map26">
+        <h2 class="section-title">Karte Stimmbezirke</h2>
+        <p class="section-sub">Voronoi-Näherung auf Basis der Wahllokale, geclippt an den OSM-Gemeindeumring. Klicken für Details.</p>
+        <p style="font-size:.82rem;color:var(--muted);background:#fdf9ee;border:1px solid #e8dfa0;border-radius:6px;padding:.5rem .75rem;margin:.4rem 0">⚠️ <strong>Hinweis:</strong> Diese Karte zeigt eine Näherung der Stimmbezirke, nicht die tatsächlichen Grenzen. Ein offizielles Straßenverzeichnis wurde beim Wahlamt angefragt – die Karte wird danach aktualisiert.</p>
+        <div class="map-wrap">
+          <div class="map-toggle-bar">
+            <div class="map-toggle-group">
+              <button class="map-toggle-btn active" data-year="2026">Stadtratswahl 2026</button>
+              <button class="map-toggle-btn" data-year="2020">Stadtratswahl 2020</button>
+            </div>
+            <div class="map-toggle-info" id="map-year-info">8. März 2026 · 20 Stimmbezirke</div>
+          </div>
+          <div id="themap" class="the-map"></div>
+          <div class="map-footer">
+            <span class="map-note-inline">Voronoi-Polygone (turf.js) · Gemeindeumring OpenStreetMap · Koordinaten AWO/WBG/vhs geschätzt</span>
+            <div class="map-legend" id="map-legend"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Bezirke Vergleich -->
+      <section id="bezirke">
+        <h2 class="section-title">Stimmbezirke: Vergleich 2020 vs. 2026</h2>
+        <div class="map-toggle-bar" style="margin-bottom:.6rem">
+          <div class="map-toggle-group">
+            <button class="map-toggle-btn active" id="bz-tab-2026" onclick="showBzTab(2026)">2026 (20 Bezirke)</button>
+            <button class="map-toggle-btn" id="bz-tab-2020" onclick="showBzTab(2020)">2020 (24 Bezirke)</button>
+          </div>
+          <div class="map-toggle-info" id="bz-tab-info">8. März 2026 · Parteianteile in Prozent</div>
+        </div>
+        <div id="bz-panel-2026"><div class="wrap-scroll"><table class="btable" id="btable26"></table></div></div>
+        <div id="bz-panel-2020" style="display:none"><div class="wrap-scroll"><table class="btable" id="btable20"></table></div></div>
+      </section>
+
+    </div>
+  </main>
+  <footer>
+    <div class="footer-grid">
+      <div><strong>Zirndorf wählt 2026</strong> · <span style="font-size:.88rem">Daten: OSRZ-Akdb (amtl. Ergebnisse), OpenStreetMap</span></div>
+      <div><a href="/">Start</a><a href="/live/">Ergebnisse</a><a href="/stadtrat/">Stadtrat</a><a href="/impressum/">Impressum</a></div>
+    </div>
+  </footer>
+
+<script>
+const PC={ZBG:'#009FA1',CSU:'#005CA9',SPD:'#E3000F',AfD:'#009DE0',GRÜNE:'#1FAB2C','FREIE WÄHLER':'#FF6600','DIE LINKE':'#BE3075','Die Linke':'#BE3075',Volt:'#562883',FDP:'#c9a900'};
+
+const B26=[{"nr":"0001","name":"AWO Ortsverband Zirndorf","parties":{"CSU":21.1,"FREIE WÄHLER":3.3,"AfD":23.0,"GRÜNE":7.0,"SPD":12.7,"Die Linke":5.9,"FDP":2.1,"Volt":5.5,"ZBG":19.4},"waehler":242,"winner":"AfD","lat":49.4385,"lon":10.9588},{"nr":"0002","name":"Grundschule II, Zi. A1","parties":{"CSU":24.6,"FREIE WÄHLER":3.1,"AfD":11.5,"GRÜNE":10.3,"SPD":11.5,"Die Linke":5.0,"FDP":1.9,"Volt":5.8,"ZBG":26.3},"waehler":327,"winner":"ZBG","lat":49.443,"lon":10.9608},{"nr":"0003","name":"Grundschule I, Mensa","parties":{"CSU":19.2,"FREIE WÄHLER":2.8,"AfD":18.5,"GRÜNE":9.1,"SPD":15.3,"Die Linke":3.1,"FDP":1.5,"Volt":6.5,"ZBG":23.8},"waehler":263,"winner":"ZBG","lat":49.4397,"lon":10.9573},{"nr":"0004","name":"Stadtbücherei","parties":{"CSU":20.3,"FREIE WÄHLER":3.7,"AfD":15.3,"GRÜNE":14.4,"SPD":11.5,"Die Linke":4.7,"FDP":1.4,"Volt":1.9,"ZBG":26.9},"waehler":270,"winner":"ZBG","lat":49.4412,"lon":10.9575},{"nr":"0005","name":"Grundschule II, Zimmer 10","parties":{"CSU":20.9,"FREIE WÄHLER":4.4,"AfD":21.1,"GRÜNE":11.3,"SPD":10.9,"Die Linke":5.6,"FDP":0.8,"Volt":3.5,"ZBG":21.5},"waehler":278,"winner":"ZBG","lat":49.4422,"lon":10.9612},{"nr":"0006","name":"Fröbelhaus, Zimmer 0.06","parties":{"CSU":23.2,"FREIE WÄHLER":3.0,"AfD":16.2,"GRÜNE":11.3,"SPD":16.2,"Die Linke":4.6,"FDP":2.5,"Volt":5.6,"ZBG":17.5},"waehler":289,"winner":"CSU","lat":49.4445,"lon":10.959},{"nr":"0007","name":"Fröbelhaus, Zimmer 0.07","parties":{"CSU":18.2,"FREIE WÄHLER":6.4,"AfD":15.4,"GRÜNE":12.2,"SPD":13.7,"Die Linke":4.8,"FDP":2.0,"Volt":6.1,"ZBG":21.2},"waehler":321,"winner":"ZBG","lat":49.4449,"lon":10.9596},{"nr":"0008","name":"Fröbelhaus, Zimmer 0.08","parties":{"CSU":27.8,"FREIE WÄHLER":5.6,"AfD":13.0,"GRÜNE":15.5,"SPD":12.6,"Die Linke":6.3,"FDP":2.3,"Volt":4.3,"ZBG":12.7},"waehler":283,"winner":"CSU","lat":49.4453,"lon":10.9602},{"nr":"0009","name":"Gemeinschaftsraum WBG","parties":{"CSU":13.8,"FREIE WÄHLER":4.3,"AfD":25.3,"GRÜNE":7.5,"SPD":15.9,"Die Linke":2.7,"FDP":2.7,"Volt":2.4,"ZBG":25.4},"waehler":329,"winner":"ZBG","lat":49.444,"lon":10.9518},{"nr":"0010","name":"vhs Eventraum","parties":{"CSU":14.3,"FREIE WÄHLER":5.3,"AfD":32.2,"GRÜNE":5.5,"SPD":12.6,"Die Linke":5.4,"FDP":1.0,"Volt":1.4,"ZBG":22.2},"waehler":298,"winner":"AfD","lat":49.4415,"lon":10.9545},{"nr":"0011","name":"Grundschule I, Zi. E 10","parties":{"CSU":15.5,"FREIE WÄHLER":3.9,"AfD":15.4,"GRÜNE":10.0,"SPD":11.7,"Die Linke":3.4,"FDP":0.5,"Volt":3.7,"ZBG":35.8},"waehler":338,"winner":"ZBG","lat":49.4468,"lon":10.9468},{"nr":"0012","name":"Grundschule I, Zi. E 9","parties":{"CSU":15.7,"FREIE WÄHLER":4.0,"AfD":15.6,"GRÜNE":9.9,"SPD":12.3,"Die Linke":3.3,"FDP":1.5,"Volt":3.1,"ZBG":34.6},"waehler":370,"winner":"ZBG","lat":49.4462,"lon":10.9462},{"nr":"0013","name":"Kindertagesstätte Weiherhof","parties":{"CSU":28.0,"FREIE WÄHLER":3.1,"AfD":10.8,"GRÜNE":11.7,"SPD":14.9,"Die Linke":4.4,"FDP":1.1,"Volt":2.5,"ZBG":23.6},"waehler":362,"winner":"CSU","lat":49.4536,"lon":10.9268},{"nr":"0014","name":"FFW-Haus Weiherhof","parties":{"CSU":24.8,"FREIE WÄHLER":3.4,"AfD":22.5,"GRÜNE":12.1,"SPD":8.0,"Die Linke":3.4,"FDP":1.6,"Volt":2.1,"ZBG":22.0},"waehler":345,"winner":"CSU","lat":49.4577,"lon":10.9228},{"nr":"0015","name":"Vereinsheim Bürgerschützen","parties":{"CSU":25.3,"FREIE WÄHLER":1.1,"AfD":16.1,"GRÜNE":11.3,"SPD":12.4,"Die Linke":3.7,"FDP":0.8,"Volt":2.2,"ZBG":26.9},"waehler":354,"winner":"ZBG","lat":49.4581,"lon":10.9217},{"nr":"0016","name":"FFW-Haus Bronnamberg","parties":{"CSU":28.3,"FREIE WÄHLER":4.0,"AfD":19.3,"GRÜNE":6.6,"SPD":9.3,"Die Linke":2.4,"FDP":1.2,"Volt":2.6,"ZBG":26.4},"waehler":358,"winner":"CSU","lat":49.4394,"lon":10.9098},{"nr":"0017","name":"FFW-Haus Lind","parties":{"CSU":19.9,"FREIE WÄHLER":2.4,"AfD":19.0,"GRÜNE":11.9,"SPD":9.9,"Die Linke":2.5,"FDP":0.9,"Volt":1.6,"ZBG":32.0},"waehler":260,"winner":"ZBG","lat":49.4235,"lon":10.9264},{"nr":"0018","name":"Vereinsheim Sängerfreunde","parties":{"CSU":25.6,"FREIE WÄHLER":3.6,"AfD":22.2,"GRÜNE":8.6,"SPD":12.3,"Die Linke":2.4,"FDP":0.7,"Volt":1.1,"ZBG":23.5},"waehler":375,"winner":"CSU","lat":49.4245,"lon":10.8971},{"nr":"0019","name":"Bibertgrundschule, Zi. E 2","parties":{"CSU":25.1,"FREIE WÄHLER":3.9,"AfD":19.0,"GRÜNE":7.8,"SPD":10.7,"Die Linke":3.6,"FDP":0.5,"Volt":1.2,"ZBG":28.1},"waehler":356,"winner":"ZBG","lat":49.4294,"lon":10.9127},{"nr":"0020","name":"Realschule, Zi. E 16 Mehrzweckraum","parties":{"CSU":24.5,"FREIE WÄHLER":3.0,"AfD":18.8,"GRÜNE":9.3,"SPD":9.0,"Die Linke":3.2,"FDP":1.5,"Volt":2.0,"ZBG":28.7},"waehler":446,"winner":"ZBG","lat":49.4422,"lon":10.9432}];
+const B20=[{"nr":"0001","name":"Grundschule I, Zi. CE22","addr":"Mühlstr. 14","lat":49.43870,"lon":10.95650,"waehler":899,"parties":{"CSU":1666,"GRÜNE":1132,"FREIE WÄHLER":455,"AfD":738,"SPD":1768,"FDP":90,"DIE LINKE":117}},{"nr":"0002","name":"Grundschule II, Zi. A1","addr":"Bahnhofstr. 38","lat":49.44310,"lon":10.96110,"waehler":998,"parties":{"CSU":2029,"GRÜNE":1565,"FREIE WÄHLER":943,"AfD":534,"SPD":1759,"FDP":117,"DIE LINKE":177}},{"nr":"0003","name":"Grundschule I, Zi. CE 23","addr":"Mühlstr. 14","lat":49.43960,"lon":10.95780,"waehler":896,"parties":{"CSU":2232,"GRÜNE":1222,"FREIE WÄHLER":640,"AfD":488,"SPD":1976,"FDP":92,"DIE LINKE":161}},{"nr":"0004","name":"Stadtbücherei","addr":"Marktplatz 1","lat":49.44124,"lon":10.95753,"waehler":882,"parties":{"CSU":1588,"GRÜNE":1158,"FREIE WÄHLER":379,"AfD":584,"SPD":1528,"FDP":263,"DIE LINKE":217}},{"nr":"0005","name":"Grundschule II, Zi. A 2","addr":"Bahnhofstr. 38","lat":49.44380,"lon":10.96190,"waehler":985,"parties":{"CSU":1805,"GRÜNE":896,"FREIE WÄHLER":558,"AfD":371,"SPD":1376,"FDP":135,"DIE LINKE":244}},{"nr":"0006","name":"Grundschule II, Zi. 10","addr":"Bahnhofstr. 38","lat":49.44200,"lon":10.96050,"waehler":975,"parties":{"CSU":1302,"GRÜNE":1057,"FREIE WÄHLER":814,"AfD":447,"SPD":1069,"FDP":133,"DIE LINKE":366}},{"nr":"0007","name":"Fröbelhaus, Zi. R 07","addr":"Homburger Str. 1","lat":49.44430,"lon":10.95880,"waehler":940,"parties":{"CSU":1757,"GRÜNE":1429,"FREIE WÄHLER":937,"AfD":392,"SPD":1949,"FDP":95,"DIE LINKE":236}},{"nr":"0008","name":"Fröbelhaus, R 09","addr":"Homburger Str. 1","lat":49.44520,"lon":10.95980,"waehler":1042,"parties":{"CSU":1777,"GRÜNE":2404,"FREIE WÄHLER":1058,"AfD":597,"SPD":1727,"FDP":112,"DIE LINKE":259}},{"nr":"0009","name":"Fröbelhaus, Zi. R 10","addr":"Homburger Str. 1","lat":49.44610,"lon":10.96080,"waehler":867,"parties":{"CSU":2187,"GRÜNE":1737,"FREIE WÄHLER":610,"AfD":364,"SPD":1458,"FDP":179,"DIE LINKE":122}},{"nr":"0010","name":"Fröbelhaus (Helene-Schultheiß-Heim)","addr":"Homburger Str. 1","lat":49.44480,"lon":10.95700,"waehler":1212,"parties":{"CSU":1075,"GRÜNE":583,"FREIE WÄHLER":544,"AfD":509,"SPD":2637,"FDP":75,"DIE LINKE":182}},{"nr":"0011","name":"Fröbelhaus (Gustav-Adolf-Heim)","addr":"Homburger Str. 1","lat":49.44350,"lon":10.95830,"waehler":1003,"parties":{"CSU":1454,"GRÜNE":661,"FREIE WÄHLER":329,"AfD":500,"SPD":1680,"FDP":121,"DIE LINKE":72}},{"nr":"0012","name":"Grundschule I, Zi. E 10","addr":"Geisleithenstr. 28","lat":49.44710,"lon":10.94720,"waehler":881,"parties":{"CSU":1574,"GRÜNE":1638,"FREIE WÄHLER":825,"AfD":420,"SPD":2967,"FDP":107,"DIE LINKE":186}},{"nr":"0013","name":"Grundschule I, Zi. E 5","addr":"Geisleithenstr. 28","lat":49.44590,"lon":10.94570,"waehler":860,"parties":{"CSU":1679,"GRÜNE":1299,"FREIE WÄHLER":766,"AfD":291,"SPD":2186,"FDP":58,"DIE LINKE":167}},{"nr":"0014","name":"Kindertagesstätte Weiherhof","addr":"Am Schreiberholz 30","lat":49.45364,"lon":10.92678,"waehler":976,"parties":{"CSU":3349,"GRÜNE":2308,"FREIE WÄHLER":870,"AfD":308,"SPD":2120,"FDP":359,"DIE LINKE":209}},{"nr":"0015","name":"FFW-Haus Weiherhof","addr":"Weiherhofer Hauptstr. 19","lat":49.45771,"lon":10.92280,"waehler":984,"parties":{"CSU":2986,"GRÜNE":1362,"FREIE WÄHLER":819,"AfD":578,"SPD":2051,"FDP":194,"DIE LINKE":309}},{"nr":"0016","name":"Vereinsheim Bürgerschützen","addr":"Schwanenweg 3","lat":49.45812,"lon":10.92175,"waehler":1012,"parties":{"CSU":3594,"GRÜNE":2097,"FREIE WÄHLER":1090,"AfD":749,"SPD":1981,"FDP":249,"DIE LINKE":289}},{"nr":"0017","name":"FFW-Haus Bronnamberg","addr":"Adlerstr. 11","lat":49.43938,"lon":10.90978,"waehler":867,"parties":{"CSU":3393,"GRÜNE":1304,"FREIE WÄHLER":705,"AfD":700,"SPD":1358,"FDP":250,"DIE LINKE":159}},{"nr":"0018","name":"FFW-Haus Lind","addr":"Lindenstr. 55","lat":49.42348,"lon":10.92637,"waehler":490,"parties":{"CSU":2067,"GRÜNE":594,"FREIE WÄHLER":462,"AfD":454,"SPD":744,"FDP":162,"DIE LINKE":91}},{"nr":"0019","name":"FFW-Haus Anwanden","addr":"Taubenweg 7","lat":49.41065,"lon":10.93001,"waehler":502,"parties":{"CSU":1894,"GRÜNE":982,"FREIE WÄHLER":702,"AfD":312,"SPD":874,"FDP":91,"DIE LINKE":35}},{"nr":"0020","name":"Vereinsheim Sängerfreunde","addr":"Traubenstr. 31","lat":49.42380,"lon":10.89640,"waehler":517,"parties":{"CSU":1637,"GRÜNE":823,"FREIE WÄHLER":396,"AfD":398,"SPD":1301,"FDP":16,"DIE LINKE":161}},{"nr":"0021","name":"Vereinsheim Sängerfreunde (2)","addr":"Traubenstr. 31","lat":49.42520,"lon":10.89770,"waehler":553,"parties":{"CSU":1976,"GRÜNE":677,"FREIE WÄHLER":373,"AfD":445,"SPD":1111,"FDP":42,"DIE LINKE":186}},{"nr":"0022","name":"Bibertgrundschule, Zi. E 10","addr":"Frankenstr. 8","lat":49.43010,"lon":10.91200,"waehler":645,"parties":{"CSU":1884,"GRÜNE":1137,"FREIE WÄHLER":377,"AfD":588,"SPD":1555,"FDP":89,"DIE LINKE":63}},{"nr":"0023","name":"Bibertgrundschule, Zi. E 2","addr":"Frankenstr. 8","lat":49.42870,"lon":10.91350,"waehler":768,"parties":{"CSU":2587,"GRÜNE":757,"FREIE WÄHLER":745,"AfD":577,"SPD":1372,"FDP":185,"DIE LINKE":114}},{"nr":"0024","name":"ZiPP, Foyer","addr":"Im Pinderpark 7","lat":49.43900,"lon":10.94790,"waehler":1036,"parties":{"CSU":3047,"GRÜNE":2292,"FREIE WÄHLER":1131,"AfD":991,"SPD":2353,"FDP":290,"DIE LINKE":449}}];
+
+// Compute winner for 2020
+B20.forEach(b=>{
+  const entries=Object.entries(b.parties);
+  b.winner=entries.reduce((a,c)=>c[1]>a[1]?c:a,entries[0])[0];
+});
+
+// ── Single Leaflet map with toggle ────────────────────────────
+const map=L.map('themap',{zoomControl:true}).setView([49.436,10.930],12);
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{
+  attribution:'© <a href="https://openstreetmap.org">OpenStreetMap</a>',maxZoom:18,
+  className:'map-tiles'
+}).addTo(map);
+
+// Layer groups
+const layers={2026:L.layerGroup(),2020:L.layerGroup()};
+let activeYear=2026;
+
+function popupHtml(b,is2026){
+  const parties=b.parties;
+  const total=is2026?100:Object.values(parties).reduce((a,v)=>a+v,0);
+  const sorted=Object.entries(parties).sort((a,c2)=>c2[1]-a[1]).slice(0,6);
+  const max=sorted[0][1];
+  const bars=sorted.map(([p,v])=>{
+    const pct=is2026?v:(v/total*100);
+    const w=Math.round((pct/max)*100);
+    return `<div class="pop-bar-row">
+      <div class="pop-party" style="color:${PC[p]||'#555'}">${p}</div>
+      <div class="pop-track"><div class="pop-fill" style="width:${w}%;background:${PC[p]||'#888'}"></div></div>
+      <div class="pop-pct">${pct.toFixed(1)}&thinsp;%</div>
+    </div>`;
+  }).join('');
+  const wc=PC[b.winner]||'#888';
+  return `<div>
+    <div class="pop-head">
+      <div class="pop-nr">Bezirk ${b.nr}</div>
+      <div class="pop-name">${b.name}</div>
+      <div class="pop-meta">${b.addr||''} · ${b.waehler.toLocaleString('de')} Wähler</div>
+    </div>
+    <div class="pop-bars">
+      ${bars}
+      <span class="pop-winner" style="background:${wc}">${b.winner} stärkste Partei</span>
+    </div>
+  </div>`;
+}
+
+function buildVoronoi(bezirke,year){
+  const lg=layers[year];
+  const bbox=[10.8691,49.4034,10.986,49.4637];
+  const pts=turf.featureCollection(bezirke.map((b,i)=>turf.point([b.lon,b.lat],{i})));
+  const vor=turf.voronoi(pts,{bbox});
+  const is26=year===2026;
+  vor.features.forEach((cell,i)=>{
+    const b=bezirke[i];
+    if(!b||!cell)return;
+    let clipped;
+    try{clipped=turf.intersect(turf.featureCollection([cell,window._boundary]));}catch(e){clipped=cell;}
+    if(!clipped)return;
+    const color=PC[b.winner]||'#888';
+    L.geoJSON(clipped,{
+      style:{fillColor:color,fillOpacity:0.5,color:'rgba(255,255,255,0.9)',weight:2.5,
+             lineCap:'round',lineJoin:'round'},
+      onEachFeature:(_,layer)=>{
+        layer.bindPopup(popupHtml(b,is26),{maxWidth:260,className:'nice-popup'});
+        layer.on('mouseover',function(){
+          this.setStyle({fillOpacity:0.75,weight:3});
+          this.bringToFront();
+        });
+        layer.on('mouseout',function(){
+          this.setStyle({fillOpacity:0.5,weight:2.5});
+        });
+      }
+    }).addTo(lg);
+    // Station dot
+    L.circleMarker([b.lat,b.lon],{
+      radius:4,fillColor:'#fff',color:color,weight:2,fillOpacity:1,
+      interactive:false
+    }).addTo(lg);
+  });
+}
+
+const INFOS={
+  2026:'8. März 2026 · 20 Stimmbezirke',
+  2020:'15. März 2020 · 24 Stimmbezirke'
+};
+
+function switchYear(year){
+  layers[activeYear].removeFrom(map);
+  activeYear=year;
+  layers[year].addTo(map);
+  document.getElementById('map-year-info').textContent=INFOS[year];
+  document.querySelectorAll('.map-toggle-btn').forEach(b=>{
+    b.classList.toggle('active',+b.dataset.year===year);
+  });
+  renderLegend(year);
+}
+
+function renderLegend(year){
+  const bezirke=year===2026?B26:B20;
+  const winners=[...new Set(bezirke.map(b=>b.winner))];
+  const leg=document.getElementById('map-legend');
+  leg.innerHTML=winners.map(w=>`<div class="leg-item"><span class="leg-dot" style="background:${PC[w]||'#888'}"></span>${w}</div>`).join('');
+}
+
+document.querySelectorAll('.map-toggle-btn').forEach(btn=>{
+  btn.addEventListener('click',()=>switchYear(+btn.dataset.year));
+});
+
+// Load boundary, then build both layers
+fetch('/analyse/zirndorf.geojson').then(r=>r.json()).then(boundary=>{
+  window._boundary=boundary;
+  buildVoronoi(B26,2026);
+  buildVoronoi(B20,2020);
+  layers[2026].addTo(map);
+  renderLegend(2026);
+  // Boundary outline
+  L.geoJSON(boundary,{style:{fill:false,color:'#888',weight:1.5,dashArray:'4 4',opacity:0.6}}).addTo(map);
+});
+
+// ── Persons Table ─────────────────────────────────────────────
+const ALL_PERSONS=[{"name": "Hesselberger Tom", "party26": "CSU", "nr26": 1, "stimmen26": 6048, "party20": "", "nr20": "", "stimmen20": 0, "stadtrat26": true}, {"name": "Seifert Adelheid", "party26": "CSU", "nr26": 2, "stimmen26": 4631, "party20": "CSU", "nr20": 3, "stimmen20": 4878, "stadtrat26": true}, {"name": "Nürnberger Udo", "party26": "CSU", "nr26": 3, "stimmen26": 4231, "party20": "CSU", "nr20": 2, "stimmen20": 5137, "stadtrat26": true}, {"name": "Maderer Michael", "party26": "CSU", "nr26": 4, "stimmen26": 3976, "party20": "CSU", "nr20": 7, "stimmen20": 3921, "stadtrat26": true}, {"name": "Spitzer Ines", "party26": "CSU", "nr26": 6, "stimmen26": 3936, "party20": "CSU", "nr20": 4, "stimmen20": 5084, "stadtrat26": true}, {"name": "Rauch Ursula", "party26": "CSU", "nr26": 5, "stimmen26": 3859, "party20": "CSU", "nr20": 5, "stimmen20": 4270, "stadtrat26": true}, {"name": "Schemm Florian", "party26": "CSU", "nr26": 7, "stimmen26": 3611, "party20": "CSU", "nr20": 6, "stimmen20": 3734, "stadtrat26": true}, {"name": "Huber Monika", "party26": "CSU", "nr26": 10, "stimmen26": 3389, "party20": "CSU", "nr20": 26, "stimmen20": 3546, "stadtrat26": false}, {"name": "Bechtloff Andreas", "party26": "CSU", "nr26": 8, "stimmen26": 3043, "party20": "CSU", "nr20": 8, "stimmen20": 3214, "stadtrat26": false}, {"name": "Plöchinger Christian", "party26": "CSU", "nr26": 12, "stimmen26": 3002, "party20": "", "nr20": "", "stimmen20": 0, "stadtrat26": false}, {"name": "Vogel Daniel", "party26": "CSU", "nr26": 14, "stimmen26": 2853, "party20": "CSU", "nr20": 11, "stimmen20": 2852, "stadtrat26": false}, {"name": "Hüfner Sven", "party26": "CSU", "nr26": 9, "stimmen26": 2767, "party20": "CSU", "nr20": 10, "stimmen20": 2905, "stadtrat26": false}, {"name": "Keck Manfred", "party26": "CSU", "nr26": 17, "stimmen26": 2678, "party20": "CSU", "nr20": 19, "stimmen20": 2675, "stadtrat26": false}, {"name": "von Moritz Paulina", "party26": "CSU", "nr26": 16, "stimmen26": 2660, "party20": "", "nr20": "", "stimmen20": 0, "stadtrat26": false}, {"name": "Braner Christian", "party26": "CSU", "nr26": 11, "stimmen26": 2614, "party20": "CSU", "nr20": 30, "stimmen20": 2019, "stadtrat26": false}, {"name": "Puler Vincenzo", "party26": "CSU", "nr26": 30, "stimmen26": 2595, "party20": "", "nr20": "", "stimmen20": 0, "stadtrat26": false}, {"name": "Weinberger Sven", "party26": "CSU", "nr26": 15, "stimmen26": 2590, "party20": "", "nr20": "", "stimmen20": 0, "stadtrat26": false}, {"name": "Ehrhardt Anja", "party26": "CSU", "nr26": 19, "stimmen26": 2545, "party20": "", "nr20": "", "stimmen20": 0, "stadtrat26": false}, {"name": "Trautmann Timo", "party26": "CSU", "nr26": 18, "stimmen26": 2471, "party20": "", "nr20": "", "stimmen20": 0, "stadtrat26": false}, {"name": "Schineis Manuel", "party26": "CSU", "nr26": 13, "stimmen26": 2374, "party20": "", "nr20": "", "stimmen20": 0, "stadtrat26": false}, {"name": "Geistbeck David", "party26": "CSU", "nr26": 21, "stimmen26": 2355, "party20": "", "nr20": "", "stimmen20": 0, "stadtrat26": false}, {"name": "Sauer Dieter", "party26": "CSU", "nr26": 26, "stimmen26": 2279, "party20": "CSU", "nr20": 27, "stimmen20": 2188, "stadtrat26": false}, {"name": "Müller Petra", "party26": "CSU", "nr26": 22, "stimmen26": 2250, "party20": "", "nr20": "", "stimmen20": 0, "stadtrat26": false}, {"name": "von Moritz Bernd", "party26": "CSU", "nr26": 23, "stimmen26": 2241, "party20": "", "nr20": "", "stimmen20": 0, "stadtrat26": false}, {"name": "Bauer Stefan", "party26": "CSU", "nr26": 20, "stimmen26": 2226, "party20": "", "nr20": "", "stimmen20": 0, "stadtrat26": false}, {"name": "Knorr Matthias", "party26": "CSU", "nr26": 25, "stimmen26": 2222, "party20": "CSU", "nr20": 18, "stimmen20": 2492, "stadtrat26": false}, {"name": "Kestler Jakob", "party26": "CSU", "nr26": 28, "stimmen26": 2167, "party20": "", "nr20": "", "stimmen20": 0, "stadtrat26": false}, {"name": "Schmidt Olivia", "party26": "CSU", "nr26": 27, "stimmen26": 2162, "party20": "", "nr20": "", "stimmen20": 0, "stadtrat26": false}, {"name": "Heinlein Ernest", "party26": "CSU", "nr26": 24, "stimmen26": 2145, "party20": "CSU", "nr20": 24, "stimmen20": 2148, "stadtrat26": false}, {"name": "Thiel Thomas", "party26": "CSU", "nr26": 29, "stimmen26": 2000, "party20": "", "nr20": "", "stimmen20": 0, "stadtrat26": false}, {"name": "Eder Elke", "party26": "FREIE WÄHLER", "nr26": 2, "stimmen26": 2106, "party20": "FREIE WÄHLER", "nr20": 2, "stimmen20": 2918, "stadtrat26": true}, {"name": "Schmidt Ralf", "party26": "FREIE WÄHLER", "nr26": 1, "stimmen26": 1978, "party20": "FREIE WÄHLER", "nr20": 3, "stimmen20": 1998, "stadtrat26": false}, {"name": "Elezović Sascha", "party26": "FREIE WÄHLER", "nr26": 13, "stimmen26": 960, "party20": "", "nr20": "", "stimmen20": 0, "stadtrat26": false}, {"name": "Junghaus Laszlo", "party26": "FREIE WÄHLER", "nr26": 3, "stimmen26": 944, "party20": "", "nr20": "", "stimmen20": 0, "stadtrat26": false}, {"name": "Hauck-Diethorn Karl-Heinz", "party26": "FREIE WÄHLER", "nr26": 4, "stimmen26": 921, "party20": "", "nr20": "", "stimmen20": 0, "stadtrat26": false}, {"name": "Zimmermann Martin", "party26": "FREIE WÄHLER", "nr26": 9, "stimmen26": 814, "party20": "", "nr20": "", "stimmen20": 0, "stadtrat26": false}, {"name": "Kohl Simon", "party26": "FREIE WÄHLER", "nr26": 12, "stimmen26": 810, "party20": "", "nr20": "", "stimmen20": 0, "stadtrat26": false}, {"name": "Klumpp Sascha", "party26": "FREIE WÄHLER", "nr26": 8, "stimmen26": 764, "party20": "", "nr20": "", "stimmen20": 0, "stadtrat26": false}, {"name": "Reichel Hanna", "party26": "FREIE WÄHLER", "nr26": 11, "stimmen26": 744, "party20": "", "nr20": "", "stimmen20": 0, "stadtrat26": false}, {"name": "Böhme Eva-Maria", "party26": "FREIE WÄHLER", "nr26": 5, "stimmen26": 731, "party20": "", "nr20": "", "stimmen20": 0, "stadtrat26": false}, {"name": "Kirik Ahmet", "party26": "FREIE WÄHLER", "nr26": 6, "stimmen26": 726, "party20": "", "nr20": "", "stimmen20": 0, "stadtrat26": false}, {"name": "Krasniqi Lulzim", "party26": "FREIE WÄHLER", "nr26": 7, "stimmen26": 691, "party20": "", "nr20": "", "stimmen20": 0, "stadtrat26": false}, {"name": "Diethorn Manfred", "party26": "FREIE WÄHLER", "nr26": 10, "stimmen26": 687, "party20": "", "nr20": "", "stimmen20": 0, "stadtrat26": false}, {"name": "Boyer-Junghaus Regina", "party26": "FREIE WÄHLER", "nr26": 14, "stimmen26": 552, "party20": "", "nr20": "", "stimmen20": 0, "stadtrat26": false}, {"name": "Übler Brigitta", "party26": "FREIE WÄHLER", "nr26": 15, "stimmen26": 552, "party20": "", "nr20": "", "stimmen20": 0, "stadtrat26": false}, {"name": "Stüwe Hans-Joachim", "party26": "AfD", "nr26": 3, "stimmen26": 4605, "party20": "AfD", "nr20": 4, "stimmen20": 2013, "stadtrat26": true}, {"name": "Treuheit Bastian", "party26": "AfD", "nr26": 1, "stimmen26": 5619, "party20": "AfD", "nr20": 1, "stimmen20": 2177, "stadtrat26": true}, {"name": "Riedel Steffen", "party26": "AfD", "nr26": 2, "stimmen26": 4821, "party20": "", "nr20": "", "stimmen20": 0, "stadtrat26": true}, {"name": "Fröhlich Günther", "party26": "AfD", "nr26": 4, "stimmen26": 4674, "party20": "AfD", "nr20": 5, "stimmen20": 1955, "stadtrat26": true}, {"name": "Rambeck Steven", "party26": "AfD", "nr26": 6, "stimmen26": 4580, "party20": "", "nr20": "", "stimmen20": 0, "stadtrat26": false}, {"name": "Seibt Ralph", "party26": "AfD", "nr26": 5, "stimmen26": 4553, "party20": "", "nr20": "", "stimmen20": 0, "stadtrat26": false}, {"name": "Seidel Mark", "party26": "AfD", "nr26": 7, "stimmen26": 4552, "party20": "", "nr20": "", "stimmen20": 0, "stadtrat26": false}, {"name": "Dietrich Sindy", "party26": "AfD", "nr26": 8, "stimmen26": 4475, "party20": "", "nr20": "", "stimmen20": 0, "stadtrat26": false}, {"name": "Veth Udo", "party26": "AfD", "nr26": 10, "stimmen26": 4431, "party20": "", "nr20": "", "stimmen20": 0, "stadtrat26": false}, {"name": "Depta Wioletta", "party26": "AfD", "nr26": 9, "stimmen26": 4404, "party20": "", "nr20": "", "stimmen20": 0, "stadtrat26": false}, {"name": "Poxleitner Lukas", "party26": "GRÜNE", "nr26": 2, "stimmen26": 4635, "party20": "GRÜNE", "nr20": 7, "stimmen20": 2186, "stadtrat26": true}, {"name": "Thomas Cornelia", "party26": "GRÜNE", "nr26": 1, "stimmen26": 4271, "party20": "GRÜNE", "nr20": 2, "stimmen20": 4484, "stadtrat26": true}, {"name": "Schäfer Walter", "party26": "GRÜNE", "nr26": 4, "stimmen26": 4060, "party20": "GRÜNE", "nr20": 1, "stimmen20": 5338, "stadtrat26": true}, {"name": "Dr. med. Engemann Timo", "party26": "GRÜNE", "nr26": 5, "stimmen26": 3765, "party20": "GRÜNE", "nr20": 5, "stimmen20": 4267, "stadtrat26": false}, {"name": "Krug Andrea", "party26": "GRÜNE", "nr26": 3, "stimmen26": 3347, "party20": "", "nr20": "", "stimmen20": 0, "stadtrat26": false}, {"name": "Dr. Wirner Gerhard", "party26": "GRÜNE", "nr26": 7, "stimmen26": 2088, "party20": "GRÜNE", "nr20": 9, "stimmen20": 1918, "stadtrat26": false}, {"name": "Sauerhöfer Heike", "party26": "GRÜNE", "nr26": 6, "stimmen26": 2022, "party20": "", "nr20": "", "stimmen20": 0, "stadtrat26": false}, {"name": "Schaa Angelika", "party26": "GRÜNE", "nr26": 13, "stimmen26": 1117, "party20": "GRÜNE", "nr20": 12, "stimmen20": 2125, "stadtrat26": false}, {"name": "Führes Kerstin", "party26": "GRÜNE", "nr26": 11, "stimmen26": 1064, "party20": "GRÜNE", "nr20": 24, "stimmen20": 1633, "stadtrat26": false}, {"name": "Aigner Heike", "party26": "GRÜNE", "nr26": 9, "stimmen26": 949, "party20": "", "nr20": "", "stimmen20": 0, "stadtrat26": false}, {"name": "Hartmann Fabian", "party26": "GRÜNE", "nr26": 10, "stimmen26": 947, "party20": "", "nr20": "", "stimmen20": 0, "stadtrat26": false}, {"name": "Haake Oliver", "party26": "GRÜNE", "nr26": 8, "stimmen26": 938, "party20": "", "nr20": "", "stimmen20": 0, "stadtrat26": false}, {"name": "Link Karin", "party26": "GRÜNE", "nr26": 15, "stimmen26": 874, "party20": "GRÜNE", "nr20": 22, "stimmen20": 1407, "stadtrat26": false}, {"name": "Link Reinhard", "party26": "GRÜNE", "nr26": 12, "stimmen26": 873, "party20": "GRÜNE", "nr20": 19, "stimmen20": 1472, "stadtrat26": false}, {"name": "Wimberger Johann", "party26": "GRÜNE", "nr26": 16, "stimmen26": 840, "party20": "GRÜNE", "nr20": 13, "stimmen20": 1592, "stadtrat26": false}, {"name": "Sieber Sabine", "party26": "GRÜNE", "nr26": 17, "stimmen26": 833, "party20": "GRÜNE", "nr20": 18, "stimmen20": 1546, "stadtrat26": false}, {"name": "Richter Christian", "party26": "GRÜNE", "nr26": 18, "stimmen26": 808, "party20": "", "nr20": "", "stimmen20": 0, "stadtrat26": false}, {"name": "Schmidt Werner", "party26": "GRÜNE", "nr26": 14, "stimmen26": 790, "party20": "GRÜNE", "nr20": 11, "stimmen20": 1517, "stadtrat26": false}, {"name": "Hauber Sandra", "party26": "SPD", "nr26": 1, "stimmen26": 4228, "party20": "SPD", "nr20": 2, "stimmen20": 5677, "stadtrat26": true}, {"name": "Otto Sylke", "party26": "SPD", "nr26": 3, "stimmen26": 3120, "party20": "SPD", "nr20": 6, "stimmen20": 4384, "stadtrat26": true}, {"name": "Zahl Elke", "party26": "SPD", "nr26": 5, "stimmen26": 2570, "party20": "SPD", "nr20": 4, "stimmen20": 4191, "stadtrat26": true}, {"name": "Leikauf Walter", "party26": "SPD", "nr26": 4, "stimmen26": 2398, "party20": "SPD", "nr20": 10, "stimmen20": 3054, "stadtrat26": true}, {"name": "Bauer Frank", "party26": "SPD", "nr26": 2, "stimmen26": 2334, "party20": "SPD", "nr20": 5, "stimmen20": 3103, "stadtrat26": false}, {"name": "Götz Michael", "party26": "SPD", "nr26": 8, "stimmen26": 1903, "party20": "", "nr20": "", "stimmen20": 0, "stadtrat26": false}, {"name": "Hauber Arwen", "party26": "SPD", "nr26": 9, "stimmen26": 1816, "party20": "", "nr20": "", "stimmen20": 0, "stadtrat26": false}, {"name": "Leikauf Bernd", "party26": "SPD", "nr26": 12, "stimmen26": 1715, "party20": "SPD", "nr20": 13, "stimmen20": 2603, "stadtrat26": false}, {"name": "Büsing Dirk", "party26": "SPD", "nr26": 6, "stimmen26": 1691, "party20": "", "nr20": "", "stimmen20": 0, "stadtrat26": false}, {"name": "Deisenrieder Nina", "party26": "SPD", "nr26": 7, "stimmen26": 1591, "party20": "", "nr20": "", "stimmen20": 0, "stadtrat26": false}, {"name": "Taubmann Michael", "party26": "SPD", "nr26": 10, "stimmen26": 1589, "party20": "", "nr20": "", "stimmen20": 0, "stadtrat26": false}, {"name": "Zwingel Stephan", "party26": "SPD", "nr26": 24, "stimmen26": 1569, "party20": "SPD", "nr20": 25, "stimmen20": 2170, "stadtrat26": false}, {"name": "Dieng Oumar", "party26": "SPD", "nr26": 16, "stimmen26": 1568, "party20": "", "nr20": "", "stimmen20": 0, "stadtrat26": false}, {"name": "Helmer Karl-Heinz", "party26": "SPD", "nr26": 18, "stimmen26": 1513, "party20": "", "nr20": "", "stimmen20": 0, "stadtrat26": false}, {"name": "Krause Kerstin", "party26": "SPD", "nr26": 13, "stimmen26": 1462, "party20": "", "nr20": "", "stimmen20": 0, "stadtrat26": false}, {"name": "Ackermann Verena", "party26": "SPD", "nr26": 21, "stimmen26": 1400, "party20": "SPD", "nr20": 24, "stimmen20": 1873, "stadtrat26": false}, {"name": "Nickel Werner", "party26": "SPD", "nr26": 29, "stimmen26": 1395, "party20": "SPD", "nr20": 23, "stimmen20": 2615, "stadtrat26": false}, {"name": "Günther Nonna", "party26": "SPD", "nr26": 23, "stimmen26": 1387, "party20": "", "nr20": "", "stimmen20": 0, "stadtrat26": false}, {"name": "Frei Anelli", "party26": "SPD", "nr26": 17, "stimmen26": 1369, "party20": "", "nr20": "", "stimmen20": 0, "stadtrat26": false}, {"name": "Michaelis Brigitte", "party26": "SPD", "nr26": 15, "stimmen26": 1366, "party20": "SPD", "nr20": 18, "stimmen20": 1824, "stadtrat26": false}, {"name": "Vestner Dieter", "party26": "SPD", "nr26": 30, "stimmen26": 1306, "party20": "SPD", "nr20": 9, "stimmen20": 2909, "stadtrat26": false}, {"name": "Offhaus Carola", "party26": "SPD", "nr26": 11, "stimmen26": 1279, "party20": "", "nr20": "", "stimmen20": 0, "stadtrat26": false}, {"name": "Österle Markus", "party26": "SPD", "nr26": 14, "stimmen26": 1260, "party20": "SPD", "nr20": 17, "stimmen20": 1780, "stadtrat26": false}, {"name": "Hartmann Franziska", "party26": "SPD", "nr26": 19, "stimmen26": 1230, "party20": "", "nr20": "", "stimmen20": 0, "stadtrat26": false}, {"name": "Gräbner Alexander", "party26": "SPD", "nr26": 20, "stimmen26": 1227, "party20": "", "nr20": "", "stimmen20": 0, "stadtrat26": false}, {"name": "Dodenhöft Aelita", "party26": "SPD", "nr26": 25, "stimmen26": 1164, "party20": "", "nr20": "", "stimmen20": 0, "stadtrat26": false}, {"name": "Drawer Fabian", "party26": "SPD", "nr26": 22, "stimmen26": 1119, "party20": "", "nr20": "", "stimmen20": 0, "stadtrat26": false}, {"name": "Enz Romina", "party26": "SPD", "nr26": 27, "stimmen26": 1111, "party20": "", "nr20": "", "stimmen20": 0, "stadtrat26": false}, {"name": "Kolb Thomas", "party26": "SPD", "nr26": 26, "stimmen26": 1099, "party20": "", "nr20": "", "stimmen20": 0, "stadtrat26": false}, {"name": "Dr. Falk Wilhelm", "party26": "SPD", "nr26": 28, "stimmen26": 1059, "party20": "", "nr20": "", "stimmen20": 0, "stadtrat26": false}, {"name": "Pfeffer Meike", "party26": "Die Linke", "nr26": 2, "stimmen26": 1824, "party20": "", "nr20": "", "stimmen20": 0, "stadtrat26": true}, {"name": "Greser Robin", "party26": "Die Linke", "nr26": 1, "stimmen26": 1716, "party20": "", "nr20": "", "stimmen20": 0, "stadtrat26": false}, {"name": "Jug Martin", "party26": "Die Linke", "nr26": 3, "stimmen26": 1259, "party20": "", "nr20": "", "stimmen20": 0, "stadtrat26": false}, {"name": "Schmidt Kevin", "party26": "Die Linke", "nr26": 4, "stimmen26": 1242, "party20": "", "nr20": "", "stimmen20": 0, "stadtrat26": false}, {"name": "Jug Yunaisy", "party26": "Die Linke", "nr26": 5, "stimmen26": 1092, "party20": "", "nr20": "", "stimmen20": 0, "stadtrat26": false}, {"name": "Haug Volker", "party26": "Die Linke", "nr26": 6, "stimmen26": 1026, "party20": "", "nr20": "", "stimmen20": 0, "stadtrat26": false}, {"name": "Berdich Volker", "party26": "Die Linke", "nr26": 10, "stimmen26": 925, "party20": "DIE LINKE", "nr20": 1, "stimmen20": 1526, "stadtrat26": false}, {"name": "Schmidt Valeria", "party26": "Die Linke", "nr26": 7, "stimmen26": 719, "party20": "", "nr20": "", "stimmen20": 0, "stadtrat26": false}, {"name": "Zinser Lea", "party26": "Die Linke", "nr26": 11, "stimmen26": 712, "party20": "", "nr20": "", "stimmen20": 0, "stadtrat26": false}, {"name": "Fasching Elena-Mariana", "party26": "Die Linke", "nr26": 8, "stimmen26": 701, "party20": "", "nr20": "", "stimmen20": 0, "stadtrat26": false}, {"name": "Pleier Dominic", "party26": "Die Linke", "nr26": 9, "stimmen26": 653, "party20": "", "nr20": "", "stimmen20": 0, "stadtrat26": false}, {"name": "Pleier Marion", "party26": "Die Linke", "nr26": 13, "stimmen26": 418, "party20": "", "nr20": "", "stimmen20": 0, "stadtrat26": false}, {"name": "Aigner Magali", "party26": "Die Linke", "nr26": 12, "stimmen26": 415, "party20": "", "nr20": "", "stimmen20": 0, "stadtrat26": false}, {"name": "Reubel Paul", "party26": "FDP", "nr26": 1, "stimmen26": 1443, "party20": "FDP", "nr20": 1, "stimmen20": 1657, "stadtrat26": true}, {"name": "Bülbül Murat", "party26": "FDP", "nr26": 2, "stimmen26": 1128, "party20": "", "nr20": "", "stimmen20": 0, "stadtrat26": false}, {"name": "Hackl Julia", "party26": "FDP", "nr26": 3, "stimmen26": 826, "party20": "", "nr20": "", "stimmen20": 0, "stadtrat26": false}, {"name": "Guttenberger Peter", "party26": "FDP", "nr26": 5, "stimmen26": 747, "party20": "", "nr20": "", "stimmen20": 0, "stadtrat26": false}, {"name": "Reubel-Wirth Katrin", "party26": "FDP", "nr26": 8, "stimmen26": 706, "party20": "", "nr20": "", "stimmen20": 0, "stadtrat26": false}, {"name": "Dr. Stottok Bernd", "party26": "FDP", "nr26": 4, "stimmen26": 566, "party20": "FDP", "nr20": 8, "stimmen20": 588, "stadtrat26": false}, {"name": "Garavello-Führhäußer Ana", "party26": "FDP", "nr26": 7, "stimmen26": 565, "party20": "FDP", "nr20": 10, "stimmen20": 515, "stadtrat26": false}, {"name": "Morgen Mirela", "party26": "FDP", "nr26": 6, "stimmen26": 515, "party20": "FREIE WÄHLER", "nr20": 28, "stimmen20": 565, "stadtrat26": false}, {"name": "Krause Eike", "party26": "Volt", "nr26": 1, "stimmen26": 1492, "party20": "FREIE WÄHLER", "nr20": 7, "stimmen20": 1121, "stadtrat26": true}, {"name": "Müller Christoph", "party26": "Volt", "nr26": 3, "stimmen26": 1290, "party20": "", "nr20": "", "stimmen20": 0, "stadtrat26": false}, {"name": "Dr. Eibl-Eibesfeldt Katharina", "party26": "Volt", "nr26": 6, "stimmen26": 1239, "party20": "", "nr20": "", "stimmen20": 0, "stadtrat26": false}, {"name": "Wittmann Marion", "party26": "Volt", "nr26": 4, "stimmen26": 1113, "party20": "", "nr20": "", "stimmen20": 0, "stadtrat26": false}, {"name": "Flohry Liam", "party26": "Volt", "nr26": 2, "stimmen26": 1056, "party20": "", "nr20": "", "stimmen20": 0, "stadtrat26": false}, {"name": "Neupert Emil", "party26": "Volt", "nr26": 5, "stimmen26": 1043, "party20": "", "nr20": "", "stimmen20": 0, "stadtrat26": false}, {"name": "Baritsch Marcus", "party26": "Volt", "nr26": 10, "stimmen26": 1023, "party20": "FREIE WÄHLER", "nr20": 1, "stimmen20": 3998, "stadtrat26": false}, {"name": "Häusinger Timo", "party26": "Volt", "nr26": 7, "stimmen26": 854, "party20": "", "nr20": "", "stimmen20": 0, "stadtrat26": false}, {"name": "Flohry Christina", "party26": "Volt", "nr26": 8, "stimmen26": 760, "party20": "", "nr20": "", "stimmen20": 0, "stadtrat26": false}, {"name": "Neupert Tim", "party26": "Volt", "nr26": 11, "stimmen26": 728, "party20": "FREIE WÄHLER", "nr20": 12, "stimmen20": 1431, "stadtrat26": false}, {"name": "Schmidt Daniel", "party26": "Volt", "nr26": 9, "stimmen26": 508, "party20": "", "nr20": "", "stimmen20": 0, "stadtrat26": false}, {"name": "Spath Marcus", "party26": "ZBG", "nr26": 1, "stimmen26": 8097, "party20": "SPD", "nr20": 3, "stimmen20": 4214, "stadtrat26": true}, {"name": "Rieß Andreas", "party26": "ZBG", "nr26": 2, "stimmen26": 5354, "party20": "SPD", "nr20": 15, "stimmen20": 2776, "stadtrat26": true}, {"name": "Felbinger Jochen", "party26": "ZBG", "nr26": 3, "stimmen26": 4695, "party20": "", "nr20": "", "stimmen20": 0, "stadtrat26": true}, {"name": "Zechentmayer Kerstin", "party26": "ZBG", "nr26": 4, "stimmen26": 4229, "party20": "", "nr20": "", "stimmen20": 0, "stadtrat26": true}, {"name": "Götz Gerd", "party26": "ZBG", "nr26": 9, "stimmen26": 4119, "party20": "", "nr20": "", "stimmen20": 0, "stadtrat26": true}, {"name": "Roth Nina", "party26": "ZBG", "nr26": 13, "stimmen26": 3937, "party20": "", "nr20": "", "stimmen20": 0, "stadtrat26": true}, {"name": "Loidold Frank", "party26": "ZBG", "nr26": 18, "stimmen26": 3711, "party20": "", "nr20": "", "stimmen20": 0, "stadtrat26": true}, {"name": "Hirmke Arnulf", "party26": "ZBG", "nr26": 5, "stimmen26": 3709, "party20": "", "nr20": "", "stimmen20": 0, "stadtrat26": true}, {"name": "Förster Jessica", "party26": "ZBG", "nr26": 7, "stimmen26": 3636, "party20": "", "nr20": "", "stimmen20": 0, "stadtrat26": false}, {"name": "Janker Stefan", "party26": "ZBG", "nr26": 15, "stimmen26": 3551, "party20": "CSU", "nr20": 16, "stimmen20": 2799, "stadtrat26": false}, {"name": "Popp Stefan", "party26": "ZBG", "nr26": 8, "stimmen26": 3518, "party20": "", "nr20": "", "stimmen20": 0, "stadtrat26": false}, {"name": "Bauer Sarah", "party26": "ZBG", "nr26": 12, "stimmen26": 3297, "party20": "", "nr20": "", "stimmen20": 0, "stadtrat26": false}, {"name": "Goldmann Nadja", "party26": "ZBG", "nr26": 10, "stimmen26": 3092, "party20": "", "nr20": "", "stimmen20": 0, "stadtrat26": false}, {"name": "Spath Horst", "party26": "ZBG", "nr26": 26, "stimmen26": 3046, "party20": "SPD", "nr20": 21, "stimmen20": 2804, "stadtrat26": false}, {"name": "Straßner Heinz", "party26": "ZBG", "nr26": 6, "stimmen26": 3040, "party20": "", "nr20": "", "stimmen20": 0, "stadtrat26": false}, {"name": "Hager Ricarda", "party26": "ZBG", "nr26": 14, "stimmen26": 2995, "party20": "", "nr20": "", "stimmen20": 0, "stadtrat26": false}, {"name": "Ulrich Robert", "party26": "ZBG", "nr26": 19, "stimmen26": 2983, "party20": "", "nr20": "", "stimmen20": 0, "stadtrat26": false}, {"name": "Grun Marcus", "party26": "ZBG", "nr26": 11, "stimmen26": 2910, "party20": "", "nr20": "", "stimmen20": 0, "stadtrat26": false}, {"name": "Eichhorn Dieter", "party26": "ZBG", "nr26": 23, "stimmen26": 2744, "party20": "", "nr20": "", "stimmen20": 0, "stadtrat26": false}, {"name": "Förster Daniel", "party26": "ZBG", "nr26": 17, "stimmen26": 2655, "party20": "", "nr20": "", "stimmen20": 0, "stadtrat26": false}, {"name": "Rupprecht Marcus", "party26": "ZBG", "nr26": 16, "stimmen26": 2623, "party20": "", "nr20": "", "stimmen20": 0, "stadtrat26": false}, {"name": "Hösch Klaus", "party26": "ZBG", "nr26": 28, "stimmen26": 2579, "party20": "", "nr20": "", "stimmen20": 0, "stadtrat26": false}, {"name": "Schwippel Fabian", "party26": "ZBG", "nr26": 21, "stimmen26": 2556, "party20": "", "nr20": "", "stimmen20": 0, "stadtrat26": false}, {"name": "Scamperle Pivi", "party26": "ZBG", "nr26": 20, "stimmen26": 2526, "party20": "", "nr20": "", "stimmen20": 0, "stadtrat26": false}, {"name": "Preßl Patric", "party26": "ZBG", "nr26": 24, "stimmen26": 2499, "party20": "", "nr20": "", "stimmen20": 0, "stadtrat26": false}, {"name": "Retzlik Mike", "party26": "ZBG", "nr26": 22, "stimmen26": 2285, "party20": "", "nr20": "", "stimmen20": 0, "stadtrat26": false}, {"name": "Traschewski Holk", "party26": "ZBG", "nr26": 25, "stimmen26": 2263, "party20": "", "nr20": "", "stimmen20": 0, "stadtrat26": false}, {"name": "Gerber Markus", "party26": "ZBG", "nr26": 29, "stimmen26": 2254, "party20": "CSU", "nr20": 14, "stimmen20": 2550, "stadtrat26": false}, {"name": "Keller Alexander", "party26": "ZBG", "nr26": 30, "stimmen26": 2214, "party20": "", "nr20": "", "stimmen20": 0, "stadtrat26": false}, {"name": "Goldmann Jens", "party26": "ZBG", "nr26": 27, "stimmen26": 2190, "party20": "", "nr20": "", "stimmen20": 0, "stadtrat26": false}, {"name": "Klaski Bernd", "party26": "", "nr26": "", "stimmen26": 0, "party20": "CSU", "nr20": 1, "stimmen20": 6921, "stadtrat26": false}, {"name": "Gebert Anton", "party26": "", "nr26": "", "stimmen26": 0, "party20": "CSU", "nr20": 9, "stimmen20": 3946, "stadtrat26": false}, {"name": "Pulerá Enzo", "party26": "", "nr26": "", "stimmen26": 0, "party20": "CSU", "nr20": 13, "stimmen20": 3732, "stadtrat26": false}, {"name": "Huschka Alexandra", "party26": "", "nr26": "", "stimmen26": 0, "party20": "CSU", "nr20": 12, "stimmen20": 3363, "stadtrat26": false}, {"name": "Barthel Simone", "party26": "", "nr26": "", "stimmen26": 0, "party20": "CSU", "nr20": 17, "stimmen20": 3143, "stadtrat26": false}, {"name": "Röhn Roland", "party26": "", "nr26": "", "stimmen26": 0, "party20": "CSU", "nr20": 15, "stimmen20": 2998, "stadtrat26": false}, {"name": "Keller Günther", "party26": "", "nr26": "", "stimmen26": 0, "party20": "CSU", "nr20": 21, "stimmen20": 2924, "stadtrat26": false}, {"name": "Dr. Ruscica Pruy Rossella", "party26": "", "nr26": "", "stimmen26": 0, "party20": "CSU", "nr20": 22, "stimmen20": 2792, "stadtrat26": false}, {"name": "Däumler Wolfgang", "party26": "", "nr26": "", "stimmen26": 0, "party20": "CSU", "nr20": 25, "stimmen20": 2763, "stadtrat26": false}, {"name": "Leybold Stefanie", "party26": "", "nr26": "", "stimmen26": 0, "party20": "CSU", "nr20": 23, "stimmen20": 2738, "stadtrat26": false}, {"name": "Dr. Müller Inga", "party26": "", "nr26": "", "stimmen26": 0, "party20": "CSU", "nr20": 28, "stimmen20": 2719, "stadtrat26": false}, {"name": "Niedermeier Gertrud", "party26": "", "nr26": "", "stimmen26": 0, "party20": "CSU", "nr20": 29, "stimmen20": 2426, "stadtrat26": false}, {"name": "Dittmar Christoph", "party26": "", "nr26": "", "stimmen26": 0, "party20": "CSU", "nr20": 20, "stimmen20": 2231, "stadtrat26": false}, {"name": "Schaa Wolfram", "party26": "", "nr26": "", "stimmen26": 0, "party20": "GRÜNE", "nr20": 3, "stimmen20": 5099, "stadtrat26": false}, {"name": "Bohrer Gabriele", "party26": "", "nr26": "", "stimmen26": 0, "party20": "GRÜNE", "nr20": 4, "stimmen20": 3996, "stadtrat26": false}, {"name": "Schwippel Yvonne", "party26": "", "nr26": "", "stimmen26": 0, "party20": "GRÜNE", "nr20": 6, "stimmen20": 1925, "stadtrat26": false}, {"name": "Zeilinger Christiane", "party26": "", "nr26": "", "stimmen26": 0, "party20": "GRÜNE", "nr20": 8, "stimmen20": 1887, "stadtrat26": false}, {"name": "Hufschmidt Karin", "party26": "", "nr26": "", "stimmen26": 0, "party20": "GRÜNE", "nr20": 16, "stimmen20": 1852, "stadtrat26": false}, {"name": "Inci Birgitta", "party26": "", "nr26": "", "stimmen26": 0, "party20": "GRÜNE", "nr20": 10, "stimmen20": 1741, "stadtrat26": false}, {"name": "Schmidt Roland", "party26": "", "nr26": "", "stimmen26": 0, "party20": "GRÜNE", "nr20": 15, "stimmen20": 1540, "stadtrat26": false}, {"name": "Richter-Kneermann Elke", "party26": "", "nr26": "", "stimmen26": 0, "party20": "GRÜNE", "nr20": 14, "stimmen20": 1499, "stadtrat26": false}, {"name": "Witt Nicole", "party26": "", "nr26": "", "stimmen26": 0, "party20": "GRÜNE", "nr20": 20, "stimmen20": 1491, "stadtrat26": false}, {"name": "Elvers Manfred", "party26": "", "nr26": "", "stimmen26": 0, "party20": "GRÜNE", "nr20": 17, "stimmen20": 1421, "stadtrat26": false}, {"name": "Stinzendörfer Herbert", "party26": "", "nr26": "", "stimmen26": 0, "party20": "GRÜNE", "nr20": 23, "stimmen20": 1309, "stadtrat26": false}, {"name": "Neuber Armin", "party26": "", "nr26": "", "stimmen26": 0, "party20": "GRÜNE", "nr20": 21, "stimmen20": 1289, "stadtrat26": false}, {"name": "Axmann Klaus-Peter", "party26": "", "nr26": "", "stimmen26": 0, "party20": "GRÜNE", "nr20": 25, "stimmen20": 1275, "stadtrat26": false}, {"name": "Ziegler Reiner", "party26": "", "nr26": "", "stimmen26": 0, "party20": "FREIE WÄHLER", "nr20": 6, "stimmen20": 1418, "stadtrat26": false}, {"name": "Bierwagen Carina", "party26": "", "nr26": "", "stimmen26": 0, "party20": "FREIE WÄHLER", "nr20": 16, "stimmen20": 1223, "stadtrat26": false}, {"name": "Eder Oskar", "party26": "", "nr26": "", "stimmen26": 0, "party20": "FREIE WÄHLER", "nr20": 10, "stimmen20": 1179, "stadtrat26": false}, {"name": "Baritsch Sandra", "party26": "", "nr26": "", "stimmen26": 0, "party20": "FREIE WÄHLER", "nr20": 17, "stimmen20": 1167, "stadtrat26": false}, {"name": "Carenza-Hanisch Sandra", "party26": "", "nr26": "", "stimmen26": 0, "party20": "FREIE WÄHLER", "nr20": 4, "stimmen20": 1155, "stadtrat26": false}, {"name": "Feist Horst", "party26": "", "nr26": "", "stimmen26": 0, "party20": "FREIE WÄHLER", "nr20": 11, "stimmen20": 1077, "stadtrat26": false}, {"name": "Walz Simeon", "party26": "", "nr26": "", "stimmen26": 0, "party20": "FREIE WÄHLER", "nr20": 19, "stimmen20": 1037, "stadtrat26": false}, {"name": "Wunderlich Uwe", "party26": "", "nr26": "", "stimmen26": 0, "party20": "FREIE WÄHLER", "nr20": 5, "stimmen20": 993, "stadtrat26": false}, {"name": "Ziegler Daniel", "party26": "", "nr26": "", "stimmen26": 0, "party20": "FREIE WÄHLER", "nr20": 8, "stimmen20": 984, "stadtrat26": false}, {"name": "Stiller Angela", "party26": "", "nr26": "", "stimmen26": 0, "party20": "FREIE WÄHLER", "nr20": 13, "stimmen20": 982, "stadtrat26": false}, {"name": "Lößel Michael", "party26": "", "nr26": "", "stimmen26": 0, "party20": "FREIE WÄHLER", "nr20": 9, "stimmen20": 961, "stadtrat26": false}, {"name": "Förster Lothar", "party26": "", "nr26": "", "stimmen26": 0, "party20": "FREIE WÄHLER", "nr20": 14, "stimmen20": 844, "stadtrat26": false}, {"name": "Kämpf Claudia", "party26": "", "nr26": "", "stimmen26": 0, "party20": "FREIE WÄHLER", "nr20": 18, "stimmen20": 821, "stadtrat26": false}, {"name": "Hahn Marco", "party26": "", "nr26": "", "stimmen26": 0, "party20": "FREIE WÄHLER", "nr20": 15, "stimmen20": 796, "stadtrat26": false}, {"name": "Kämpf Marcus", "party26": "", "nr26": "", "stimmen26": 0, "party20": "FREIE WÄHLER", "nr20": 25, "stimmen20": 770, "stadtrat26": false}, {"name": "Pili Cadiana", "party26": "", "nr26": "", "stimmen26": 0, "party20": "FREIE WÄHLER", "nr20": 21, "stimmen20": 727, "stadtrat26": false}, {"name": "Kißlinger Denise", "party26": "", "nr26": "", "stimmen26": 0, "party20": "FREIE WÄHLER", "nr20": 20, "stimmen20": 709, "stadtrat26": false}, {"name": "Appelsmeier Concetta", "party26": "", "nr26": "", "stimmen26": 0, "party20": "FREIE WÄHLER", "nr20": 23, "stimmen20": 703, "stadtrat26": false}, {"name": "Stenz Manuel", "party26": "", "nr26": "", "stimmen26": 0, "party20": "FREIE WÄHLER", "nr20": 22, "stimmen20": 687, "stadtrat26": false}, {"name": "Scholz Werner", "party26": "", "nr26": "", "stimmen26": 0, "party20": "FREIE WÄHLER", "nr20": 24, "stimmen20": 680, "stadtrat26": false}, {"name": "Kästner Fabian", "party26": "", "nr26": "", "stimmen26": 0, "party20": "FREIE WÄHLER", "nr20": 29, "stimmen20": 648, "stadtrat26": false}, {"name": "Gobé Sébastien", "party26": "", "nr26": "", "stimmen26": 0, "party20": "FREIE WÄHLER", "nr20": 27, "stimmen20": 642, "stadtrat26": false}, {"name": "Kämpf Walter", "party26": "", "nr26": "", "stimmen26": 0, "party20": "FREIE WÄHLER", "nr20": 30, "stimmen20": 634, "stadtrat26": false}, {"name": "Erbsmehl Axel", "party26": "", "nr26": "", "stimmen26": 0, "party20": "FREIE WÄHLER", "nr20": 26, "stimmen20": 629, "stadtrat26": false}, {"name": "Pleyer Claus-Georg", "party26": "", "nr26": "", "stimmen26": 0, "party20": "AfD", "nr20": 2, "stimmen20": 2190, "stadtrat26": false}, {"name": "Bininda Stefan", "party26": "", "nr26": "", "stimmen26": 0, "party20": "AfD", "nr20": 3, "stimmen20": 2002, "stadtrat26": false}, {"name": "Michelbach Melitta", "party26": "", "nr26": "", "stimmen26": 0, "party20": "AfD", "nr20": 6, "stimmen20": 1859, "stadtrat26": false}, {"name": "Wecke-Emden Franz", "party26": "", "nr26": "", "stimmen26": 0, "party20": "AfD", "nr20": 7, "stimmen20": 1844, "stadtrat26": false}, {"name": "Sandbichler Gustav", "party26": "", "nr26": "", "stimmen26": 0, "party20": "AfD", "nr20": 8, "stimmen20": 1816, "stadtrat26": false}, {"name": "Mogavero Manuela", "party26": "", "nr26": "", "stimmen26": 0, "party20": "AfD", "nr20": 9, "stimmen20": 1787, "stadtrat26": false}, {"name": "Pleyer Brigitte", "party26": "", "nr26": "", "stimmen26": 0, "party20": "AfD", "nr20": 10, "stimmen20": 1740, "stadtrat26": false}, {"name": "Zwingel Thomas", "party26": "", "nr26": "", "stimmen26": 0, "party20": "SPD", "nr20": 1, "stimmen20": 7059, "stadtrat26": false}, {"name": "Popp Axel", "party26": "", "nr26": "", "stimmen26": 0, "party20": "SPD", "nr20": 11, "stimmen20": 3097, "stadtrat26": false}, {"name": "Götz Jürgen", "party26": "", "nr26": "", "stimmen26": 0, "party20": "SPD", "nr20": 28, "stimmen20": 3097, "stadtrat26": false}, {"name": "Wolf Alina", "party26": "", "nr26": "", "stimmen26": 0, "party20": "SPD", "nr20": 14, "stimmen20": 2557, "stadtrat26": false}, {"name": "Trautmann Markus", "party26": "", "nr26": "", "stimmen26": 0, "party20": "SPD", "nr20": 7, "stimmen20": 2492, "stadtrat26": false}, {"name": "Behringer Herbert", "party26": "", "nr26": "", "stimmen26": 0, "party20": "SPD", "nr20": 26, "stimmen20": 2433, "stadtrat26": false}, {"name": "Konrad Birgit", "party26": "", "nr26": "", "stimmen26": 0, "party20": "SPD", "nr20": 16, "stimmen20": 2430, "stadtrat26": false}, {"name": "Pulerá Renate", "party26": "", "nr26": "", "stimmen26": 0, "party20": "SPD", "nr20": 20, "stimmen20": 2375, "stadtrat26": false}, {"name": "Exner Michaela", "party26": "", "nr26": "", "stimmen26": 0, "party20": "SPD", "nr20": 8, "stimmen20": 2277, "stadtrat26": false}, {"name": "Liebel Walter", "party26": "", "nr26": "", "stimmen26": 0, "party20": "SPD", "nr20": 29, "stimmen20": 2246, "stadtrat26": false}, {"name": "Weber Sarah", "party26": "", "nr26": "", "stimmen26": 0, "party20": "SPD", "nr20": 12, "stimmen20": 2162, "stadtrat26": false}, {"name": "Zimmermann Daniel", "party26": "", "nr26": "", "stimmen26": 0, "party20": "SPD", "nr20": 19, "stimmen20": 2104, "stadtrat26": false}, {"name": "Harreuther Rainer", "party26": "", "nr26": "", "stimmen26": 0, "party20": "SPD", "nr20": 27, "stimmen20": 1976, "stadtrat26": false}, {"name": "Jung Susanne", "party26": "", "nr26": "", "stimmen26": 0, "party20": "SPD", "nr20": 22, "stimmen20": 1911, "stadtrat26": false}, {"name": "Lunz Klaus", "party26": "", "nr26": "", "stimmen26": 0, "party20": "SPD", "nr20": 30, "stimmen20": 1897, "stadtrat26": false}, {"name": "Bartsch Felix", "party26": "", "nr26": "", "stimmen26": 0, "party20": "FDP", "nr20": 3, "stimmen20": 906, "stadtrat26": false}, {"name": "Gessner Daniel", "party26": "", "nr26": "", "stimmen26": 0, "party20": "FDP", "nr20": 4, "stimmen20": 663, "stadtrat26": false}, {"name": "Schüer Cordula", "party26": "", "nr26": "", "stimmen26": 0, "party20": "FDP", "nr20": 2, "stimmen20": 647, "stadtrat26": false}, {"name": "Vollmar Nick", "party26": "", "nr26": "", "stimmen26": 0, "party20": "FDP", "nr20": 5, "stimmen20": 637, "stadtrat26": false}, {"name": "Rohde Jörg", "party26": "", "nr26": "", "stimmen26": 0, "party20": "FDP", "nr20": 7, "stimmen20": 568, "stadtrat26": false}, {"name": "Stier Isabel", "party26": "", "nr26": "", "stimmen26": 0, "party20": "FDP", "nr20": 9, "stimmen20": 551, "stadtrat26": false}, {"name": "Ullmann Klaus", "party26": "", "nr26": "", "stimmen26": 0, "party20": "FDP", "nr20": 6, "stimmen20": 516, "stadtrat26": false}, {"name": "Gün Sevim", "party26": "", "nr26": "", "stimmen26": 0, "party20": "DIE LINKE", "nr20": 2, "stimmen20": 934, "stadtrat26": false}, {"name": "Frank Martin", "party26": "", "nr26": "", "stimmen26": 0, "party20": "DIE LINKE", "nr20": 3, "stimmen20": 904, "stadtrat26": false}, {"name": "", "party26": "", "nr26": "", "stimmen26": 0, "party20": "DIE LINKE", "nr20": 4, "stimmen20": 754, "stadtrat26": false}];
+let curFilter='all',curSort={col:4,asc:false},curSearch='';
+const pSwitches=new Set(ALL_PERSONS.filter(p=>{
+  if(!p.party20||!p.party26)return false;
+  const a=p.party20==='DIE LINKE'?'Die Linke':p.party20;
+  const b=p.party26==='DIE LINKE'?'Die Linke':p.party26;
+  return a!==b;
+}).map(p=>p.name));
+
+function chip(party){const c=PC[party]||'#888';return party?`<span class="party-chip" style="background:${c}">${party}</span>`:'–';}
+
+function renderPersons(){
+  let d=[...ALL_PERSONS];
+  if(curSearch)d=d.filter(p=>p.name.toLowerCase().includes(curSearch.toLowerCase()));
+  if(curFilter==='both')d=d.filter(p=>p.party20&&p.party26);
+  else if(curFilter==='switch')d=d.filter(p=>pSwitches.has(p.name));
+  else if(curFilter==='elected')d=d.filter(p=>p.stadtrat26);
+  else if(curFilter==='only26')d=d.filter(p=>!p.party20&&p.party26);
+  else if(curFilter==='only20')d=d.filter(p=>p.party20&&!p.party26);
+  const {col,asc}=curSort;
+  d.sort((a,b)=>{
+    const vals=[
+      [a.name,b.name],
+      [a.party20||'',b.party20||''],
+      [a.stimmen20||0,b.stimmen20||0],
+      [a.party26||'',b.party26||''],
+      [a.stimmen26||0,b.stimmen26||0],
+      [(a.stimmen26||0)-(a.stimmen20||0),(b.stimmen26||0)-(b.stimmen20||0)]
+    ][col];
+    if(vals[0]<vals[1])return asc?-1:1;
+    if(vals[0]>vals[1])return asc?1:-1;
+    return 0;
+  });
+  document.getElementById('p-count').textContent=`${d.length} von 247 Personen`;
+  const tbody=document.getElementById('p-tbody');
+  tbody.innerHTML=d.map(p=>{
+    const sw=pSwitches.has(p.name);
+    const delta=(p.stimmen26||0)-(p.stimmen20||0);
+    const dHtml=p.stimmen20&&p.stimmen26
+      ?`<span style="color:${delta>=0?'#2f7a10':'#c0392b'};font-weight:700">${delta>=0?'+':''}${delta.toLocaleString('de')}</span>`:'–';
+    const partyCol=sw
+      ?`${chip(p.party20||'–')} <span class="switch-arrow">→</span> ${chip(p.party26||'–')}`
+      :'';
+    return`<tr class="${p.stadtrat26?'elected':''}">
+      <td style="white-space:nowrap;font-weight:600">${p.name}</td>
+      <td>${p.party20?chip(p.party20):'–'}</td>
+      <td style="text-align:right">${p.stimmen20?p.stimmen20.toLocaleString('de'):'–'}</td>
+      <td>${p.party26?chip(p.party26):'–'}</td>
+      <td style="text-align:right">${p.stimmen26?p.stimmen26.toLocaleString('de'):'–'}</td>
+      <td style="text-align:right">${dHtml}</td>
+    </tr>`;
+  }).join('');
+}
+window.sortTable=col=>{
+  if(curSort.col===col)curSort.asc=!curSort.asc;
+  else{curSort.col=col;curSort.asc=false;}
+  renderPersons();
+};
+document.getElementById('p-search').addEventListener('input',e=>{curSearch=e.target.value;renderPersons();});
+document.querySelectorAll('.filter-btn').forEach(btn=>btn.addEventListener('click',()=>{
+  document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  curFilter=btn.dataset.filter;
+  renderPersons();
+}));
+renderPersons();
+
+// ── Career section ────────────────────────────────────────────
+const careers=[
+  {name:'Spath Marcus',from:'SPD',to:'ZBG',st20:4214,st26:8097,note:'Gründet ZBG nach SPD-Austritt. Gewinnt Stichwahl mit 69,6 %. Stimmenstärkster Kandidat 2026.',h:true},
+  {name:'Rieß Andreas',from:'SPD',to:'ZBG',st20:2776,st26:5354,note:'SPD-Kandidat 2020, ZBG Nr. 2 in 2026. Stimmen fast verdoppelt.'},
+  {name:'Spath Horst',from:'SPD',to:'ZBG',st20:2804,st26:3046,note:'Wechselt ebenfalls von SPD zu ZBG.'},
+  {name:'Janker Stefan',from:'CSU',to:'ZBG',st20:2799,st26:3551,note:'CSU-Kandidat 2020. Tritt 2026 für ZBG an.'},
+  {name:'Gerber Markus',from:'CSU',to:'ZBG',st20:2550,st26:2254,note:'Wechselt von CSU zu ZBG.'},
+  {name:'Krause Eike',from:'FREIE WÄHLER',to:'Volt',st20:1121,st26:1492,note:'FW → Volt. BM-Kandidat 2026, holt Volt ersten Stadtratssitz.'},
+  {name:'Baritsch Marcus',from:'FREIE WÄHLER',to:'Volt',st20:3998,st26:1023,note:'Ehem. FW-Listenführer und BM-Kandidat 2020, wechselt zu Volt.'},
+  {name:'Neupert Tim',from:'FREIE WÄHLER',to:'Volt',st20:1431,st26:728,note:'Dritter FW-Wechsler zu Volt.'},
+  {name:'Morgen Mirela',from:'FREIE WÄHLER',to:'FDP',st20:565,st26:515,note:'Wechselt von FW zu FDP.'},
+];
+const cg=document.getElementById('career-grid');
+careers.forEach(c=>{
+  const fc=PC[c.from]||'#888',tc=PC[c.to]||'#888';
+  const d=c.st26-c.st20;
+  cg.insertAdjacentHTML('beforeend',`<div class="career-card${c.h?' career-highlight':''}">
+    <div class="career-name">${c.name}</div>
+    <div class="career-path">
+      <span class="career-tag" style="background:${fc}">${c.from}</span>
+      ${c.st20?c.st20.toLocaleString('de')+' St.':''}
+      <span style="color:var(--muted)">→</span>
+      <span class="career-tag" style="background:${tc}">${c.to}</span>
+      ${c.st26?c.st26.toLocaleString('de')+' St.':''}
+      <span style="font-size:.8rem;color:${d>=0?'#2f7a10':'#c0392b'};font-weight:700">(${d>=0?'+':''}${d.toLocaleString('de')})</span>
+    </div>
+    <div class="career-note">${c.note}</div>
+  </div>`);
+});
+
+// ── Bezirke tables ────────────────────────────────────────────
+// Party columns per year (only parties with actual Bezirk data)
+const BZ_P20=[
+  {key:'CSU',          label:'CSU'},
+  {key:'SPD',          label:'SPD'},
+  {key:'GRÜNE',        label:'GRÜNE'},
+  {key:'AfD',          label:'AfD'},
+  {key:'FREIE WÄHLER', label:'FW'},
+  {key:'DIE LINKE',    label:'LNK'},
+  {key:'FDP',          label:'FDP'},
+];
+const BZ_P26=[
+  {key:'ZBG',          label:'ZBG'},
+  {key:'CSU',          label:'CSU'},
+  {key:'SPD',          label:'SPD'},
+  {key:'AfD',          label:'AfD'},
+  {key:'GRÜNE',        label:'GRÜNE'},
+  {key:'FREIE WÄHLER', label:'FW'},
+  {key:'Die Linke',    label:'LNK'},
+  {key:'Volt',         label:'Volt'},
+  {key:'FDP',          label:'FDP'},
+];
+function bzColorDot(wc){
+  return `<span style="display:inline-block;width:8px;height:8px;border-radius:2px;background:${wc};margin-right:3px;vertical-align:middle"></span>`;
+}
+function buildTable20(){
+  const t=document.getElementById('btable20');
+  const hdr=BZ_P20.map(({label})=>`<th>${label} %</th>`).join('');
+  t.innerHTML=`<thead><tr><th>Nr</th><th>Wahllokal</th><th>Wähler</th>${hdr}<th>Stärkste</th></tr></thead><tbody></tbody>`;
+  const tb=t.querySelector('tbody');
+  B20.forEach(b=>{
+    const tot=Object.values(b.parties).reduce((a,v)=>a+v,0);
+    const pct=key=>((b.parties[key]||0)/tot*100).toFixed(1);
+    const wc=PC[b.winner]||'#666';
+    const cells=BZ_P20.map(({key})=>`<td style="text-align:right">${pct(key)}</td>`).join('');
+    tb.insertAdjacentHTML('beforeend',`<tr><td>${b.nr}</td><td>${b.name}</td><td style="text-align:right">${b.waehler.toLocaleString('de')}</td>${cells}<td style="font-weight:800">${bzColorDot(wc)}${b.winner}</td></tr>`);
+  });
+}
+function buildTable26(){
+  const t=document.getElementById('btable26');
+  const hdr=BZ_P26.map(({label})=>`<th>${label} %</th>`).join('');
+  t.innerHTML=`<thead><tr><th>Nr</th><th>Wahllokal</th><th>Wähler</th>${hdr}<th>Stärkste</th></tr></thead><tbody></tbody>`;
+  const tb=t.querySelector('tbody');
+  B26.forEach(b=>{
+    const pct=key=>(b.parties[key]||0).toFixed(1);
+    const wc=PC[b.winner]||'#666';
+    const cells=BZ_P26.map(({key})=>`<td style="text-align:right">${pct(key)}</td>`).join('');
+    tb.insertAdjacentHTML('beforeend',`<tr><td>${b.nr}</td><td>${b.name}</td><td style="text-align:right">${b.waehler.toLocaleString('de')}</td>${cells}<td style="font-weight:800">${bzColorDot(wc)}${b.winner}</td></tr>`);
+  });
+}
+buildTable20();
+buildTable26();
+
+// ── Bezirke tab toggle ────────────────────────────────────────
+function showBzTab(year){
+  document.getElementById('bz-panel-2026').style.display=year===2026?'':'none';
+  document.getElementById('bz-panel-2020').style.display=year===2020?'':'none';
+  document.getElementById('bz-tab-2026').classList.toggle('active',year===2026);
+  document.getElementById('bz-tab-2020').classList.toggle('active',year===2020);
+  document.getElementById('bz-tab-info').textContent=year===2026
+    ?'8. März 2026 · Parteianteile in Prozent'
+    :'15. März 2020 · Listenstimmen je Partei in Prozent';
+}
+</script>
+</body>
+</html>

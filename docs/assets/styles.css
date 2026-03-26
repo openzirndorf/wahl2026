@@ -36,6 +36,7 @@ a { color: inherit; }
 .menu { display: flex; gap: 1rem; flex-wrap: wrap; }
 .menu a { text-decoration: none; font-weight: 600; border-bottom: 2px solid transparent; }
 .menu a:hover, .menu a[aria-current="page"] { border-bottom-color: var(--primary); }
+.menu a.nav-highlight { color: var(--primary); font-weight: 800; }
 .btn { display: inline-block; text-decoration: none; font-weight: 700; border-radius: 999px; padding: .68rem .95rem; border: 1px solid transparent; }
 .btn-primary { background: var(--primary); color: #fff; }
 .btn-light { background: #fff; border-color: var(--line); }

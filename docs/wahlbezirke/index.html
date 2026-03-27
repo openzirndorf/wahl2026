@@ -1,0 +1,738 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Stimmbezirke & Straßenverzeichnis | Zirndorf wählt 2026</title>
+  <meta name="description" content="Offizielles Straßenverzeichnis der Stadt Zirndorf: Finde deinen Stimmbezirk für die Kommunalwahl 2026. Alle 20 Stimmbezirke mit vollständiger Straßenliste." />
+  <link rel="stylesheet" href="/assets/styles.css" />
+  <style>
+    .page-head{margin:0 0 1.6rem}
+    .page-kicker{margin:0 0 .35rem;font-size:.82rem;font-weight:700;letter-spacing:.6px;text-transform:uppercase;color:var(--muted)}
+    .page-head h1{font-size:clamp(1.6rem,3.5vw,2.4rem);margin:0 0 .5rem}
+    .page-head .lead{margin:0;max-width:62ch}
+
+    /* Search */
+    .search-hero{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:1.5rem;margin-bottom:1.5rem;box-shadow:var(--shadow)}
+    .search-wrap{display:flex;gap:.5rem;align-items:center}
+    .search-input{flex:1;border:2px solid var(--line);border-radius:10px;padding:.6rem 1rem;font-size:1rem;font-family:inherit;outline:none;background:#fff;transition:border-color .15s}
+    .search-input:focus{border-color:var(--primary)}
+    .search-results{margin-top:1rem}
+    .search-hit{display:flex;align-items:baseline;gap:.6rem;padding:.5rem .75rem;background:#f0f9e8;border:1px solid #c5e09a;border-radius:8px;margin-bottom:.4rem;cursor:pointer;transition:background .12s}
+    .search-hit:hover{background:#e4f5d3}
+    .search-hit-name{font-weight:700;font-size:.95rem}
+    .search-hit-bz{font-size:.85rem;color:var(--muted)}
+    .search-hit-ort{font-size:.78rem;color:var(--muted);font-style:italic}
+    .search-no-result{color:var(--muted);font-size:.9rem;padding:.4rem 0}
+    .search-hint{font-size:.82rem;color:var(--muted);margin-top:.5rem}
+
+    /* Bezirk cards */
+    .bz-grid{display:grid;gap:1rem}
+    .bz-card{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden}
+    .bz-header{display:flex;align-items:center;gap:.75rem;padding:.75rem 1rem;cursor:pointer;user-select:none;transition:background .12s}
+    .bz-header:hover{background:#f5f4ef}
+    .bz-nr{width:2.2rem;height:2.2rem;border-radius:8px;background:var(--primary);color:#fff;font-weight:900;font-size:.95rem;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+    .bz-title{flex:1}
+    .bz-title strong{font-size:.98rem;display:block;line-height:1.2}
+    .bz-title span{font-size:.78rem;color:var(--muted)}
+    .bz-count{font-size:.78rem;color:var(--muted);white-space:nowrap}
+    .bz-chevron{color:var(--muted);font-size:.8rem;transition:transform .2s;flex-shrink:0}
+    .bz-card.open .bz-chevron{transform:rotate(180deg)}
+    .bz-body{display:none;padding:.5rem 1rem 1rem;border-top:1px solid var(--line)}
+    .bz-card.open .bz-body{display:block}
+    .street-list{display:flex;flex-wrap:wrap;gap:.3rem .5rem;margin-top:.4rem}
+    .street-chip{display:inline-flex;align-items:center;gap:.3rem;background:#f0f0ea;border:1px solid var(--line);border-radius:6px;padding:.2rem .5rem;font-size:.8rem;line-height:1.3}
+    .street-chip.highlighted{background:#d8f0c0;border-color:#92c45a}
+    .street-chip .ort-tag{font-size:.7rem;color:var(--muted);font-style:italic;white-space:nowrap}
+    .bz-note{font-size:.8rem;color:var(--muted);margin:.5rem 0 .2rem;font-style:italic}
+
+    /* Ortsteil filter */
+    .filter-bar{display:flex;flex-wrap:wrap;gap:.4rem;margin-bottom:1rem;align-items:center}
+    .filter-label{font-size:.8rem;font-weight:700;color:var(--muted);margin-right:.2rem}
+    .filter-btn{border:1px solid var(--line);background:#fff;border-radius:999px;padding:.3rem .7rem;font-size:.8rem;font-weight:700;cursor:pointer;font-family:inherit;color:var(--ink);transition:all .15s}
+    .filter-btn:hover{border-color:var(--primary)}
+    .filter-btn.active{background:var(--primary);border-color:var(--primary);color:#fff}
+
+    /* Compare note */
+    .compare-note{background:#fdf9ee;border:1px solid #e8dfa0;border-radius:8px;padding:.6rem .85rem;font-size:.82rem;color:#5a4e1a;margin-bottom:1rem}
+
+    /* Stats bar */
+    .stats-row{display:grid;grid-template-columns:repeat(2,1fr);gap:.75rem;margin-bottom:1.5rem}
+    @media(max-width:540px){.stats-row{grid-template-columns:repeat(2,1fr)}}
+    .stat-card{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:.7rem .9rem}
+    .stat-val{font-size:1.6rem;font-weight:900;line-height:1.1}
+    .stat-lbl{font-size:.75rem;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.4px;margin-top:.2rem}
+
+    /* Jump list */
+    .bz-jump{display:flex;flex-wrap:wrap;gap:.3rem;margin-bottom:1rem}
+    .bz-jump a{display:inline-flex;width:2rem;height:2rem;align-items:center;justify-content:center;background:var(--panel);border:1px solid var(--line);border-radius:6px;font-size:.82rem;font-weight:700;text-decoration:none;color:var(--ink);transition:all .15s}
+    .bz-jump a:hover{background:var(--primary);color:#fff;border-color:var(--primary)}
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="wrap nav">
+      <a class="brand" href="/"><img src="/assets/logo.png" alt="OpenZirndorf Logo" /><strong>Zirndorf wählt 2026</strong></a>
+      <nav class="menu" aria-label="Navigation">
+        <a href="/">Start</a>
+        <a href="/prompt/">Prompt</a>
+        <a href="/ergebnisse/">KI-Bewertungen</a>
+        <a href="/parteiantworten/">Parteiantworten</a>
+        <a href="/live/">Wahlergebnis</a>
+        <a href="/stadtrat/" class="nav-highlight">Neuer Stadtrat</a>
+        <a href="/analyse/" class="nav-highlight">Analyse</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="wrap" style="padding-top:2rem;padding-bottom:3rem">
+    <div class="page-head">
+      <p class="page-kicker">Kommunalwahl · 8. März 2026 · Zirndorf</p>
+      <h1>Stimmbezirke &amp; Straßenverzeichnis</h1>
+      <p class="lead">Das offizielle Straßenverzeichnis der Stadt Zirndorf für die Kommunalwahl 2026. Finde deinen Stimmbezirk nach Straßenname oder durchsuche alle 20 Bezirke.</p>
+    </div>
+
+    <!-- Stats -->
+    <div class="stats-row">
+      <div class="stat-card">
+        <div class="stat-val">20</div>
+        <div class="stat-lbl">Stimmbezirke 2026</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-val" id="stat-streets">–</div>
+        <div class="stat-lbl">Straßen/Wege gesamt</div>
+      </div>
+    </div>
+
+    <div class="compare-note">
+      📋 <strong>Quelle:</strong> Offizielles Straßenverzeichnis der Stadt Zirndorf, Stand 2026, ausgestellt am 27.03.2026. Einige Straßen erscheinen in mehreren Stimmbezirken, da sie nach Hausnummernbereichen aufgeteilt sind.
+    </div>
+
+    <!-- Search -->
+    <div class="search-hero">
+      <label for="street-search" style="font-weight:700;display:block;margin-bottom:.5rem">Straße suchen</label>
+      <div class="search-wrap">
+        <input id="street-search" class="search-input" type="search" placeholder="z. B. Bahnhofstr., Rothenburger Str., Schwabengartenstr. …" autocomplete="off" />
+      </div>
+      <div class="search-results" id="search-results" aria-live="polite"></div>
+      <p class="search-hint">Gib mindestens 2 Zeichen ein – Teilwörter werden gefunden.</p>
+    </div>
+
+    <!-- Ortsteil filter -->
+    <div class="filter-bar">
+      <span class="filter-label">Ortsteil:</span>
+      <button class="filter-btn active" data-ort="all">Alle</button>
+      <button class="filter-btn" data-ort="">Zirndorf (Kernstadt)</button>
+      <button class="filter-btn" data-ort="Ot Weiherhof">Weiherhof</button>
+      <button class="filter-btn" data-ort="Ot Lind">Lind</button>
+      <button class="filter-btn" data-ort="Ot Anwanden">Anwanden</button>
+      <button class="filter-btn" data-ort="Ot Weinzierlein">Weinzierlein</button>
+      <button class="filter-btn" data-ort="Ot Wintersdorf">Wintersdorf</button>
+      <button class="filter-btn" data-ort="Ot Bronnamberg">Bronnamberg</button>
+      <button class="filter-btn" data-ort="Ot Leichendorf">Leichendorf</button>
+      <button class="filter-btn" data-ort="Ot Banderbach">Banderbach</button>
+    </div>
+
+    <!-- Jump nav -->
+    <div class="bz-jump" id="bz-jump"></div>
+
+    <!-- Bezirk cards -->
+    <div class="bz-grid" id="bz-grid"></div>
+
+  </main>
+
+  <footer>
+    <div class="footer-grid">
+      <div><strong>Zirndorf wählt 2026</strong> · <span style="font-size:.88rem">Straßenverzeichnis: Stadt Zirndorf, Stand 2026</span></div>
+      <div><a href="/">Start</a><a href="/live/">Ergebnisse</a><a href="/stadtrat/">Stadtrat</a><a href="/analyse/">Analyse</a><a href="/impressum/">Impressum</a></div>
+    </div>
+  </footer>
+
+<script>
+// ── Data: 2026 Stimmbezirke with streets ──────────────────────────────────────
+// Source: Offizielles Straßenverzeichnis Stadt Zirndorf, 27.03.2026
+// Gebiet 1–22 (Gebiete 6+20 nicht vergeben) = Stimmbezirke 1–20
+const BEZIRKE = [
+  {
+    nr:1, lokal:"AWO Ortsverband Zirndorf",
+    streets:[
+      {n:"Albrecht-Dürer-Str."},
+      {n:"Am Steinacker", o:"Ot Leichendorf"},
+      {n:"Badstr."},
+      {n:"Brandstätterstr.", o:"Ot Leichendorf"},
+      {n:"Carl-Benz-Str.", o:"Ot Leichendorf"},
+      {n:"Frauenschlägerstr."},
+      {n:"Heinestr."},
+      {n:"Hirtenackerstr."},
+      {n:"Im Bibertgrund"},
+      {n:"Jordanstr."},
+      {n:"Neptunstr."},
+      {n:"Nürnberger Str.", hint:"Nr. 54–Ende"},
+      {n:"Oberasbacher Str."},
+      {n:"Österreicher Str."},
+      {n:"Ostmarkstr."},
+      {n:"Plauener Str."},
+      {n:"Rothenburger Str.", hint:"Nr. 1–83"},
+      {n:"Rudolf-Diesel-Str.", o:"Ot Leichendorf"},
+      {n:"Sandäckerstr."},
+      {n:"Siebenbürgener Str."},
+    ]
+  },
+  {
+    nr:2, lokal:"Grundschule II, Zi. A1",
+    streets:[
+      {n:"Am Sportplatz"},
+      {n:"Bahnhofstr.", hint:"Nr. 38–99"},
+      {n:"Carl-Diem-Str."},
+      {n:"Donauschwabenweg"},
+      {n:"Eichenhain"},
+      {n:"Fasanenweg"},
+      {n:"Felsenstr."},
+      {n:"Fliederstr."},
+      {n:"Fuggerstr."},
+      {n:"Grillenbergerstr."},
+      {n:"Heimgartenstr."},
+      {n:"Jahnstr."},
+      {n:"Lerchenstr."},
+      {n:"Parkstr."},
+      {n:"Rudolf-Harbig-Str."},
+      {n:"Turnstr."},
+      {n:"Wallensteinstr."},
+      {n:"Walter-Gropius-Weg"},
+      {n:"Weidachstr."},
+      {n:"Weinbergstr."},
+    ]
+  },
+  {
+    nr:3, lokal:"Grundschule I, Mensa",
+    streets:[
+      {n:"Am Amselschlag"},
+      {n:"Am Hammerstättchen"},
+      {n:"Am Mühlenpark"},
+      {n:"Anwandener Str."},
+      {n:"Buchackerstr."},
+      {n:"Fischerweg"},
+      {n:"Koppler Str."},
+      {n:"Linder Str."},
+      {n:"Mühlstr."},
+      {n:"Rehdorfer Weg"},
+      {n:"Schwabacher Str.", hint:"Teil"},
+      {n:"Schwalbenstr."},
+      {n:"Volkhardtstr."},
+      {n:"Wehrstr."},
+      {n:"Weinzierleiner Str."},
+      {n:"Wintersdorfer Str."},
+    ]
+  },
+  {
+    nr:4, lokal:"Stadtbücherei",
+    streets:[
+      {n:"Albert-Einstein-Str."},
+      {n:"Bachwiesen"},
+      {n:"Bahnhofstr.", hint:"Nr. 1–37"},
+      {n:"Banderbacher Str.", hint:"Teil"},
+      {n:"Gartenstr."},
+      {n:"Hallstr."},
+      {n:"Hauptstr."},
+      {n:"Herrleinstr."},
+      {n:"Jupiterweg"},
+      {n:"Kirchenplatz"},
+      {n:"Kirchenweg"},
+      {n:"Kleinstr."},
+      {n:"Koppenplatz"},
+    ]
+  },
+  {
+    nr:5, lokal:"Grundschule II, Zimmer 10",
+    streets:[
+      {n:"Angerzeile"},
+      {n:"Austr."},
+      {n:"Bachstr.", hint:"Teil"},
+      {n:"Baustr."},
+      {n:"Bibertstr."},
+      {n:"Bogenstr."},
+      {n:"Brücknerstr."},
+      {n:"Finkenstr."},
+      {n:"Fürther Str.", hint:"Nr. 1–21"},
+      {n:"Karlstr."},
+      {n:"Marktplatz"},
+      {n:"Max-Planck-Str."},
+      {n:"Merkurweg"},
+      {n:"Mondstr.", hint:"Teil"},
+      {n:"Pfarrhof"},
+      {n:"Rathausplatz"},
+      {n:"Rotestr."},
+      {n:"Saturnweg"},
+      {n:"Schillerstr."},
+      {n:"Schulstr."},
+      {n:"Spitalstr."},
+      {n:"Sternstr."},
+      {n:"Vogelherdstr."},
+      {n:"Ziegelstr."},
+    ]
+  },
+  {
+    nr:6, lokal:"Fröbelhaus, Zimmer 0.06",
+    streets:[
+      {n:"Alte Veste", o:"Ot Alte Veste"},
+      {n:"Altfeldstr."},
+      {n:"Bernhard-von-Weimar-Str."},
+      {n:"Eichenwaldstr."},
+      {n:"Florian-Geyer-Str."},
+      {n:"Franz-Schubert-Str."},
+      {n:"Fürther Str.", hint:"Nr. 60–82 gerade"},
+    ]
+  },
+  {
+    nr:7, lokal:"Fröbelhaus, Zimmer 0.07",
+    streets:[
+      {n:"Anton-Emmerling-Str."},
+      {n:"Bergstr."},
+      {n:"Eichendorffstr."},
+      {n:"Fürther Str.", hint:"Nr. 22–58 gerade, 29–55 ungerade"},
+      {n:"Grenzstr."},
+      {n:"Gustav-Adolf-Str."},
+      {n:"Hans-Sachs-Str."},
+      {n:"Kreutleinstr."},
+      {n:"Robert-Koch-Str."},
+      {n:"Sonnenstr."},
+      {n:"Steinweg", hint:"Nr. 10–999"},
+      {n:"Tillystr."},
+    ]
+  },
+  {
+    nr:8, lokal:"Fröbelhaus, Zimmer 0.08",
+    streets:[
+      {n:"Beethovenstr."},
+      {n:"Goethestr."},
+      {n:"Hauckstr."},
+      {n:"Hermann-Löns-Str."},
+      {n:"Homburger Str."},
+      {n:"Lessingstr."},
+      {n:"Mozartstr."},
+      {n:"Pestalozzistr."},
+      {n:"Saarbrückener Str."},
+      {n:"Saarlandstr."},
+      {n:"Uhlandstr."},
+      {n:"Veit-Stoß-Str."},
+    ]
+  },
+  {
+    nr:9, lokal:"Gemeinschaftsraum WBG",
+    streets:[
+      {n:"Am Achterplätzchen"},
+      {n:"Breslauer Str."},
+      {n:"Danziger Str."},
+      {n:"Freyjastr.", hint:"Teil"},
+      {n:"Karlsbader Str."},
+      {n:"Kneippallee"},
+      {n:"Leonh.-Förtsch-Str."},
+      {n:"Lichtenstädter Str."},
+      {n:"Marie-Juchacz-Str.", hint:"Teil"},
+      {n:"Marienbader Str."},
+      {n:"Sudetenstr."},
+    ]
+  },
+  {
+    nr:10, lokal:"vhs Eventraum",
+    streets:[
+      {n:"An der Weinleithe"},
+      {n:"Burgfarrnbacher Str.", hint:"Nr. 16–105"},
+      {n:"K.-Rat-Zimmermann-Str.", hint:"Teil"},
+      {n:"Karl-Vogler-Str."},
+      {n:"Kolberger Str."},
+      {n:"Marie-Juchacz-Str.", hint:"Teil"},
+      {n:"Richard-Wagner-Str."},
+    ]
+  },
+  {
+    nr:11, lokal:"Grundschule I, Zi. E 10",
+    streets:[
+      {n:"Am Grasweg"},
+      {n:"Banderbacher Str.", hint:"Teil"},
+      {n:"Bourganeufer Str."},
+      {n:"Feldstr."},
+      {n:"Flurstr."},
+      {n:"Freiheitstr."},
+      {n:"Hasenstr."},
+      {n:"Hochstr."},
+      {n:"Kolpingweg"},
+      {n:"Kornstr."},
+      {n:"Martin-Loos-Str."},
+      {n:"Schwabengartenstr."},
+      {n:"Siedlerstr."},
+      {n:"Wernher-von-Braun-Weg"},
+    ]
+  },
+  {
+    nr:12, lokal:"Grundschule I, Zi. E 9",
+    streets:[
+      {n:"Ammerndorfer Str."},
+      {n:"Amperestr."},
+      {n:"Cadolzburger Str."},
+      {n:"Egersdorfer Str."},
+      {n:"Friedenstr."},
+      {n:"Geisleithenstr."},
+      {n:"Großhabersdorfer Str."},
+      {n:"Hertzstr."},
+      {n:"Langenzenner Str."},
+      {n:"Ohmstr."},
+      {n:"Siegelsdorfer Str."},
+    ]
+  },
+  {
+    nr:13, lokal:"Kindertagesstätte Weiherhof",
+    streets:[
+      {n:"Ackerstr.", o:"Ot Weiherhof"},
+      {n:"Am Hügel", o:"Ot Weiherhof"},
+      {n:"Am Schreiberholz", o:"Ot Weiherhof"},
+      {n:"Am Steinbruch", o:"Ot Weiherhof"},
+      {n:"Am Weizenfeld", o:"Ot Weiherhof"},
+      {n:"Dinkelweg", o:"Ot Weiherhof"},
+      {n:"Friedrich-König-Weg", o:"Ot Weiherhof"},
+      {n:"Gerstenweg", o:"Ot Weiherhof"},
+      {n:"Haferweg", o:"Ot Weiherhof"},
+      {n:"Hopfenweg", o:"Ot Weiherhof"},
+      {n:"Maisweg", o:"Ot Weiherhof"},
+      {n:"Rainweg", o:"Ot Weiherhof"},
+      {n:"Rapsweg", o:"Ot Weiherhof"},
+      {n:"Roggenweg", o:"Ot Weiherhof"},
+      {n:"Schreiberstr.", o:"Ot Weiherhof"},
+      {n:"Sonnenhalde", o:"Ot Weiherhof"},
+      {n:"Steinbacher Str."},
+      {n:"Talblick", o:"Ot Weiherhof"},
+      {n:"Voltastr."},
+      {n:"Wachendorfer Str."},
+      {n:"Wattstr."},
+      {n:"Wilhelm-Tell-Platz", o:"Ot Weiherhof"},
+      {n:"Zeisigstr.", o:"Ot Weiherhof"},
+    ]
+  },
+  {
+    nr:14, lokal:"FFW-Haus Weiherhof",
+    streets:[
+      {n:"Gutenbergstr.", o:"Ot Weiherhof", hint:"Teil"},
+      {n:"Hegelstr.", o:"Ot Weiherhof"},
+      {n:"Humboldtstr.", o:"Ot Weiherhof"},
+      {n:"Joh.-Gottlieb-Fichte-Weg", o:"Ot Weiherhof"},
+      {n:"Kantstr.", o:"Ot Weiherhof"},
+      {n:"Leibnizweg", o:"Ot Weiherhof"},
+      {n:"Maximilianstr.", o:"Ot Weiherhof"},
+      {n:"Schwedenstr.", o:"Ot Weiherhof"},
+      {n:"Sperlingstr.", o:"Ot Weiherhof"},
+      {n:"Weiherhofer Hauptstr.", o:"Ot Weiherhof", hint:"Nr. 23–81 ungerade, 46–100 gerade"},
+      {n:"Wielandstr.", o:"Ot Weiherhof"},
+    ]
+  },
+  {
+    nr:15, lokal:"Vereinsheim Bürgerschützen",
+    streets:[
+      {n:"Banderbacher Str.", o:"Ot Weiherhof", hint:"Nr. 301 SV Weiherhof / Banderbacher Str. 150–216"},
+      {n:"Dorfplatz", o:"Ot Weiherhof"},
+      {n:"Eckstr.", o:"Ot Weiherhof"},
+      {n:"Eibenstr.", o:"Ot Weiherhof"},
+      {n:"Frühlingstr.", o:"Ot Weiherhof"},
+      {n:"Gutenbergstr.", o:"Ot Weiherhof", hint:"Teil"},
+      {n:"Haselnußweg", o:"Ot Weiherhof"},
+      {n:"Heideweg", o:"Ot Weiherhof"},
+      {n:"Herbststr.", o:"Ot Weiherhof"},
+      {n:"Holzstr.", o:"Ot Weiherhof"},
+      {n:"Märzenweg", o:"Ot Weiherhof"},
+      {n:"Schleifweg", o:"Ot Weiherhof"},
+      {n:"Schwanenweg", o:"Ot Weiherhof"},
+      {n:"Steilstr.", o:"Ot Weiherhof"},
+      {n:"Tannenweg", o:"Ot Weiherhof"},
+      {n:"Weiherhofer Hauptstr.", o:"Ot Weiherhof", hint:"Nr. 1–21 ungerade, 2–44 gerade"},
+      {n:"Weiherstr.", o:"Ot Weiherhof"},
+      {n:"Zedernstr.", o:"Ot Weiherhof"},
+    ]
+  },
+  {
+    nr:16, lokal:"FFW-Haus Bronnamberg",
+    streets:[
+      {n:"Adlerstr.", o:"Ot Bronnamberg"},
+      {n:"Am Brünnfeld", o:"Ot Bronnamberg"},
+      {n:"Am Kuhtrieb", o:"Ot Bronnamberg"},
+      {n:"Banderbacher Str.", o:"Ot Banderbach"},
+      {n:"Brunnenweg", o:"Ot Bronnamberg"},
+      {n:"Bussardweg", o:"Ot Bronnamberg"},
+      {n:"Grundstr.", o:"Ot Leichendorf"},
+      {n:"Hubertusstr.", o:"Ot Bronnamberg"},
+      {n:"Im stillen Winkel", o:"Ot Banderbach"},
+      {n:"Im Tal", o:"Ot Bronnamberg"},
+      {n:"Landweg", o:"Ot Leichendorf"},
+      {n:"Leichendorfer Str.", o:"Ot Bronnamberg"},
+      {n:"Ortsstr.", o:"Ot Leichendorf"},
+      {n:"Pleikershofer Str.", o:"Ot Bronnamberg"},
+      {n:"Quellenstr.", o:"Ot Bronnamberg"},
+      {n:"Rebhuhnweg", o:"Ot Bronnamberg"},
+      {n:"Schimmelweg", o:"Ot Banderbach"},
+      {n:"Schwabacher Str.", o:"Ot Leichendorf"},
+      {n:"Waldstr.", o:"Ot Leichendorf"},
+      {n:"Wolfengasse", o:"Ot Banderbach"},
+    ]
+  },
+  {
+    nr:17, lokal:"FFW-Haus Lind",
+    streets:[
+      {n:"Ahornstr.", o:"Ot Lind"},
+      {n:"Birkenstr.", o:"Ot Lind"},
+      {n:"Buchenstr.", o:"Ot Lind"},
+      {n:"Büchleiner Str.", o:"Ot Anwanden"},
+      {n:"Drosselstr.", o:"Ot Anwanden"},
+      {n:"Erlenstr.", o:"Ot Lind"},
+      {n:"Faber-Castell-Str.", o:"Ot Anwanden"},
+      {n:"Falkenstr.", o:"Ot Anwanden"},
+      {n:"Fichtenstr.", o:"Ot Lind"},
+      {n:"Habichtweg", o:"Ot Anwanden"},
+      {n:"Jasminstr.", o:"Ot Lind"},
+      {n:"Kiefernweg", o:"Ot Lind"},
+      {n:"Kleiberstr.", o:"Ot Anwanden"},
+      {n:"Kranichweg", o:"Ot Anwanden"},
+      {n:"Langgrüner Str.", o:"Ot Anwanden"},
+      {n:"Lindenstr.", o:"Ot Lind"},
+      {n:"Meisenstr.", o:"Ot Anwanden"},
+      {n:"Narzissenstr.", o:"Ot Lind"},
+      {n:"Nelkenstr.", o:"Ot Lind"},
+      {n:"Oleanderstr.", o:"Ot Lind"},
+      {n:"Pfauenweg", o:"Ot Anwanden"},
+      {n:"Rosenstr.", o:"Ot Lind"},
+      {n:"Schwabacher Str.", o:"Ot Lind", hint:"Nr. 300–380"},
+      {n:"Schwabacher Str.", o:"Ot Anwanden", hint:"Nr. 390–999"},
+      {n:"Spatzenweg", o:"Ot Anwanden"},
+      {n:"Spechtstr.", o:"Ot Anwanden"},
+      {n:"Storchenweg", o:"Ot Anwanden"},
+      {n:"Taubenweg", o:"Ot Anwanden"},
+      {n:"Tulpenstr.", o:"Ot Lind"},
+      {n:"Ulmenstr.", o:"Ot Lind"},
+      {n:"Weitersdorfer Str.", o:"Ot Gut Wolfgangshof"},
+      {n:"Zum Steig", o:"Ot Anwanden"},
+    ]
+  },
+  {
+    nr:18, lokal:"Vereinsheim Sängerfreunde",
+    streets:[
+      {n:"Am Geretsfeld", o:"Ot Weinzierlein"},
+      {n:"Asternweg", o:"Ot Weinzierlein"},
+      {n:"Bienenweg", o:"Ot Weinzierlein"},
+      {n:"Birkenhofweg", o:"Ot Weinzierlein"},
+      {n:"Blütenweg", o:"Ot Weinzierlein"},
+      {n:"Eichenstr.", o:"Ot Weinzierlein"},
+      {n:"Elsternweg", o:"Ot Weinzierlein"},
+      {n:"Erlachstr.", o:"Ot Weinzierlein"},
+      {n:"Eschenstr.", o:"Ot Weinzierlein"},
+      {n:"Eulenweg", o:"Ot Weinzierlein"},
+      {n:"Föhrenstr.", o:"Ot Weinzierlein"},
+      {n:"Ginsterweg", o:"Ot Weinzierlein"},
+      {n:"Heilsbronner Str.", o:"Ot Weinzierlein"},
+      {n:"Holunderweg", o:"Ot Weinzierlein"},
+      {n:"Hügelstr.", o:"Ot Weinzierlein"},
+      {n:"Jägerstr.", o:"Ot Weinzierlein"},
+      {n:"Kleestr.", o:"Ot Weinzierlein"},
+      {n:"Krokusweg", o:"Ot Wintersdorf"},
+      {n:"Mohnstr.", o:"Ot Weinzierlein"},
+      {n:"Neuseser Str.", o:"Ot Weinzierlein"},
+      {n:"Römerstr.", o:"Ot Weinzierlein"},
+      {n:"Roßtaler Str.", o:"Ot Wintersdorf"},
+      {n:"Rotdornstr.", o:"Ot Weinzierlein"},
+      {n:"Seeackerstr.", o:"Ot Weinzierlein"},
+      {n:"Sommerstr.", o:"Ot Weinzierlein"},
+      {n:"Sperberweg", o:"Ot Weinzierlein"},
+      {n:"Traubenstr.", o:"Ot Weinzierlein"},
+      {n:"Uferstr.", o:"Ot Weinzierlein"},
+      {n:"Weinstr.", o:"Ot Weinzierlein"},
+    ]
+  },
+  {
+    nr:19, lokal:"Bibertgrundschule, Zi. E 2",
+    streets:[
+      {n:"Ansbacher Str.", o:"Ot Wintersdorf"},
+      {n:"Blumenstr.", o:"Ot Wintersdorf"},
+      {n:"Dahlienstr.", o:"Ot Wintersdorf"},
+      {n:"Frankenstr.", o:"Ot Wintersdorf"},
+      {n:"Kernstr.", o:"Ot Wintersdorf"},
+      {n:"Lilienstr.", o:"Ot Wintersdorf"},
+      {n:"Lupinenstr.", o:"Ot Wintersdorf"},
+      {n:"Markgrafenstr.", o:"Ot Wintersdorf"},
+      {n:"Rangaustr.", o:"Ot Leichendorf"},
+      {n:"Rankenstr.", o:"Ot Wintersdorf"},
+      {n:"Robert-Bosch-Str.", o:"Ot Leichendorf"},
+      {n:"Rothenburger Str.", o:"Ot Weinzierlein", hint:"Nr. 200–999"},
+      {n:"Rothenburger Str.", o:"Ot Wintersdorf", hint:"Nr. 84–110, 161/163/171"},
+      {n:"Rothenburger Str.", o:"Ot Leichendorf"},
+      {n:"Seewaldstr.", o:"Ot Wintersdorf"},
+      {n:"Seewaldstr.", o:"Ot Leichendorfer Mühle"},
+      {n:"Winkelstr.", o:"Ot Wintersdorf"},
+    ]
+  },
+  {
+    nr:20, lokal:"Realschule, Zi. E 16 Mehrzweckraum",
+    streets:[
+      {n:"Bertolt-Brecht-Weg"},
+      {n:"Bronnamberger Weg"},
+      {n:"Clara-Viebig-Weg"},
+      {n:"Erich-Kästner-Weg"},
+      {n:"Franz-Kafka-Weg"},
+      {n:"Gerhart-Hauptmann-Str."},
+      {n:"Heinrich-Böll-Str."},
+      {n:"Hermann-Hesse-Weg"},
+      {n:"Im Pinderpark"},
+      {n:"Jakob-Wassermann-Str."},
+      {n:"Luise-Rinser-Str."},
+      {n:"Thomas-Mann-Str."},
+    ]
+  },
+];
+
+// ── Build ──────────────────────────────────────────────────────────────────────
+const grid = document.getElementById('bz-grid');
+const jumpEl = document.getElementById('bz-jump');
+const searchInput = document.getElementById('street-search');
+const searchResults = document.getElementById('search-results');
+
+// Count unique street names
+const allStreetNames = new Set(BEZIRKE.flatMap(b => b.streets.map(s => s.n)));
+document.getElementById('stat-streets').textContent = allStreetNames.size;
+
+// Render all bezirk cards
+let activeOrt = 'all';
+
+function normalise(s){
+  return s.toLowerCase()
+    .replace(/str\./g,'str')
+    .replace(/weg\./g,'weg')
+    .replace(/[äÄ]/g,'ae').replace(/[öÖ]/g,'oe').replace(/[üÜ]/g,'ue').replace(/ß/g,'ss')
+    .replace(/[^a-z0-9]/g,' ').replace(/\s+/g,' ').trim();
+}
+
+function renderCards(highlightQuery){
+  grid.innerHTML='';
+  BEZIRKE.forEach(bz=>{
+    const q=normalise(highlightQuery||'');
+    let streets=bz.streets;
+    if(activeOrt!=='all'){
+      streets=streets.filter(s=> activeOrt==='' ? !s.o : s.o===activeOrt);
+    }
+    if(!streets.length) return;
+
+    const card=document.createElement('div');
+    card.className='bz-card';
+    card.id='bz-'+bz.nr;
+
+    // Count matching streets for highlight badge
+    let matchCount=0;
+    if(q){
+      matchCount=streets.filter(s=>normalise(s.n).includes(q)).length;
+    }
+
+    card.innerHTML=`
+      <div class="bz-header" onclick="toggleCard(this)">
+        <div class="bz-nr">${bz.nr}</div>
+        <div class="bz-title">
+          <strong>Stimmbezirk ${bz.nr}</strong>
+          <span>Wahllokal: ${bz.lokal}</span>
+        </div>
+        <div class="bz-count">${streets.length} Straßen${matchCount?` · <strong style="color:var(--primary)">${matchCount} Treffer</strong>`:''}</div>
+        <div class="bz-chevron">▼</div>
+      </div>
+      <div class="bz-body">
+        <div class="street-list">
+          ${streets.map(s=>{
+            const isMatch=q&&normalise(s.n).includes(q);
+            return `<span class="street-chip${isMatch?' highlighted':''}">
+              ${s.n}${s.hint?` <span class="ort-tag">${s.hint}</span>`:''}
+              ${s.o?` <span class="ort-tag">(${s.o.replace('Ot ','')})</span>`:''}
+            </span>`;
+          }).join('')}
+        </div>
+        ${activeOrt!=='all'?`<p class="bz-note">Nur Straßen des gewählten Ortsteils angezeigt.</p>`:''}
+      </div>`;
+
+    // Auto-open if there are matches
+    if(matchCount>0) card.classList.add('open');
+    grid.appendChild(card);
+  });
+}
+
+function toggleCard(header){
+  header.closest('.bz-card').classList.toggle('open');
+}
+
+// Build jump nav
+BEZIRKE.forEach(bz=>{
+  const a=document.createElement('a');
+  a.href='#bz-'+bz.nr;
+  a.textContent=bz.nr;
+  a.title='Stimmbezirk '+bz.nr+' – '+bz.lokal;
+  jumpEl.appendChild(a);
+});
+
+// Render initial
+renderCards();
+
+// Search
+let searchTimeout;
+searchInput.addEventListener('input',()=>{
+  clearTimeout(searchTimeout);
+  searchTimeout=setTimeout(()=>{
+    const raw=searchInput.value.trim();
+    const q=normalise(raw);
+    searchResults.innerHTML='';
+
+    if(q.length<2){
+      renderCards();
+      return;
+    }
+
+    // Find all matches
+    const hits=[];
+    BEZIRKE.forEach(bz=>{
+      bz.streets.forEach(s=>{
+        if(normalise(s.n).includes(q)){
+          hits.push({street:s,bz});
+        }
+      });
+    });
+
+    if(hits.length===0){
+      searchResults.innerHTML='<p class="search-no-result">Keine Straße gefunden. Versuch einen kürzeren Suchbegriff oder prüf die Schreibweise.</p>';
+    } else {
+      // Group by street name
+      const grouped={};
+      hits.forEach(h=>{
+        const key=h.street.n;
+        if(!grouped[key]) grouped[key]=[];
+        grouped[key].push(h);
+      });
+      Object.entries(grouped).forEach(([name,entries])=>{
+        entries.forEach(({street,bz})=>{
+          const div=document.createElement('div');
+          div.className='search-hit';
+          div.innerHTML=`<span class="search-hit-name">${name}</span>
+            <span class="search-hit-bz">→ Stimmbezirk ${bz.nr} (${bz.lokal})${street.hint?` · <em>${street.hint}</em>`:''}</span>
+            ${street.o?`<span class="search-hit-ort">${street.o}</span>`:''}`;
+          div.onclick=()=>{
+            document.getElementById('bz-'+bz.nr)?.scrollIntoView({behavior:'smooth',block:'start'});
+            document.getElementById('bz-'+bz.nr)?.classList.add('open');
+          };
+          searchResults.appendChild(div);
+        });
+      });
+    }
+
+    renderCards(raw);
+  },180);
+});
+
+// Ortsteil filter
+document.querySelectorAll('.filter-btn').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    activeOrt=btn.dataset.ort;
+    renderCards(searchInput.value.trim());
+  });
+});
+</script>
+</body>
+</html>

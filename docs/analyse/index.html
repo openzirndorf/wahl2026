@@ -29,22 +29,33 @@
     .map-toggle-btn{border:none;background:transparent;border-radius:999px;padding:.38rem .95rem;font-weight:700;font-size:.85rem;cursor:pointer;font-family:inherit;color:var(--muted);transition:all .2s ease}
     .map-toggle-btn.active{background:#fff;color:var(--ink);box-shadow:0 1px 4px rgba(0,0,0,.14)}
     .map-toggle-info{font-size:.82rem;color:var(--muted);font-weight:600}
+    .map-party-bar{display:flex;align-items:center;justify-content:space-between;gap:.7rem;flex-wrap:wrap;padding:.55rem .9rem;background:#f8f7f2;border-bottom:1px solid var(--line)}
+    .map-party-label{font-size:.78rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.4px}
+    .map-party-group{display:flex;gap:.4rem;flex-wrap:wrap}
+    .map-party-btn{border:1px solid var(--line);background:#fff;border-radius:999px;padding:.32rem .65rem;font-size:.8rem;font-weight:700;cursor:pointer;font-family:inherit;color:var(--ink);transition:all .15s ease}
+    .map-party-btn.active{color:#fff;border-color:transparent;box-shadow:0 1px 4px rgba(0,0,0,.14)}
+    .map-party-btn.ghost-active{background:#363636;color:#fff;border-color:#363636}
+    .map-party-note{font-size:.78rem;color:var(--muted)}
     .the-map{height:480px}
+    @media(max-width:720px){.the-map{height:62vh;min-height:420px}}
     .map-footer{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:.5rem;padding:.55rem .9rem;background:var(--panel);border-top:1px solid var(--line)}
     .map-note-inline{font-size:.75rem;color:var(--muted)}
+    .map-touch-hint{font-size:.76rem;color:var(--muted);background:#f5f5f0;border:1px solid var(--line);border-radius:999px;padding:.22rem .55rem}
     .map-legend{display:flex;flex-wrap:wrap;gap:.3rem .7rem}
     .leg-item{display:flex;align-items:center;gap:.3rem;font-size:.78rem;font-weight:600}
     .leg-dot{width:10px;height:10px;border-radius:3px;flex-shrink:0}
     /* Custom popup */
     .leaflet-popup-content-wrapper{border-radius:12px!important;box-shadow:0 8px 28px rgba(0,0,0,.16)!important;padding:0!important;overflow:hidden}
-    .leaflet-popup-content{margin:0!important;width:240px!important}
-    .pop-head{padding:.65rem .8rem .4rem;border-bottom:1px solid #eee}
+    .leaflet-popup-content{margin:0!important;width:272px!important}
+    .pop-head{padding:.7rem .85rem .45rem;border-bottom:1px solid #eee;position:relative}
     .pop-nr{font-size:.72rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.4px}
     .pop-name{font-weight:800;font-size:.95rem;margin:.1rem 0 0;line-height:1.2}
     .pop-meta{font-size:.75rem;color:var(--muted);margin-top:.2rem}
+    .pop-head::before{content:"";position:absolute;left:0;top:0;bottom:0;width:6px;background:var(--win-color,#999)}
     .pop-bars{padding:.55rem .8rem .65rem}
     .pop-bar-row{display:flex;align-items:center;gap:.45rem;margin-bottom:.32rem;font-size:.78rem}
-    .pop-party{min-width:70px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .pop-party{min-width:112px;font-weight:700;color:var(--ink);display:flex;align-items:center;gap:.38rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .pop-party-dot{width:9px;height:9px;border-radius:50%;flex:0 0 9px;background:#999}
     .pop-track{flex:1;background:#e8e6df;border-radius:99px;height:6px;overflow:hidden}
     .pop-fill{height:100%;border-radius:99px;transition:width .4s ease}
     .pop-pct{min-width:34px;text-align:right;font-weight:700;font-size:.75rem}
@@ -306,19 +317,20 @@
       <!-- Map -->
       <section id="map26">
         <h2 class="section-title">Karte Stimmbezirke</h2>
-        <p class="section-sub">Voronoi-Näherung auf Basis der Wahllokale, geclippt an den OSM-Gemeindeumring. Klicken für Details.</p>
-        <p style="font-size:.82rem;color:var(--muted);background:#fdf9ee;border:1px solid #e8dfa0;border-radius:6px;padding:.5rem .75rem;margin:.4rem 0">⚠️ <strong>Hinweis:</strong> Diese Karte zeigt eine Näherung der Stimmbezirke, nicht die tatsächlichen Grenzen. Ein offizielles Straßenverzeichnis wurde beim Wahlamt angefragt – die Karte wird danach aktualisiert.</p>
+        <p class="section-sub">Straßenkarte der Stimmbezirke 2026. Für die vollständige Straßenliste je Bezirk: <a href="/wahlbezirke/" style="color:var(--primary-dark);font-weight:700">Straßenverzeichnis &amp; Stimmbezirk-Suche</a>.</p>
         <div class="map-wrap">
           <div class="map-toggle-bar">
-            <div class="map-toggle-group">
-              <button class="map-toggle-btn active" data-year="2026">Stadtratswahl 2026</button>
-              <button class="map-toggle-btn" data-year="2020">Stadtratswahl 2020</button>
-            </div>
             <div class="map-toggle-info" id="map-year-info">8. März 2026 · 20 Stimmbezirke</div>
+          </div>
+          <div class="map-party-bar">
+            <div class="map-party-label">Parteiansicht</div>
+            <div class="map-party-group" id="map-party-group"></div>
+            <div class="map-party-note" id="map-party-note">Standard: Siegerfarben je Bezirk</div>
           </div>
           <div id="themap" class="the-map"></div>
           <div class="map-footer">
-            <span class="map-note-inline">Voronoi-Polygone (turf.js) · Gemeindeumring OpenStreetMap · Koordinaten AWO/WBG/vhs geschätzt</span>
+            <span class="map-note-inline">2026: Straßenverzeichnis Stadt Zirndorf vom 27.03.2026 · Straßengeometrien OpenStreetMap</span>
+            <span class="map-touch-hint" id="map-touch-hint">Tippen: Bezirk hervorheben · Erneut tippen oder in die Karte tippen: Auswahl lösen</span>
             <div class="map-legend" id="map-legend"></div>
           </div>
         </div>
@@ -326,16 +338,11 @@
 
       <!-- Bezirke Vergleich -->
       <section id="bezirke">
-        <h2 class="section-title">Stimmbezirke: Vergleich 2020 vs. 2026</h2>
+        <h2 class="section-title">Stimmbezirke 2026</h2>
         <div class="map-toggle-bar" style="margin-bottom:.6rem">
-          <div class="map-toggle-group">
-            <button class="map-toggle-btn active" id="bz-tab-2026" onclick="showBzTab(2026)">2026 (20 Bezirke)</button>
-            <button class="map-toggle-btn" id="bz-tab-2020" onclick="showBzTab(2020)">2020 (24 Bezirke)</button>
-          </div>
           <div class="map-toggle-info" id="bz-tab-info">8. März 2026 · Parteianteile in Prozent</div>
         </div>
         <div id="bz-panel-2026"><div class="wrap-scroll"><table class="btable" id="btable26"></table></div></div>
-        <div id="bz-panel-2020" style="display:none"><div class="wrap-scroll"><table class="btable" id="btable20"></table></div></div>
       </section>
 
     </div>
@@ -351,13 +358,6 @@
 const PC={ZBG:'#009FA1',CSU:'#005CA9',SPD:'#E3000F',AfD:'#009DE0',GRÜNE:'#1FAB2C','FREIE WÄHLER':'#FF6600','DIE LINKE':'#BE3075','Die Linke':'#BE3075',Volt:'#562883',FDP:'#c9a900'};
 
 const B26=[{"nr":"0001","name":"AWO Ortsverband Zirndorf","parties":{"CSU":21.1,"FREIE WÄHLER":3.3,"AfD":23.0,"GRÜNE":7.0,"SPD":12.7,"Die Linke":5.9,"FDP":2.1,"Volt":5.5,"ZBG":19.4},"waehler":242,"winner":"AfD","lat":49.4385,"lon":10.9588},{"nr":"0002","name":"Grundschule II, Zi. A1","parties":{"CSU":24.6,"FREIE WÄHLER":3.1,"AfD":11.5,"GRÜNE":10.3,"SPD":11.5,"Die Linke":5.0,"FDP":1.9,"Volt":5.8,"ZBG":26.3},"waehler":327,"winner":"ZBG","lat":49.443,"lon":10.9608},{"nr":"0003","name":"Grundschule I, Mensa","parties":{"CSU":19.2,"FREIE WÄHLER":2.8,"AfD":18.5,"GRÜNE":9.1,"SPD":15.3,"Die Linke":3.1,"FDP":1.5,"Volt":6.5,"ZBG":23.8},"waehler":263,"winner":"ZBG","lat":49.4397,"lon":10.9573},{"nr":"0004","name":"Stadtbücherei","parties":{"CSU":20.3,"FREIE WÄHLER":3.7,"AfD":15.3,"GRÜNE":14.4,"SPD":11.5,"Die Linke":4.7,"FDP":1.4,"Volt":1.9,"ZBG":26.9},"waehler":270,"winner":"ZBG","lat":49.4412,"lon":10.9575},{"nr":"0005","name":"Grundschule II, Zimmer 10","parties":{"CSU":20.9,"FREIE WÄHLER":4.4,"AfD":21.1,"GRÜNE":11.3,"SPD":10.9,"Die Linke":5.6,"FDP":0.8,"Volt":3.5,"ZBG":21.5},"waehler":278,"winner":"ZBG","lat":49.4422,"lon":10.9612},{"nr":"0006","name":"Fröbelhaus, Zimmer 0.06","parties":{"CSU":23.2,"FREIE WÄHLER":3.0,"AfD":16.2,"GRÜNE":11.3,"SPD":16.2,"Die Linke":4.6,"FDP":2.5,"Volt":5.6,"ZBG":17.5},"waehler":289,"winner":"CSU","lat":49.4445,"lon":10.959},{"nr":"0007","name":"Fröbelhaus, Zimmer 0.07","parties":{"CSU":18.2,"FREIE WÄHLER":6.4,"AfD":15.4,"GRÜNE":12.2,"SPD":13.7,"Die Linke":4.8,"FDP":2.0,"Volt":6.1,"ZBG":21.2},"waehler":321,"winner":"ZBG","lat":49.4449,"lon":10.9596},{"nr":"0008","name":"Fröbelhaus, Zimmer 0.08","parties":{"CSU":27.8,"FREIE WÄHLER":5.6,"AfD":13.0,"GRÜNE":15.5,"SPD":12.6,"Die Linke":6.3,"FDP":2.3,"Volt":4.3,"ZBG":12.7},"waehler":283,"winner":"CSU","lat":49.4453,"lon":10.9602},{"nr":"0009","name":"Gemeinschaftsraum WBG","parties":{"CSU":13.8,"FREIE WÄHLER":4.3,"AfD":25.3,"GRÜNE":7.5,"SPD":15.9,"Die Linke":2.7,"FDP":2.7,"Volt":2.4,"ZBG":25.4},"waehler":329,"winner":"ZBG","lat":49.444,"lon":10.9518},{"nr":"0010","name":"vhs Eventraum","parties":{"CSU":14.3,"FREIE WÄHLER":5.3,"AfD":32.2,"GRÜNE":5.5,"SPD":12.6,"Die Linke":5.4,"FDP":1.0,"Volt":1.4,"ZBG":22.2},"waehler":298,"winner":"AfD","lat":49.4415,"lon":10.9545},{"nr":"0011","name":"Grundschule I, Zi. E 10","parties":{"CSU":15.5,"FREIE WÄHLER":3.9,"AfD":15.4,"GRÜNE":10.0,"SPD":11.7,"Die Linke":3.4,"FDP":0.5,"Volt":3.7,"ZBG":35.8},"waehler":338,"winner":"ZBG","lat":49.4468,"lon":10.9468},{"nr":"0012","name":"Grundschule I, Zi. E 9","parties":{"CSU":15.7,"FREIE WÄHLER":4.0,"AfD":15.6,"GRÜNE":9.9,"SPD":12.3,"Die Linke":3.3,"FDP":1.5,"Volt":3.1,"ZBG":34.6},"waehler":370,"winner":"ZBG","lat":49.4462,"lon":10.9462},{"nr":"0013","name":"Kindertagesstätte Weiherhof","parties":{"CSU":28.0,"FREIE WÄHLER":3.1,"AfD":10.8,"GRÜNE":11.7,"SPD":14.9,"Die Linke":4.4,"FDP":1.1,"Volt":2.5,"ZBG":23.6},"waehler":362,"winner":"CSU","lat":49.4536,"lon":10.9268},{"nr":"0014","name":"FFW-Haus Weiherhof","parties":{"CSU":24.8,"FREIE WÄHLER":3.4,"AfD":22.5,"GRÜNE":12.1,"SPD":8.0,"Die Linke":3.4,"FDP":1.6,"Volt":2.1,"ZBG":22.0},"waehler":345,"winner":"CSU","lat":49.4577,"lon":10.9228},{"nr":"0015","name":"Vereinsheim Bürgerschützen","parties":{"CSU":25.3,"FREIE WÄHLER":1.1,"AfD":16.1,"GRÜNE":11.3,"SPD":12.4,"Die Linke":3.7,"FDP":0.8,"Volt":2.2,"ZBG":26.9},"waehler":354,"winner":"ZBG","lat":49.4581,"lon":10.9217},{"nr":"0016","name":"FFW-Haus Bronnamberg","parties":{"CSU":28.3,"FREIE WÄHLER":4.0,"AfD":19.3,"GRÜNE":6.6,"SPD":9.3,"Die Linke":2.4,"FDP":1.2,"Volt":2.6,"ZBG":26.4},"waehler":358,"winner":"CSU","lat":49.4394,"lon":10.9098},{"nr":"0017","name":"FFW-Haus Lind","parties":{"CSU":19.9,"FREIE WÄHLER":2.4,"AfD":19.0,"GRÜNE":11.9,"SPD":9.9,"Die Linke":2.5,"FDP":0.9,"Volt":1.6,"ZBG":32.0},"waehler":260,"winner":"ZBG","lat":49.4235,"lon":10.9264},{"nr":"0018","name":"Vereinsheim Sängerfreunde","parties":{"CSU":25.6,"FREIE WÄHLER":3.6,"AfD":22.2,"GRÜNE":8.6,"SPD":12.3,"Die Linke":2.4,"FDP":0.7,"Volt":1.1,"ZBG":23.5},"waehler":375,"winner":"CSU","lat":49.4245,"lon":10.8971},{"nr":"0019","name":"Bibertgrundschule, Zi. E 2","parties":{"CSU":25.1,"FREIE WÄHLER":3.9,"AfD":19.0,"GRÜNE":7.8,"SPD":10.7,"Die Linke":3.6,"FDP":0.5,"Volt":1.2,"ZBG":28.1},"waehler":356,"winner":"ZBG","lat":49.4294,"lon":10.9127},{"nr":"0020","name":"Realschule, Zi. E 16 Mehrzweckraum","parties":{"CSU":24.5,"FREIE WÄHLER":3.0,"AfD":18.8,"GRÜNE":9.3,"SPD":9.0,"Die Linke":3.2,"FDP":1.5,"Volt":2.0,"ZBG":28.7},"waehler":446,"winner":"ZBG","lat":49.4422,"lon":10.9432}];
-const B20=[{"nr":"0001","name":"Grundschule I, Zi. CE22","addr":"Mühlstr. 14","lat":49.43870,"lon":10.95650,"waehler":899,"parties":{"CSU":1666,"GRÜNE":1132,"FREIE WÄHLER":455,"AfD":738,"SPD":1768,"FDP":90,"DIE LINKE":117}},{"nr":"0002","name":"Grundschule II, Zi. A1","addr":"Bahnhofstr. 38","lat":49.44310,"lon":10.96110,"waehler":998,"parties":{"CSU":2029,"GRÜNE":1565,"FREIE WÄHLER":943,"AfD":534,"SPD":1759,"FDP":117,"DIE LINKE":177}},{"nr":"0003","name":"Grundschule I, Zi. CE 23","addr":"Mühlstr. 14","lat":49.43960,"lon":10.95780,"waehler":896,"parties":{"CSU":2232,"GRÜNE":1222,"FREIE WÄHLER":640,"AfD":488,"SPD":1976,"FDP":92,"DIE LINKE":161}},{"nr":"0004","name":"Stadtbücherei","addr":"Marktplatz 1","lat":49.44124,"lon":10.95753,"waehler":882,"parties":{"CSU":1588,"GRÜNE":1158,"FREIE WÄHLER":379,"AfD":584,"SPD":1528,"FDP":263,"DIE LINKE":217}},{"nr":"0005","name":"Grundschule II, Zi. A 2","addr":"Bahnhofstr. 38","lat":49.44380,"lon":10.96190,"waehler":985,"parties":{"CSU":1805,"GRÜNE":896,"FREIE WÄHLER":558,"AfD":371,"SPD":1376,"FDP":135,"DIE LINKE":244}},{"nr":"0006","name":"Grundschule II, Zi. 10","addr":"Bahnhofstr. 38","lat":49.44200,"lon":10.96050,"waehler":975,"parties":{"CSU":1302,"GRÜNE":1057,"FREIE WÄHLER":814,"AfD":447,"SPD":1069,"FDP":133,"DIE LINKE":366}},{"nr":"0007","name":"Fröbelhaus, Zi. R 07","addr":"Homburger Str. 1","lat":49.44430,"lon":10.95880,"waehler":940,"parties":{"CSU":1757,"GRÜNE":1429,"FREIE WÄHLER":937,"AfD":392,"SPD":1949,"FDP":95,"DIE LINKE":236}},{"nr":"0008","name":"Fröbelhaus, R 09","addr":"Homburger Str. 1","lat":49.44520,"lon":10.95980,"waehler":1042,"parties":{"CSU":1777,"GRÜNE":2404,"FREIE WÄHLER":1058,"AfD":597,"SPD":1727,"FDP":112,"DIE LINKE":259}},{"nr":"0009","name":"Fröbelhaus, Zi. R 10","addr":"Homburger Str. 1","lat":49.44610,"lon":10.96080,"waehler":867,"parties":{"CSU":2187,"GRÜNE":1737,"FREIE WÄHLER":610,"AfD":364,"SPD":1458,"FDP":179,"DIE LINKE":122}},{"nr":"0010","name":"Fröbelhaus (Helene-Schultheiß-Heim)","addr":"Homburger Str. 1","lat":49.44480,"lon":10.95700,"waehler":1212,"parties":{"CSU":1075,"GRÜNE":583,"FREIE WÄHLER":544,"AfD":509,"SPD":2637,"FDP":75,"DIE LINKE":182}},{"nr":"0011","name":"Fröbelhaus (Gustav-Adolf-Heim)","addr":"Homburger Str. 1","lat":49.44350,"lon":10.95830,"waehler":1003,"parties":{"CSU":1454,"GRÜNE":661,"FREIE WÄHLER":329,"AfD":500,"SPD":1680,"FDP":121,"DIE LINKE":72}},{"nr":"0012","name":"Grundschule I, Zi. E 10","addr":"Geisleithenstr. 28","lat":49.44710,"lon":10.94720,"waehler":881,"parties":{"CSU":1574,"GRÜNE":1638,"FREIE WÄHLER":825,"AfD":420,"SPD":2967,"FDP":107,"DIE LINKE":186}},{"nr":"0013","name":"Grundschule I, Zi. E 5","addr":"Geisleithenstr. 28","lat":49.44590,"lon":10.94570,"waehler":860,"parties":{"CSU":1679,"GRÜNE":1299,"FREIE WÄHLER":766,"AfD":291,"SPD":2186,"FDP":58,"DIE LINKE":167}},{"nr":"0014","name":"Kindertagesstätte Weiherhof","addr":"Am Schreiberholz 30","lat":49.45364,"lon":10.92678,"waehler":976,"parties":{"CSU":3349,"GRÜNE":2308,"FREIE WÄHLER":870,"AfD":308,"SPD":2120,"FDP":359,"DIE LINKE":209}},{"nr":"0015","name":"FFW-Haus Weiherhof","addr":"Weiherhofer Hauptstr. 19","lat":49.45771,"lon":10.92280,"waehler":984,"parties":{"CSU":2986,"GRÜNE":1362,"FREIE WÄHLER":819,"AfD":578,"SPD":2051,"FDP":194,"DIE LINKE":309}},{"nr":"0016","name":"Vereinsheim Bürgerschützen","addr":"Schwanenweg 3","lat":49.45812,"lon":10.92175,"waehler":1012,"parties":{"CSU":3594,"GRÜNE":2097,"FREIE WÄHLER":1090,"AfD":749,"SPD":1981,"FDP":249,"DIE LINKE":289}},{"nr":"0017","name":"FFW-Haus Bronnamberg","addr":"Adlerstr. 11","lat":49.43938,"lon":10.90978,"waehler":867,"parties":{"CSU":3393,"GRÜNE":1304,"FREIE WÄHLER":705,"AfD":700,"SPD":1358,"FDP":250,"DIE LINKE":159}},{"nr":"0018","name":"FFW-Haus Lind","addr":"Lindenstr. 55","lat":49.42348,"lon":10.92637,"waehler":490,"parties":{"CSU":2067,"GRÜNE":594,"FREIE WÄHLER":462,"AfD":454,"SPD":744,"FDP":162,"DIE LINKE":91}},{"nr":"0019","name":"FFW-Haus Anwanden","addr":"Taubenweg 7","lat":49.41065,"lon":10.93001,"waehler":502,"parties":{"CSU":1894,"GRÜNE":982,"FREIE WÄHLER":702,"AfD":312,"SPD":874,"FDP":91,"DIE LINKE":35}},{"nr":"0020","name":"Vereinsheim Sängerfreunde","addr":"Traubenstr. 31","lat":49.42380,"lon":10.89640,"waehler":517,"parties":{"CSU":1637,"GRÜNE":823,"FREIE WÄHLER":396,"AfD":398,"SPD":1301,"FDP":16,"DIE LINKE":161}},{"nr":"0021","name":"Vereinsheim Sängerfreunde (2)","addr":"Traubenstr. 31","lat":49.42520,"lon":10.89770,"waehler":553,"parties":{"CSU":1976,"GRÜNE":677,"FREIE WÄHLER":373,"AfD":445,"SPD":1111,"FDP":42,"DIE LINKE":186}},{"nr":"0022","name":"Bibertgrundschule, Zi. E 10","addr":"Frankenstr. 8","lat":49.43010,"lon":10.91200,"waehler":645,"parties":{"CSU":1884,"GRÜNE":1137,"FREIE WÄHLER":377,"AfD":588,"SPD":1555,"FDP":89,"DIE LINKE":63}},{"nr":"0023","name":"Bibertgrundschule, Zi. E 2","addr":"Frankenstr. 8","lat":49.42870,"lon":10.91350,"waehler":768,"parties":{"CSU":2587,"GRÜNE":757,"FREIE WÄHLER":745,"AfD":577,"SPD":1372,"FDP":185,"DIE LINKE":114}},{"nr":"0024","name":"ZiPP, Foyer","addr":"Im Pinderpark 7","lat":49.43900,"lon":10.94790,"waehler":1036,"parties":{"CSU":3047,"GRÜNE":2292,"FREIE WÄHLER":1131,"AfD":991,"SPD":2353,"FDP":290,"DIE LINKE":449}}];
-
-// Compute winner for 2020
-B20.forEach(b=>{
-  const entries=Object.entries(b.parties);
-  b.winner=entries.reduce((a,c)=>c[1]>a[1]?c:a,entries[0])[0];
-});
 
 // ── Single Leaflet map with toggle ────────────────────────────
 const map=L.map('themap',{zoomControl:true}).setView([49.436,10.930],12);
@@ -367,26 +367,180 @@ L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{
 }).addTo(map);
 
 // Layer groups
-const layers={2026:L.layerGroup(),2020:L.layerGroup()};
+const layers={2026:L.layerGroup()};
 let activeYear=2026;
+const districtStreetLayers={2026:{}};
+const districtMarkers={2026:{}};
+const districtFocusState={2026:null};
+const mapPartyState={2026:null};
+let touchHintDismissed=false;
+
+function districtAccent(nr){
+  const palette=[
+    {dash:null, offset:0, opacity:0.82},
+    {dash:'10 6', offset:0, opacity:0.82},
+    {dash:'3 6', offset:0, opacity:0.9},
+    {dash:'16 8 4 8', offset:0, opacity:0.84},
+    {dash:'1 7', offset:0, opacity:0.95},
+    {dash:'8 4 2 4', offset:2, opacity:0.86}
+  ];
+  return palette[(nr - 1) % palette.length];
+}
+
+function isTouchDevice(){
+  return window.matchMedia('(pointer: coarse)').matches || 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+}
+
+function setTouchHintVisibility(hidden){
+  const el=document.getElementById('map-touch-hint');
+  if(!el) return;
+  el.style.display=hidden?'none':'inline-flex';
+}
+
+function hexToRgb(hex){
+  const clean=hex.replace('#','');
+  const full=clean.length===3?clean.split('').map(c=>c+c).join(''):clean;
+  const num=parseInt(full,16);
+  return {r:(num>>16)&255,g:(num>>8)&255,b:num&255};
+}
+
+function rgbToHex({r,g,b}){
+  return `#${[r,g,b].map(v=>Math.max(0,Math.min(255,Math.round(v))).toString(16).padStart(2,'0')).join('')}`;
+}
+
+function mixColor(hexA,hexB,t){
+  const a=hexToRgb(hexA),b=hexToRgb(hexB);
+  return rgbToHex({
+    r:a.r+(b.r-a.r)*t,
+    g:a.g+(b.g-a.g)*t,
+    b:a.b+(b.b-a.b)*t
+  });
+}
+
+function getPartyPct(b, party, year){
+  if(!party) return null;
+  return b.parties[party]||0;
+}
+
+function getMaxPartyPct(year, party){
+  if(!party) return 0;
+  const data=B26;
+  return Math.max(...data.map(b=>getPartyPct(b,party,year)),0);
+}
+
+function applyMarkerVisual(marker, year, districtNr, districtData){
+  const active=districtFocusState[year]!==null && districtFocusState[year]===districtNr;
+  const faded=districtFocusState[year]!==null && districtFocusState[year]!==districtNr;
+  const selectedParty=mapPartyState[year];
+  const baseColor=selectedParty?(PC[selectedParty]||districtData.winnerColor):districtData.winnerColor;
+  marker.setStyle({
+    color:baseColor,
+    radius:active?(isTouchDevice()?10:8):(isTouchDevice()?8:6),
+    weight:active?3:(isTouchDevice()?3:2.5),
+    opacity:faded?0.35:1,
+    fillOpacity:faded?0.35:1
+  });
+  if(active) marker.bringToFront();
+}
+
+function applyStreetVisual(seg, year, districtNr, districtData){
+  const active=districtFocusState[year]!==null && districtFocusState[year]===districtNr;
+  const faded=districtFocusState[year]!==null && districtFocusState[year]!==districtNr;
+  const selectedParty=mapPartyState[year];
+  let color=districtData.winnerColor;
+  let opacity=seg._baseStyle.opacity;
+  if(selectedParty){
+    const pct=getPartyPct(districtData.bezirk, selectedParty, year);
+    const maxPct=Math.max(getMaxPartyPct(year, selectedParty),1);
+    const intensity=Math.max(0, Math.min(1, pct / maxPct));
+    if(pct<=0){
+      color='#f3efcf';
+      opacity=0.2;
+    }else if(intensity>=0.67){
+      color='#d7301f';
+      opacity=0.95;
+    }else if(intensity>=0.34){
+      color='#fc8d59';
+      opacity=0.86;
+    }else{
+      color='#ffd92f';
+      opacity=0.78;
+    }
+  }
+  seg.setStyle({
+    color,
+    weight:active?8:seg._baseStyle.weight,
+    opacity:active?1:(faded?0.16:opacity),
+    dashArray:seg._baseStyle.dashArray,
+    dashOffset:seg._baseStyle.dashOffset
+  });
+  if(active) seg.bringToFront();
+}
+
+function updateMapPartyNote(year){
+  const note=document.getElementById('map-party-note');
+  if(!note) return;
+  const party=mapPartyState[year];
+  note.textContent=party
+    ?`${party}: Heatmap mit rot = viel, orange = mittel, gelb = weniger`
+    :'Standard: Siegerfarben je Bezirk';
+}
+
+function renderPartyFilter(year){
+  const group=document.getElementById('map-party-group');
+  if(!group) return;
+  const defs=BZ_P26;
+  const selected=mapPartyState[year];
+  const allBtn=`<button class="map-party-btn ${selected===null?'ghost-active':''}" data-party="">Sieger</button>`;
+  const partyBtns=defs.map(({key,label})=>{
+    const color=PC[key]||'#666';
+    const active=selected===key;
+    return `<button class="map-party-btn ${active?'active':''}" data-party="${key}" style="${active?`background:${color}`:`border-color:${color};color:${color}` }">${label}</button>`;
+  }).join('');
+  group.innerHTML=allBtn+partyBtns;
+  group.querySelectorAll('.map-party-btn').forEach(btn=>{
+    btn.addEventListener('click',()=>{
+      const party=btn.dataset.party||null;
+      mapPartyState[year]=party;
+      renderPartyFilter(year);
+      updateMapPartyNote(year);
+      updateMapVisuals(year);
+    });
+  });
+}
+
+function updateMapVisuals(year){
+  Object.entries(districtStreetLayers[year]).forEach(([nr,layersForDistrict])=>{
+    const districtNr=+nr;
+    layersForDistrict.forEach(seg=>applyStreetVisual(seg, year, districtNr, seg._districtData));
+  });
+  Object.entries(districtMarkers[year]).forEach(([nr,marker])=>{
+    const districtNr=+nr;
+    applyMarkerVisual(marker, year, districtNr, marker._districtData);
+  });
+}
+
+function resetDistrictFocus(year){
+  districtFocusState[year]=null;
+  updateMapVisuals(year);
+}
 
 function popupHtml(b,is2026){
   const parties=b.parties;
   const total=is2026?100:Object.values(parties).reduce((a,v)=>a+v,0);
   const sorted=Object.entries(parties).sort((a,c2)=>c2[1]-a[1]).slice(0,6);
-  const max=sorted[0][1];
   const bars=sorted.map(([p,v])=>{
     const pct=is2026?v:(v/total*100);
-    const w=Math.round((pct/max)*100);
+    const w=Math.max(2, Math.round(pct));
     return `<div class="pop-bar-row">
-      <div class="pop-party" style="color:${PC[p]||'#555'}">${p}</div>
+      <div class="pop-party"><span class="pop-party-dot" style="background:${PC[p]||'#888'}"></span>${p}</div>
       <div class="pop-track"><div class="pop-fill" style="width:${w}%;background:${PC[p]||'#888'}"></div></div>
       <div class="pop-pct">${pct.toFixed(1)}&thinsp;%</div>
     </div>`;
   }).join('');
   const wc=PC[b.winner]||'#888';
   return `<div>
-    <div class="pop-head">
+    <div class="pop-head" style="--win-color:${wc}">
       <div class="pop-nr">Bezirk ${b.nr}</div>
       <div class="pop-name">${b.name}</div>
       <div class="pop-meta">${b.addr||''} · ${b.waehler.toLocaleString('de')} Wähler</div>
@@ -396,6 +550,147 @@ function popupHtml(b,is2026){
       <span class="pop-winner" style="background:${wc}">${b.winner} stärkste Partei</span>
     </div>
   </div>`;
+}
+
+function buildFromStreets(bezirke, streets, year){
+  const lg=layers[year];
+  const is26=year===2026;
+  districtStreetLayers[year]={};
+  districtMarkers[year]={};
+  districtFocusState[year]=null;
+  // Build lookup: nr → bezirk data
+  const bzByNr={};
+  bezirke.forEach(b=>{ bzByNr[parseInt(b.nr)]=b; });
+
+  function setDistrictFocus(targetNr=null){
+    districtFocusState[year]=targetNr;
+    if(targetNr!==null){
+      touchHintDismissed=true;
+      setTouchHintVisibility(true);
+    }
+    updateMapVisuals(year);
+  }
+
+  // Draw each street as a colored polyline
+  L.geoJSON(streets,{
+    style(f){
+      const b=bzByNr[f.properties.nr];
+      const color=b?(PC[b.winner]||'#888'):'#888';
+      const accent=districtAccent(f.properties.nr);
+      return {
+        color,
+        weight:isTouchDevice()?6:4,
+        opacity:accent.opacity,
+        dashArray:accent.dash,
+        dashOffset:String(accent.offset),
+        lineCap:'round',
+        lineJoin:'round'
+      };
+    },
+    onEachFeature(f,layer){
+      const b=bzByNr[f.properties.nr];
+      if(!b) return;
+      const districtNr=f.properties.nr;
+      districtStreetLayers[year][districtNr] ||= [];
+      districtStreetLayers[year][districtNr].push(layer);
+      const accent=districtAccent(districtNr);
+      layer._baseStyle={
+        color:PC[b.winner]||'#888',
+        weight:isTouchDevice()?6:4,
+        opacity:accent.opacity,
+        dashArray:accent.dash,
+        dashOffset:String(accent.offset)
+      };
+      layer._districtData={bezirk:b,winnerColor:PC[b.winner]||'#888'};
+      layer.bindPopup(popupHtml(b,is26),{maxWidth:260,className:'nice-popup'});
+      if(!isTouchDevice()){
+        layer.on('mouseover',()=>{
+          if(districtFocusState[year]===null) setDistrictFocus(districtNr);
+        });
+        layer.on('mouseout',()=>{
+          if(districtFocusState[year]===districtNr) return;
+          if(districtFocusState[year]===null) setDistrictFocus(null);
+        });
+      }
+      layer.on('click',()=>{
+        if(districtFocusState[year]===districtNr){
+          layer.closePopup();
+          resetDistrictFocus(year);
+          return;
+        }
+        setDistrictFocus(districtNr);
+        layer.openPopup();
+      });
+      layer.on('mousedown touchstart pointerdown',e=>L.DomEvent.stopPropagation(e));
+    }
+  }).addTo(lg);
+  // Wahllokal dots
+  bezirke.forEach(b=>{
+    const color=PC[b.winner]||'#888';
+    const districtNr=parseInt(b.nr);
+    const marker=L.circleMarker([b.lat,b.lon],{
+      radius:isTouchDevice()?8:6,fillColor:'#fff',color,weight:isTouchDevice()?3:2.5,fillOpacity:1,interactive:true
+    }).addTo(lg);
+    marker._districtData={bezirk:b,winnerColor:color};
+    marker.bindPopup(popupHtml(b,is26),{maxWidth:260,className:'nice-popup'});
+    marker.on('click',()=>{
+      if(districtFocusState[year]===districtNr){
+        marker.closePopup();
+        resetDistrictFocus(year);
+        return;
+      }
+      setDistrictFocus(districtNr);
+      marker.openPopup();
+    });
+    marker.on('mousedown touchstart pointerdown',e=>L.DomEvent.stopPropagation(e));
+    districtMarkers[year][districtNr]=marker;
+  });
+
+  updateMapVisuals(year);
+
+  map.on('popupclose',()=>{
+    if(activeYear===year){
+      resetDistrictFocus(year);
+    }
+  });
+}
+
+function buildFromPolygons(bezirke, polygons, year){
+  const lg=layers[year];
+  const is26=year===2026;
+  const bzByNr={};
+  bezirke.forEach(b=>{ bzByNr[parseInt(b.nr,10)]=b; });
+
+  L.geoJSON(polygons,{
+    style(feature){
+      const b=bzByNr[feature.properties.nr];
+      const color=b?(PC[b.winner]||'#888'):'#888';
+      return {
+        fillColor:color,
+        fillOpacity:0.42,
+        color:'rgba(255,255,255,0.92)',
+        weight:2,
+        lineCap:'round',
+        lineJoin:'round'
+      };
+    },
+    onEachFeature(feature,layer){
+      const b=bzByNr[feature.properties.nr];
+      if(!b) return;
+      const color=PC[b.winner]||'#888';
+      layer.bindPopup(popupHtml(b,is26),{maxWidth:260,className:'nice-popup'});
+      layer.on('mouseover',function(){
+        this.setStyle({fillOpacity:0.68,weight:3,color:'#ffffff'});
+        this.bringToFront();
+      });
+      layer.on('mouseout',function(){
+        this.setStyle({fillOpacity:0.42,weight:2,color:'rgba(255,255,255,0.92)'});
+      });
+      L.circleMarker([b.lat,b.lon],{
+        radius:4.5,fillColor:'#fff',color,weight:2,fillOpacity:1,interactive:false
+      }).addTo(lg);
+    }
+  }).addTo(lg);
 }
 
 function buildVoronoi(bezirke,year){
@@ -412,62 +707,63 @@ function buildVoronoi(bezirke,year){
     if(!clipped)return;
     const color=PC[b.winner]||'#888';
     L.geoJSON(clipped,{
-      style:{fillColor:color,fillOpacity:0.5,color:'rgba(255,255,255,0.9)',weight:2.5,
+      style:{fillColor:color,fillOpacity:0.45,color:'rgba(255,255,255,0.85)',weight:2,
              lineCap:'round',lineJoin:'round'},
       onEachFeature:(_,layer)=>{
         layer.bindPopup(popupHtml(b,is26),{maxWidth:260,className:'nice-popup'});
-        layer.on('mouseover',function(){
-          this.setStyle({fillOpacity:0.75,weight:3});
-          this.bringToFront();
-        });
-        layer.on('mouseout',function(){
-          this.setStyle({fillOpacity:0.5,weight:2.5});
-        });
+        layer.on('mouseover',function(){this.setStyle({fillOpacity:0.7,weight:3});this.bringToFront();});
+        layer.on('mouseout',function(){this.setStyle({fillOpacity:0.45,weight:2});});
       }
     }).addTo(lg);
-    // Station dot
     L.circleMarker([b.lat,b.lon],{
-      radius:4,fillColor:'#fff',color:color,weight:2,fillOpacity:1,
-      interactive:false
+      radius:4,fillColor:'#fff',color:color,weight:2,fillOpacity:1,interactive:false
     }).addTo(lg);
   });
 }
 
 const INFOS={
-  2026:'8. März 2026 · 20 Stimmbezirke',
-  2020:'15. März 2020 · 24 Stimmbezirke'
+  2026:'8. März 2026 · 20 Stimmbezirke'
 };
 
 function switchYear(year){
-  layers[activeYear].removeFrom(map);
   activeYear=year;
   layers[year].addTo(map);
   document.getElementById('map-year-info').textContent=INFOS[year];
-  document.querySelectorAll('.map-toggle-btn').forEach(b=>{
-    b.classList.toggle('active',+b.dataset.year===year);
-  });
+  renderPartyFilter(year);
+  updateMapPartyNote(year);
+  updateMapVisuals(year);
   renderLegend(year);
 }
 
 function renderLegend(year){
-  const bezirke=year===2026?B26:B20;
+  const bezirke=B26;
   const winners=[...new Set(bezirke.map(b=>b.winner))];
   const leg=document.getElementById('map-legend');
   leg.innerHTML=winners.map(w=>`<div class="leg-item"><span class="leg-dot" style="background:${PC[w]||'#888'}"></span>${w}</div>`).join('');
 }
 
-document.querySelectorAll('.map-toggle-btn').forEach(btn=>{
-  btn.addEventListener('click',()=>switchYear(+btn.dataset.year));
+setTouchHintVisibility(!touchHintDismissed && isTouchDevice() ? false : true);
+map.on('click',()=>{
+  if(districtFocusState[activeYear]!==null){
+    Object.values(map._layers).forEach(layer=>{
+      if(layer.closePopup) layer.closePopup();
+    });
+    resetDistrictFocus(activeYear);
+  }
 });
 
-// Load boundary, then build both layers
-fetch('/analyse/zirndorf.geojson').then(r=>r.json()).then(boundary=>{
+// Load boundary + street GeoJSON
+Promise.all([
+  fetch('/analyse/zirndorf.geojson').then(r=>r.json()),
+  fetch('/analyse/bezirk_streets.geojson').then(r=>r.json()).catch(()=>null)
+]).then(([boundary, streets26])=>{
   window._boundary=boundary;
-  buildVoronoi(B26,2026);
-  buildVoronoi(B20,2020);
+  if(streets26){ buildFromStreets(B26, streets26, 2026); }
+  else { buildVoronoi(B26, 2026); }
   layers[2026].addTo(map);
+  renderPartyFilter(2026);
+  updateMapPartyNote(2026);
   renderLegend(2026);
-  // Boundary outline
   L.geoJSON(boundary,{style:{fill:false,color:'#888',weight:1.5,dashArray:'4 4',opacity:0.6}}).addTo(map);
 });
 
@@ -570,16 +866,6 @@ careers.forEach(c=>{
 });
 
 // ── Bezirke tables ────────────────────────────────────────────
-// Party columns per year (only parties with actual Bezirk data)
-const BZ_P20=[
-  {key:'CSU',          label:'CSU'},
-  {key:'SPD',          label:'SPD'},
-  {key:'GRÜNE',        label:'GRÜNE'},
-  {key:'AfD',          label:'AfD'},
-  {key:'FREIE WÄHLER', label:'FW'},
-  {key:'DIE LINKE',    label:'LNK'},
-  {key:'FDP',          label:'FDP'},
-];
 const BZ_P26=[
   {key:'ZBG',          label:'ZBG'},
   {key:'CSU',          label:'CSU'},
@@ -594,19 +880,6 @@ const BZ_P26=[
 function bzColorDot(wc){
   return `<span style="display:inline-block;width:8px;height:8px;border-radius:2px;background:${wc};margin-right:3px;vertical-align:middle"></span>`;
 }
-function buildTable20(){
-  const t=document.getElementById('btable20');
-  const hdr=BZ_P20.map(({label})=>`<th>${label} %</th>`).join('');
-  t.innerHTML=`<thead><tr><th>Nr</th><th>Wahllokal</th><th>Wähler</th>${hdr}<th>Stärkste</th></tr></thead><tbody></tbody>`;
-  const tb=t.querySelector('tbody');
-  B20.forEach(b=>{
-    const tot=Object.values(b.parties).reduce((a,v)=>a+v,0);
-    const pct=key=>((b.parties[key]||0)/tot*100).toFixed(1);
-    const wc=PC[b.winner]||'#666';
-    const cells=BZ_P20.map(({key})=>`<td style="text-align:right">${pct(key)}</td>`).join('');
-    tb.insertAdjacentHTML('beforeend',`<tr><td>${b.nr}</td><td>${b.name}</td><td style="text-align:right">${b.waehler.toLocaleString('de')}</td>${cells}<td style="font-weight:800">${bzColorDot(wc)}${b.winner}</td></tr>`);
-  });
-}
 function buildTable26(){
   const t=document.getElementById('btable26');
   const hdr=BZ_P26.map(({label})=>`<th>${label} %</th>`).join('');
@@ -619,19 +892,7 @@ function buildTable26(){
     tb.insertAdjacentHTML('beforeend',`<tr><td>${b.nr}</td><td>${b.name}</td><td style="text-align:right">${b.waehler.toLocaleString('de')}</td>${cells}<td style="font-weight:800">${bzColorDot(wc)}${b.winner}</td></tr>`);
   });
 }
-buildTable20();
 buildTable26();
-
-// ── Bezirke tab toggle ────────────────────────────────────────
-function showBzTab(year){
-  document.getElementById('bz-panel-2026').style.display=year===2026?'':'none';
-  document.getElementById('bz-panel-2020').style.display=year===2020?'':'none';
-  document.getElementById('bz-tab-2026').classList.toggle('active',year===2026);
-  document.getElementById('bz-tab-2020').classList.toggle('active',year===2020);
-  document.getElementById('bz-tab-info').textContent=year===2026
-    ?'8. März 2026 · Parteianteile in Prozent'
-    :'15. März 2020 · Listenstimmen je Partei in Prozent';
-}
 </script>
 </body>
 </html>

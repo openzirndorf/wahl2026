@@ -12,11 +12,17 @@ Berechnet GeoJSON-Polygone für jeden Stimmbezirk (Zirndorf 2026).
 import json, math, os, sys, time
 from collections import defaultdict
 import requests
+from shapely import concave_hull
 from shapely.geometry import MultiPoint, shape, mapping
 from shapely.ops import unary_union
 
 # Zirndorf bounding box (etwas Puffer)
 BBOX = "49.395,10.865,49.475,10.975"
+OVERPASS_ENDPOINTS = [
+    "https://overpass-api.de/api/interpreter",
+    "https://lz4.overpass-api.de/api/interpreter",
+    "https://overpass.kumi.systems/api/interpreter",
+]
 
 # ── Straße → Stimmbezirke ──────────────────────────────────────────────────────
 # Normalisierungsregeln: Kleinschrift, "straße"→"str", "strasse"→"str",
@@ -777,22 +783,54 @@ def fetch_ways() -> list:
     # Fetch from Overpass: area filter → only Zirndorf
     q_area = '[out:json][timeout:60];area["admin_level"="8"]["name"="Zirndorf"]->.z;(way["highway"]["name"](area.z););out geom qt;'
     q_bbox = f'[out:json][timeout:60];(way["highway"]["name"]({BBOX}););out geom qt;'
-    for attempt, (q, label) in enumerate([(q_area,"Area"),(q_area,"Area"),(q_bbox,"Bbox")]):
-        try:
-            r = requests.get("https://overpass-api.de/api/interpreter",
-                             params={"data": q}, timeout=65)
-            r.raise_for_status()
-            j = r.json()
-            if j["elements"]:
-                print(f"  {len(j['elements'])} Wege ({label})")
-                # Cache the result
-                with open(cache_path, "w") as f:
-                    json.dump(j, f)
-                return j["elements"]
-        except Exception as e:
-            print(f"  Versuch {attempt+1} ({label}) fehlgeschlagen: {e}", file=sys.stderr)
-            time.sleep(3)
+    queries = [(q_area, "Area"), (q_area, "Area"), (q_bbox, "Bbox")]
+    for endpoint in OVERPASS_ENDPOINTS:
+        for attempt, (q, label) in enumerate(queries, start=1):
+            try:
+                r = requests.get(endpoint, params={"data": q}, timeout=65)
+                r.raise_for_status()
+                j = r.json()
+                if j["elements"]:
+                    print(f"  {len(j['elements'])} Wege ({label}, {endpoint})")
+                    with open(cache_path, "w") as f:
+                        json.dump(j, f)
+                    return j["elements"]
+            except Exception as e:
+                print(f"  Versuch {attempt} ({label}, {endpoint}) fehlgeschlagen: {e}", file=sys.stderr)
+                time.sleep(2)
     raise RuntimeError("Overpass nicht erreichbar")
+
+
+def fetch_buildings() -> list:
+    """Load OSM building ways for Zirndorf as a free proxy for settlement area."""
+    print("Lade Gebäude-Geometrien …", flush=True)
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+    cache_path = os.path.join(script_dir, "zirndorf_buildings_cache.json")
+
+    if os.path.exists(cache_path):
+        with open(cache_path) as f:
+            j = json.load(f)
+        print(f"  {len(j['elements'])} Gebäude-Wege aus Cache ({os.path.basename(cache_path)})")
+        return j["elements"]
+
+    q_area = '[out:json][timeout:90];area["admin_level"="8"]["name"="Zirndorf"]->.z;(way["building"](area.z););out geom qt;'
+    q_bbox = f'[out:json][timeout:90];(way["building"]({BBOX}););out geom qt;'
+    queries = [(q_bbox, "Bbox"), (q_area, "Area"), (q_bbox, "Bbox")]
+    for endpoint in OVERPASS_ENDPOINTS:
+        for attempt, (q, label) in enumerate(queries, start=1):
+            try:
+                r = requests.get(endpoint, params={"data": q}, timeout=95)
+                r.raise_for_status()
+                j = r.json()
+                if j["elements"]:
+                    print(f"  {len(j['elements'])} Gebäude-Wege ({label}, {endpoint})")
+                    with open(cache_path, "w") as f:
+                        json.dump(j, f)
+                    return j["elements"]
+            except Exception as e:
+                print(f"  Versuch {attempt} ({label}, {endpoint}) fehlgeschlagen: {e}", file=sys.stderr)
+                time.sleep(2)
+    raise RuntimeError("Gebäude-Overpass nicht erreichbar")
 
 
 def load_municipality_boundary(path: str):
@@ -805,6 +843,44 @@ def load_municipality_boundary(path: str):
         if g:
             geoms.append(shape(g))
     return unary_union(geoms) if geoms else None
+
+
+def buildings_to_polygons(elements: list, municipality=None) -> list:
+    """Convert cached OSM building ways to clipped polygon geometries."""
+    from shapely.geometry import Polygon
+    from shapely.validation import make_valid
+
+    muni_valid = make_valid(municipality) if municipality else None
+    polygons = []
+
+    for way in elements:
+        coords = [(n["lon"], n["lat"]) for n in way.get("geometry", []) if "lon" in n]
+        if len(coords) < 3:
+            continue
+        if coords[0] != coords[-1]:
+            coords.append(coords[0])
+        try:
+            poly = Polygon(coords)
+        except Exception:
+            continue
+        if poly.is_empty or poly.area == 0:
+            continue
+        poly = make_valid(poly)
+        if muni_valid:
+            try:
+                poly = poly.intersection(muni_valid)
+            except Exception:
+                poly = poly.intersection(muni_valid.buffer(0))
+        if poly.is_empty:
+            continue
+        if poly.geom_type == "Polygon":
+            polygons.append(poly)
+        else:
+            for part in getattr(poly, "geoms", []):
+                if part.geom_type == "Polygon" and not part.is_empty:
+                    polygons.append(part)
+
+    return polygons
 
 
 def build_street_buffer_polygons(bz_ways: dict, municipality=None,
@@ -948,6 +1024,115 @@ def build_way_centroids(bz_ways: dict) -> dict:
             ys = [p[1] for p in pts]
             centroids[bz_nr].append((sum(xs) / len(xs), sum(ys) / len(ys)))
     return centroids
+
+
+def assign_buildings_to_districts(buildings: list, bz_ways: dict) -> dict:
+    """
+    Approximate building ownership by nearest district street geometry.
+    This is still not parcel-accurate, but much closer to settlement structure
+    than pure street buffers.
+    """
+    from shapely.geometry import LineString
+
+    district_lines = {}
+    for bz_nr, ways in bz_ways.items():
+        lines = []
+        for way in ways:
+            pts = [(n["lon"], n["lat"]) for n in way.get("geometry", []) if "lon" in n]
+            if len(pts) >= 2:
+                lines.append(LineString(pts))
+        if lines:
+            district_lines[bz_nr] = unary_union(lines)
+
+    assigned = defaultdict(list)
+    skipped = 0
+    max_distance = 0.0035  # ~250-300 m in this latitude band
+
+    for building in buildings:
+        point = building.representative_point()
+        ranked = []
+        for bz_nr, geom in district_lines.items():
+            ranked.append((point.distance(geom), bz_nr))
+        if not ranked:
+            continue
+        ranked.sort(key=lambda item: item[0])
+        best_dist, best_bz = ranked[0]
+        second_dist = ranked[1][0] if len(ranked) > 1 else None
+
+        # Reject remote or very ambiguous outliers.
+        if best_dist > max_distance:
+            skipped += 1
+            continue
+        if second_dist is not None and second_dist > 0 and best_dist / second_dist > 0.92 and best_dist > 0.0012:
+            skipped += 1
+            continue
+
+        assigned[best_bz].append(building)
+
+    print(f"  Gebäude zugeordnet: {sum(len(v) for v in assigned.values())}, übersprungen: {skipped}")
+    return assigned
+
+
+def build_settlement_based_polygons(bz_ways: dict, buildings: list, municipality=None) -> dict:
+    """
+    Build calmer district areas from the combination of
+    - district street geometries
+    - nearby assigned OSM buildings
+    - concave hull over settlement points
+    """
+    from shapely.geometry import LineString
+    from shapely.validation import make_valid
+
+    muni_valid = make_valid(municipality) if municipality else None
+    district_buildings = assign_buildings_to_districts(buildings, bz_ways)
+    way_centroids = build_way_centroids(bz_ways)
+    result = {}
+
+    for bz_nr in sorted(bz_ways.keys()):
+        lines = []
+        for way in bz_ways[bz_nr]:
+            pts = [(n["lon"], n["lat"]) for n in way.get("geometry", []) if "lon" in n]
+            if len(pts) >= 2:
+                lines.append(LineString(pts))
+        if not lines:
+            continue
+
+        geoms = []
+        road_union = unary_union(lines)
+        geoms.append(road_union.buffer(0.00026))
+
+        assigned_buildings = district_buildings.get(bz_nr, [])
+        if assigned_buildings:
+            building_union = unary_union(assigned_buildings)
+            geoms.append(building_union.buffer(0.00010))
+
+        seed_points = []
+        for lon, lat in way_centroids.get(bz_nr, []):
+            seed_points.append((lon, lat))
+        for building in assigned_buildings:
+            rp = building.representative_point()
+            seed_points.append((rp.x, rp.y))
+
+        if len(seed_points) >= 3:
+            hull = concave_hull(MultiPoint(seed_points), ratio=0.18, allow_holes=False)
+            if not hull.is_empty:
+                geoms.append(hull.buffer(0.00022))
+
+        merged = unary_union(geoms)
+        merged = make_valid(merged).buffer(0.00075).buffer(-0.00042)
+        merged = make_valid(merged).simplify(0.00038, preserve_topology=True)
+
+        if muni_valid:
+            try:
+                merged = merged.intersection(muni_valid)
+            except Exception:
+                merged = merged.intersection(muni_valid.buffer(0))
+
+        if merged.is_empty:
+            continue
+        result[bz_nr] = make_valid(merged)
+
+    return result
 
 
 def smooth_district_polygons(polys: dict, municipality=None,
@@ -1222,6 +1407,7 @@ def main():
     out_path   = os.path.join(script_dir, "../docs/analyse/bezirk_polygons.geojson")
     out20_path = os.path.join(script_dir, "../docs/analyse/bezirk_polygons_2020.geojson")
     manual26_path = os.path.join(script_dir, "../docs/analyse/bezirk_polygons_2026_manual.geojson")
+    settlement26_path = os.path.join(script_dir, "../docs/analyse/bezirk_polygons_2026_settlement.geojson")
 
     municipality = None
     if os.path.exists(muni_path):
@@ -1313,6 +1499,39 @@ def main():
         json.dump({"type": "FeatureCollection", "features": manual_features},
                   f, ensure_ascii=False, separators=(",", ":"))
     print(f"✓ {len(manual_features)} stilisierte Polygone → {manual26_path}")
+
+    try:
+        print("\nErzeuge siedlungsbasierte 2026-Testflächen …", flush=True)
+        building_elements = fetch_buildings()
+        building_polys = buildings_to_polygons(building_elements, clip_boundary)
+        print(f"  Gebäudepolygone nutzbar: {len(building_polys)}")
+        settlement_polys = build_settlement_based_polygons(bz_ways, building_polys, clip_boundary)
+        settlement_polys = smooth_district_polygons(
+            settlement_polys,
+            clip_boundary,
+            smooth_outer=0.0008,
+            smooth_inner=0.00055,
+            simplify_tol=0.00035,
+            min_part_ratio=0.05,
+            min_part_area=0.000006
+        )
+        settlement_features = []
+        for bz_nr in sorted(settlement_polys.keys()):
+            settlement_features.append({
+                "type": "Feature",
+                "properties": {
+                    "nr": bz_nr,
+                    "stimmbezirk": bz_nr,
+                    "source": "settlement-derived"
+                },
+                "geometry": mapping(settlement_polys[bz_nr])
+            })
+        with open(settlement26_path, "w", encoding="utf-8") as f:
+            json.dump({"type": "FeatureCollection", "features": settlement_features},
+                      f, ensure_ascii=False, separators=(",", ":"))
+        print(f"✓ {len(settlement_features)} siedlungsbasierte Polygone → {settlement26_path}")
+    except Exception as e:
+        print(f"! Siedlungsbasierte Testflächen konnten nicht erzeugt werden: {e}", file=sys.stderr)
 
     # Export streets as colored lines (more accurate than polygons)
     streets_path = os.path.join(script_dir, "../docs/analyse/bezirk_streets.geojson")

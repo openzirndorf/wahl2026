@@ -36,6 +36,7 @@
     .map-party-btn.active{color:#fff;border-color:transparent;box-shadow:0 1px 4px rgba(0,0,0,.14)}
     .map-party-btn.ghost-active{background:#363636;color:#fff;border-color:#363636}
     .map-party-note{font-size:.78rem;color:var(--muted)}
+    .map-thanks{margin:.35rem 0 .8rem;font-size:.82rem;color:var(--muted)}
     .the-map{height:480px}
     @media(max-width:720px){.the-map{height:62vh;min-height:420px}}
     .map-footer{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:.5rem;padding:.55rem .9rem;background:var(--panel);border-top:1px solid var(--line)}
@@ -318,6 +319,7 @@
       <section id="map26">
         <h2 class="section-title">Karte Stimmbezirke</h2>
         <p class="section-sub">Straßenkarte der Stimmbezirke 2026. Für die vollständige Straßenliste je Bezirk: <a href="/wahlbezirke/" style="color:var(--primary-dark);font-weight:700">Straßenverzeichnis &amp; Stimmbezirk-Suche</a>.</p>
+        <p class="map-thanks">Danke an das Wahlamt Zirndorf für die Bereitstellung der Daten.</p>
         <div class="map-wrap">
           <div class="map-toggle-bar">
             <div class="map-toggle-info" id="map-year-info">8. März 2026 · 20 Stimmbezirke</div>
@@ -428,6 +430,34 @@ function getMaxPartyPct(year, party){
   return Math.max(...data.map(b=>getPartyPct(b,party,year)),0);
 }
 
+function hexToRgb(hex){
+  const clean=hex.replace('#','');
+  const full=clean.length===3 ? clean.split('').map(ch=>ch+ch).join('') : clean;
+  const num=parseInt(full,16);
+  return {r:(num>>16)&255,g:(num>>8)&255,b:num&255};
+}
+
+function mixColor(a,b,t){
+  const ca=hexToRgb(a);
+  const cb=hexToRgb(b);
+  const clamp=Math.max(0,Math.min(1,t));
+  const r=Math.round(ca.r+(cb.r-ca.r)*clamp);
+  const g=Math.round(ca.g+(cb.g-ca.g)*clamp);
+  const bch=Math.round(ca.b+(cb.b-ca.b)*clamp);
+  return `rgb(${r}, ${g}, ${bch})`;
+}
+
+function heatColor(intensity){
+  const t=Math.max(0,Math.min(1,intensity));
+  if(t<=0.4){
+    return mixColor('#fff7bc','#fec44f',t/0.4);
+  }
+  if(t<=0.75){
+    return mixColor('#fec44f','#fc8d59',(t-0.4)/0.35);
+  }
+  return mixColor('#fc8d59','#d7301f',(t-0.75)/0.25);
+}
+
 function applyMarkerVisual(marker, year, districtNr, districtData){
   const active=districtFocusState[year]!==null && districtFocusState[year]===districtNr;
   const faded=districtFocusState[year]!==null && districtFocusState[year]!==districtNr;
@@ -456,15 +486,9 @@ function applyStreetVisual(seg, year, districtNr, districtData){
     if(pct<=0){
       color='#f3efcf';
       opacity=0.2;
-    }else if(intensity>=0.67){
-      color='#d7301f';
-      opacity=0.95;
-    }else if(intensity>=0.34){
-      color='#fc8d59';
-      opacity=0.86;
     }else{
-      color='#ffd92f';
-      opacity=0.78;
+      color=heatColor(intensity);
+      opacity=0.55 + intensity * 0.4;
     }
   }
   seg.setStyle({
@@ -482,7 +506,7 @@ function updateMapPartyNote(year){
   if(!note) return;
   const party=mapPartyState[year];
   note.textContent=party
-    ?`${party}: Heatmap mit rot = viel, orange = mittel, gelb = weniger`
+    ?`${party}: fein abgestufte Heatmap von gelb über orange bis rot`
     :'Standard: Siegerfarben je Bezirk';
 }
 

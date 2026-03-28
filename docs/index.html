@@ -28,6 +28,29 @@
       white-space: nowrap;
     }
     .stichwahl-banner-btn:hover { background: var(--primary-dark); transform: translateY(-1px); }
+
+    .analyse-promo { margin: 2rem 0; }
+    .analyse-promo-card {
+      display: flex; align-items: center; gap: 1.2rem;
+      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+      color: #fff; border-radius: var(--radius); padding: 1.4rem 1.6rem;
+      text-decoration: none; border: 2px solid #4a6fa5;
+      transition: transform .15s, box-shadow .15s;
+      box-shadow: 0 4px 16px rgba(0,0,0,.18);
+    }
+    .analyse-promo-card:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,.25); }
+    .analyse-promo-icon { font-size: 2.2rem; flex-shrink: 0; }
+    .analyse-promo-text { flex: 1; }
+    .analyse-promo-text strong { display: block; font-size: 1.15rem; font-weight: 800; margin-bottom: .3rem; }
+    .analyse-promo-text span { font-size: .9rem; opacity: .85; }
+    .analyse-promo-arrow {
+      flex-shrink: 0; background: #4a6fa5; color: #fff; font-weight: 800; font-size: .9rem;
+      padding: .5rem 1.1rem; border-radius: 999px; white-space: nowrap;
+    }
+    @media (max-width: 600px) {
+      .analyse-promo-card { flex-wrap: wrap; }
+      .analyse-promo-arrow { width: 100%; text-align: center; }
+    }
   </style>
 </head>
 <body>
@@ -56,6 +79,19 @@
       </div>
       <a class="stichwahl-banner-btn" href="/stichwahl/live/">Ergebnis ansehen →</a>
     </div>
+  </div>
+
+  <div class="wrap" style="padding-top:1.2rem;padding-bottom:.2rem">
+    <section class="analyse-promo" style="margin:0">
+      <a href="/analyse/" class="analyse-promo-card">
+        <div class="analyse-promo-icon">📊</div>
+        <div class="analyse-promo-text">
+          <strong>Wahlanalyse 2020 → 2026</strong>
+          <span>Wie hat Zirndorf gewählt? Stimmbezirke, Parteigewinne, Voronoi-Karte und alle 247 Kandidaten im Vergleich.</span>
+        </div>
+        <div class="analyse-promo-arrow">Zur Analyse →</div>
+      </a>
+    </section>
   </div>
 
   <main class="wrap home-v3">
